@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Upload, BarChart3, TrendingUp, FileText, Settings, Users, X } from 'lucide-react';
+import { LayoutDashboard, Upload, BarChart3, TrendingUp, FileText, Settings, Users, X, Activity } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
@@ -32,19 +32,23 @@ const navItems: NavItem[] = [
         description: 'Upload bank statements'
     },
     {
+        title: 'Processing',
+        href: '/processing',
+        icon: <Activity className='h-4 w-4' />,
+        description: 'Real-time analysis status'
+    },
+    {
         title: 'Analytics',
         href: '/analytics',
         icon: <BarChart3 className='h-4 w-4' />,
-        description: 'Detailed financial analysis',
-        disabled: true
+        description: 'Detailed financial analysis'
     },
     {
         title: 'Recommendations',
         href: '/recommendations',
         icon: <TrendingUp className='h-4 w-4' />,
         badge: '3',
-        description: 'Treasury product suggestions',
-        disabled: true
+        description: 'Treasury product suggestions'
     },
     {
         title: 'Reports',

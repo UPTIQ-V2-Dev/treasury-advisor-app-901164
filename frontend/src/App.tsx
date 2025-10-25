@@ -2,6 +2,9 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AppLayout } from '@/components/layout/AppLayout';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { UploadPage } from '@/pages/UploadPage';
+import { RecommendationsPage } from '@/pages/RecommendationsPage';
+import { ProcessingPage } from '@/pages/ProcessingPage';
+import { AnalyticsPage } from '@/pages/AnalyticsPage';
 
 export const App = () => {
     return (
@@ -27,6 +30,18 @@ export const App = () => {
                     <Route
                         path='upload'
                         element={<UploadPage />}
+                    />
+                    <Route
+                        path='recommendations'
+                        element={<RecommendationsPage />}
+                    />
+                    <Route
+                        path='processing'
+                        element={<ProcessingPage />}
+                    />
+                    <Route
+                        path='analytics'
+                        element={<AnalyticsPage />}
                     />
                     <Route
                         path='*'
