@@ -1,5 +1,6 @@
 import { api } from '@/lib/api';
 import { mockApiDelay } from '@/lib/utils';
+import { emitter } from '@/agentSdk';
 import {
     mockStatementFiles,
     mockStatementValidation,
@@ -19,25 +20,55 @@ import type {
 
 export const statementsService = {
     uploadStatements: async (uploadData: StatementUpload): Promise<StatementFile[]> => {
+        let statementFiles: StatementFile[];
+
         if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
             console.log('--- MOCK API: uploadStatements ---', uploadData);
             await mockApiDelay();
-            return mockStatementFiles.slice(0, uploadData.files.length);
+            statementFiles = mockStatementFiles.slice(0, uploadData.files.length);
+        } else {
+            const formData = new FormData();
+            uploadData.files.forEach((file, index) => {
+                formData.append(`files[${index}]`, file);
+            });
+            formData.append('clientId', uploadData.clientId);
+            formData.append('statementPeriod', JSON.stringify(uploadData.statementPeriod));
+
+            const response = await api.post('/statements/upload', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            statementFiles = response.data;
         }
 
-        const formData = new FormData();
-        uploadData.files.forEach((file, index) => {
-            formData.append(`files[${index}]`, file);
-        });
-        formData.append('clientId', uploadData.clientId);
-        formData.append('statementPeriod', JSON.stringify(uploadData.statementPeriod));
+        // Emit agent event after successful upload
+        try {
+            await emitter.emit({
+                agentId: '37cff143-f7d2-4204-878f-020620e7697e',
+                event: 'Bank-Statement-Uploaded',
+                payload: {
+                    clientId: uploadData.clientId,
+                    fileCount: uploadData.files.length,
+                    statementPeriod: uploadData.statementPeriod,
+                    uploadedAt: new Date().toISOString()
+                },
+                documents: statementFiles.map(file => ({
+                    signedUrl: `/statements/${file.id}/download`,
+                    fileName: file.fileName,
+                    mimeType:
+                        file.fileType === 'pdf'
+                            ? 'application/pdf'
+                            : file.fileType === 'csv'
+                              ? 'text/csv'
+                              : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                }))
+            });
+        } catch (error) {
+            console.log('Agent event emission failed:', error);
+        }
 
-        const response = await api.post('/statements/upload', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
-        });
-        return response.data;
+        return statementFiles;
     },
 
     validateStatement: async (fileId: string): Promise<StatementValidation> => {
