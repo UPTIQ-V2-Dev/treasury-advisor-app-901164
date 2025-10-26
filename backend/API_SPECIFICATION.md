@@ -10,7 +10,7 @@ model User {
   email           String   @unique
   name            String?
   password        String
-  role            String   @default("USER")
+  role            Role     @default(USER)
   isEmailVerified Boolean  @default(false)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -18,15 +18,27 @@ model User {
   Client          Client[]
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
 model Token {
-  id          Int      @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   token       String
-  type        String
+  type        TokenType
   expires     DateTime
   blacklisted Boolean
-  createdAt   DateTime @default(now())
-  user        User     @relation(fields: [userId], references: [id])
+  createdAt   DateTime  @default(now())
+  user        User      @relation(fields: [userId], references: [id])
   userId      Int
+}
+
+enum TokenType {
+  ACCESS
+  REFRESH
+  RESET_PASSWORD
+  VERIFY_EMAIL
 }
 
 model Client {
@@ -35,15 +47,16 @@ model Client {
   businessType          String
   industry              String
   businessSegment       String
-  riskProfile           String
-  relationshipManagerId String
-  relationshipManager   User             @relation(fields: [relationshipManagerId], references: [id])
-  contact               Json
-  preferences           Json
+  riskProfile           String           @default("medium")
+  relationshipManagerId  Int
+  relationshipManager    User             @relation(fields: [relationshipManagerId], references: [id])
+  contact                Json
+  preferences           Json             @default("{}")
   createdAt             DateTime         @default(now())
   updatedAt             DateTime         @updatedAt
   ClientAccount         ClientAccount[]
   Statement             Statement[]
+  BankConnection        BankConnection[]
   ProcessingTask        ProcessingTask[]
   Recommendation        Recommendation[]
   Transaction           Transaction[]
@@ -63,8 +76,9 @@ model ClientAccount {
   client        Client        @relation(fields: [clientId], references: [id])
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
-  Transaction   Transaction[]
   Statement     Statement[]
+  Transaction   Transaction[]
+  BankConnection BankConnection[]
 }
 
 model Statement {
@@ -72,16 +86,57 @@ model Statement {
   fileName    String
   fileSize    Int
   fileType    String
+  filePath    String?
   uploadDate  DateTime      @default(now())
-  status      String
+  status      StatementStatus
   clientId    String
   client      Client        @relation(fields: [clientId], references: [id])
   accountId   String?
   account     ClientAccount? @relation(fields: [accountId], references: [id])
-  period      Json
+  period      Json?
+  errorMessage String?
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   Transaction Transaction[]
+  ProcessingTask ProcessingTask[]
+}
+
+enum StatementStatus {
+  UPLOADED
+  PROCESSING
+  COMPLETED
+  FAILED
+  VALIDATED
+}
+
+model BankConnection {
+  id             String   @id @default(uuid())
+  clientId       String
+  client         Client   @relation(fields: [clientId], references: [id])
+  accountId      String
+  account        ClientAccount @relation(fields: [accountId], references: [id])
+  bankName       String
+  connectionType ConnectionType
+  lastSync       DateTime?
+  status         ConnectionStatus @default(CONNECTED)
+  credentials    Json?
+  settings       Json?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+enum ConnectionStatus {
+  CONNECTED
+  DISCONNECTED
+  ERROR
+  SYNCING
+}
+
+enum ConnectionType {
+  API
+  PLAID
+  YODLEE
+  MANUAL
 }
 
 model Transaction {
@@ -95,12 +150,25 @@ model Transaction {
   date         DateTime
   description  String
   amount       Float
-  type         String
+  type         TransactionType
   category     String?
   counterparty String?
-  balanceAfter Float
+  balanceAfter Float?
+  metadata     Json?
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
+}
+
+enum TransactionType {
+  DEBIT
+  CREDIT
+  ACH
+  WIRE
+  CHECK
+  TRANSFER
+  FEE
+  INTEREST
+  OTHER
 }
 
 model ProcessingTask {
@@ -108,8 +176,10 @@ model ProcessingTask {
   taskId           String   @unique @default(uuid())
   clientId         String
   client           Client   @relation(fields: [clientId], references: [id])
-  type             String
-  status           String
+  statementId      String?
+  statement        Statement? @relation(fields: [statementId], references: [id])
+  type             TaskType
+  status           TaskStatus
   progress         Int      @default(0)
   startTime        DateTime @default(now())
   endTime          DateTime?
@@ -120,6 +190,21 @@ model ProcessingTask {
   results          Json?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
+}
+
+enum TaskType {
+  STATEMENT_PARSE
+  DATA_SYNC
+  ANALYSIS
+  RECOMMENDATION_GENERATION
+}
+
+enum TaskStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+  CANCELLED
 }
 
 model TreasuryProduct {
@@ -144,30 +229,33 @@ model Recommendation {
   client           Client          @relation(fields: [clientId], references: [id])
   productId        String
   product          TreasuryProduct @relation(fields: [productId], references: [id])
-  priority         String
+  priority         RecommendationPriority @default(MEDIUM)
   rationale        Json
   estimatedBenefit Json
   implementation   Json
   supportingData   Json[]
   confidence       Float
-  status           String          @default("pending")
+  status           RecommendationStatus @default(PENDING)
   reviewedBy       String?
   reviewedAt       DateTime?
+  implementedAt    DateTime?
   notes            String?
+  feedback         Json?
   createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
 }
 
-model BankConnection {
-  id             String   @id @default(uuid())
-  clientId       String
-  bankName       String
-  accountId      String
-  connectionType String
-  lastSync       DateTime?
-  status         String   @default("connected")
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+enum RecommendationPriority {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum RecommendationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  IMPLEMENTED
 }
 ```
 
@@ -235,17 +323,17 @@ EX_RES_200: {"id":"client-123","name":"ABC Corp","businessType":"Corporation","i
 
 EP: POST /clients
 DESC: Create a new client.
-IN: body:{name:str!, businessType:str!, industry:str!, relationshipManagerId:str!, businessSegment:str!, contact:obj!, preferences:obj}
+IN: body:{name:str!, businessType:str!, industry:str!, relationshipManagerId:int!, businessSegment:str!, contact:obj!, preferences:obj}
 OUT: 201:{id:str, name:str, businessType:str, industry:str, businessSegment:str, riskProfile:str, relationshipManager:obj, accounts:arr, contact:obj, preferences:obj, createdAt:str, updatedAt:str}
 ERR: {"400":"Invalid input data", "401":"Unauthorized", "500":"Internal server error"}
-EX_REQ: curl -X POST /clients -H "Content-Type: application/json" -H "Authorization: Bearer eyJ..." -d '{"name":"New Corp","businessType":"LLC","industry":"Finance","relationshipManagerId":"rm-456","businessSegment":"small","contact":{"primaryContact":{"name":"Jane Doe","title":"CFO","email":"jane@newcorp.com","phone":"555-0123"}}}'
-EX_RES_201: {"id":"client-789","name":"New Corp","businessType":"LLC","industry":"Finance","businessSegment":"small","riskProfile":"medium","relationshipManager":{"id":"rm-456","name":"John Smith","email":"john@bank.com","department":"Commercial Banking"},"accounts":[],"contact":{"primaryContact":{"name":"Jane Doe","title":"CFO","email":"jane@newcorp.com","phone":"555-0123"}},"preferences":{},"createdAt":"2024-01-15T10:30:00Z","updatedAt":"2024-01-15T10:30:00Z"}
+EX_REQ: curl -X POST /clients -H "Content-Type: application/json" -H "Authorization: Bearer eyJ..." -d '{"name":"New Corp","businessType":"LLC","industry":"Finance","relationshipManagerId":456,"businessSegment":"small","contact":{"primaryContact":{"name":"Jane Doe","title":"CFO","email":"jane@newcorp.com","phone":"555-0123"}}}'
+EX_RES_201: {"id":"client-789","name":"New Corp","businessType":"LLC","industry":"Finance","businessSegment":"small","riskProfile":"medium","relationshipManager":{"id":456,"name":"John Smith","email":"john@bank.com","department":"Commercial Banking"},"accounts":[],"contact":{"primaryContact":{"name":"Jane Doe","title":"CFO","email":"jane@newcorp.com","phone":"555-0123"}},"preferences":{},"createdAt":"2024-01-15T10:30:00Z","updatedAt":"2024-01-15T10:30:00Z"}
 
 ---
 
 EP: PUT /clients/{clientId}
 DESC: Update client information.
-IN: params:{clientId:str!}, body:{name:str, businessType:str, industry:str, relationshipManagerId:str, businessSegment:str, contact:obj, preferences:obj}
+IN: params:{clientId:str!}, body:{name:str, businessType:str, industry:str, relationshipManagerId:int, businessSegment:str, contact:obj, preferences:obj}
 OUT: 200:{id:str, name:str, businessType:str, industry:str, businessSegment:str, riskProfile:str, relationshipManager:obj, accounts:arr, contact:obj, preferences:obj, createdAt:str, updatedAt:str}
 ERR: {"400":"Invalid input data", "401":"Unauthorized", "404":"Client not found", "500":"Internal server error"}
 EX_REQ: curl -X PUT /clients/client-123 -H "Content-Type: application/json" -H "Authorization: Bearer eyJ..." -d '{"name":"ABC Corporation","industry":"Technology Services"}'
@@ -275,7 +363,7 @@ EX_RES_200: [{"id":"client-123","name":"ABC Corp","businessType":"Corporation","
 
 EP: GET /relationship-managers/{rmId}/clients
 DESC: Get all clients assigned to a relationship manager.
-IN: params:{rmId:str!}
+IN: params:{rmId:int!}
 OUT: 200:arr[obj{id:str, name:str, businessType:str, industry:str, businessSegment:str, riskProfile:str, relationshipManager:obj, contact:obj, preferences:obj, createdAt:str, updatedAt:str}]
 ERR: {"401":"Unauthorized", "404":"Relationship manager not found", "500":"Internal server error"}
 EX_REQ: curl -X GET /relationship-managers/rm-456/clients -H "Authorization: Bearer eyJ..."

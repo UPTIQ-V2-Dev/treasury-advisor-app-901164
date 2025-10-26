@@ -3,6 +3,7 @@ import { LayoutDashboard, Upload, BarChart3, TrendingUp, FileText, Settings, Use
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
+import { useAuth } from '@/hooks/useAuth';
 
 interface SidebarProps {
     isOpen: boolean;
@@ -16,6 +17,7 @@ interface NavItem {
     badge?: string;
     description?: string;
     disabled?: boolean;
+    roles?: string[]; // Restrict to specific roles
 }
 
 const navItems: NavItem[] = [
@@ -62,19 +64,23 @@ const navItems: NavItem[] = [
         href: '/clients',
         icon: <Users className='h-4 w-4' />,
         description: 'Manage client accounts',
-        disabled: true
+        roles: ['ADMIN', 'RELATIONSHIP_MANAGER']
     },
     {
         title: 'Settings',
         href: '/settings',
         icon: <Settings className='h-4 w-4' />,
         description: 'Configuration and preferences',
-        disabled: true
+        disabled: true,
+        roles: ['ADMIN']
     }
 ];
 
 export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     const location = useLocation();
+    const { user } = useAuth();
+
+    const visibleNavItems = navItems.filter(item => !item.roles || item.roles.includes(user?.role || ''));
 
     return (
         <>
@@ -108,7 +114,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
                     {/* Navigation */}
                     <nav className='flex-1 space-y-1 p-4'>
-                        {navItems.map(item => (
+                        {visibleNavItems.map(item => (
                             <Link
                                 key={item.href}
                                 to={item.href}

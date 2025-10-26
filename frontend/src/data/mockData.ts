@@ -21,10 +21,20 @@ export const mockAdminUser: User = {
     updatedAt: new Date().toISOString()
 };
 
-export const mockUsers: User[] = [mockUser, mockAdminUser];
+export const mockRelationshipManagerUser: User = {
+    id: 3,
+    email: 'rm@example.com',
+    name: 'Robert Manager',
+    role: 'RELATIONSHIP_MANAGER',
+    isEmailVerified: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+};
+
+export const mockUsers: User[] = [mockUser, mockAdminUser, mockRelationshipManagerUser];
 
 export const mockAuthResponse: AuthResponse = {
-    user: mockUser,
+    user: mockRelationshipManagerUser,
     tokens: {
         access: {
             token: 'mock-access-token',
@@ -42,5 +52,5 @@ export const mockPaginatedUsers: PaginatedResponse<User> = {
     page: 1,
     limit: 10,
     totalPages: 1,
-    totalResults: 2
+    totalResults: 3
 };

@@ -20,8 +20,9 @@ A React 19 + Vite + ShadCN + Tailwind v4 application that analyzes business bank
 
 #### Pages:
 
-- **Login Page (`/login`)** - SSO/role-based authentication
+- **Login Page (`/login`)** - SSO/role-based authentication for Admins and Relationship Managers
 - **App Shell** - Main layout wrapper
+- **Clients Page (`/clients`)** - Client management for Relationship Managers
 
 #### Components:
 
@@ -96,16 +97,17 @@ A React 19 + Vite + ShadCN + Tailwind v4 application that analyzes business bank
 
 ---
 
-### 4. Analysis Dashboard (`/dashboard`)
+### 4. Analysis Dashboard (`/dashboard`) - Relationship Manager View
 
 #### Components:
 
-- `src/components/dashboard/MetricsCards.tsx` - Key financial metrics cards
+- `src/components/dashboard/MetricsCards.tsx` - Key financial metrics cards for RM clients
 - `src/components/dashboard/CashFlowChart.tsx` - Inflow/outflow visualization
 - `src/components/dashboard/LiquidityHeatmap.tsx` - Liquidity analysis chart
 - `src/components/dashboard/TransactionTable.tsx` - Transaction data table
 - `src/components/dashboard/CategoryFilters.tsx` - Date and category filters
 - `src/components/dashboard/IdleBalanceAlert.tsx` - Idle balance notifications
+- `src/components/dashboard/ClientSelector.tsx` - Client selection dropdown for RMs
 
 #### Utils:
 

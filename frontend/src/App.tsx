@@ -8,6 +8,7 @@ import { UploadPage } from '@/pages/UploadPage';
 import { RecommendationsPage } from '@/pages/RecommendationsPage';
 import { ProcessingPage } from '@/pages/ProcessingPage';
 import { AnalyticsPage } from '@/pages/AnalyticsPage';
+import { ClientsPage } from '@/pages/ClientsPage';
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -63,6 +64,10 @@ export const App = () => {
                         <Route
                             path='analytics'
                             element={<AnalyticsPage />}
+                        />
+                        <Route
+                            path='clients'
+                            element={<ClientsPage />}
                         />
                         <Route
                             path='*'

@@ -1,4 +1,4 @@
-export type UserRole = 'ADMIN' | 'USER';
+export type UserRole = 'ADMIN' | 'USER' | 'RELATIONSHIP_MANAGER';
 
 export interface User {
     id: number;
@@ -13,6 +13,12 @@ export interface User {
 export interface Admin extends User {
     role: 'ADMIN';
     permissions?: string[];
+}
+
+export interface RelationshipManagerUser extends User {
+    role: 'RELATIONSHIP_MANAGER';
+    clients?: string[]; // Client IDs they manage
+    department?: string;
 }
 
 export interface LoginRequest {
