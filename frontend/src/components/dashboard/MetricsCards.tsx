@@ -32,7 +32,17 @@ const MetricCard = ({
     format = 'currency'
 }: MetricCardProps) => {
     const formatValue = (val: string | number) => {
+        // Handle null, undefined, or empty values
+        if (val === null || val === undefined || val === '') {
+            return '0';
+        }
+
         const numValue = typeof val === 'string' ? parseFloat(val) : val;
+
+        // Handle NaN or invalid numbers
+        if (isNaN(numValue) || !isFinite(numValue)) {
+            return '0';
+        }
 
         switch (format) {
             case 'currency':
@@ -44,7 +54,7 @@ const MetricCard = ({
             case 'number':
                 return numValue.toLocaleString();
             default:
-                return val;
+                return String(val);
         }
     };
 
@@ -109,15 +119,15 @@ export const MetricsCards = ({ metrics, isLoading = false, className }: MetricsC
     const cards: MetricCardProps[] = [
         {
             title: 'Total Inflow',
-            value: metrics.totalInflow,
+            value: metrics?.totalInflow ?? 0,
             icon: <TrendingUp className='h-4 w-4 text-blue-600' />,
-            trend: metrics.totalInflow > 0 ? 'up' : 'neutral',
+            trend: (metrics?.totalInflow ?? 0) > 0 ? 'up' : 'neutral',
             changeLabel: 'this period',
             format: 'currency'
         },
         {
             title: 'Total Outflow',
-            value: metrics.totalOutflow,
+            value: metrics?.totalOutflow ?? 0,
             icon: <TrendingDown className='h-4 w-4 text-blue-600' />,
             trend: 'down',
             changeLabel: 'this period',
@@ -125,31 +135,32 @@ export const MetricsCards = ({ metrics, isLoading = false, className }: MetricsC
         },
         {
             title: 'Net Cash Flow',
-            value: metrics.netCashFlow,
+            value: metrics?.netCashFlow ?? 0,
             icon: <DollarSign className='h-4 w-4 text-blue-600' />,
-            trend: metrics.netCashFlow > 0 ? 'up' : 'down',
+            trend: (metrics?.netCashFlow ?? 0) > 0 ? 'up' : 'down',
             format: 'currency'
         },
         {
             title: 'Average Daily Balance',
-            value: metrics.averageDailyBalance,
+            value: metrics?.averageDailyBalance ?? 0,
             icon: <Activity className='h-4 w-4 text-blue-600' />,
             trend: 'neutral',
             format: 'currency'
         },
         {
             title: 'Liquidity Ratio',
-            value: metrics.liquidityRatio,
+            value: metrics?.liquidityRatio ?? 0,
             icon: <Percent className='h-4 w-4 text-blue-600' />,
-            trend: metrics.liquidityRatio > 1.5 ? 'up' : metrics.liquidityRatio < 1.0 ? 'down' : 'neutral',
+            trend:
+                (metrics?.liquidityRatio ?? 0) > 1.5 ? 'up' : (metrics?.liquidityRatio ?? 0) < 1.0 ? 'down' : 'neutral',
             format: 'number'
         },
         {
             title: 'Idle Balance',
-            value: metrics.idleBalance,
+            value: metrics?.idleBalance ?? 0,
             icon: <AlertTriangle className='h-4 w-4 text-orange-600' />,
             trend: 'neutral',
-            alert: metrics.idleBalance > 250000,
+            alert: (metrics?.idleBalance ?? 0) > 250000,
             changeLabel: 'earning minimal interest',
             format: 'currency'
         }
