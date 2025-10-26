@@ -1,4 +1,5 @@
 import { api } from '@/lib/api';
+import { USE_MOCK_DATA } from '@/lib/constants';
 import { mockApiDelay } from '@/lib/utils';
 import { emitter } from '@/agentSdk';
 import {
@@ -22,7 +23,7 @@ export const statementsService = {
     uploadStatements: async (uploadData: StatementUpload): Promise<StatementFile[]> => {
         let statementFiles: StatementFile[];
 
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: uploadStatements ---', uploadData);
             await mockApiDelay();
             statementFiles = mockStatementFiles.slice(0, uploadData.files.length);
@@ -72,7 +73,7 @@ export const statementsService = {
     },
 
     validateStatement: async (fileId: string): Promise<StatementValidation> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: validateStatement ---', fileId);
             await mockApiDelay();
             return mockStatementValidation;
@@ -83,7 +84,7 @@ export const statementsService = {
     },
 
     getStatementStatus: async (fileId: string): Promise<{ status: StatementStatus; progress: number }> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: getStatementStatus ---', fileId);
             await mockApiDelay();
             return { status: 'completed', progress: 100 };
@@ -94,7 +95,7 @@ export const statementsService = {
     },
 
     parseStatements: async (fileIds: string[]): Promise<{ taskId: string }> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: parseStatements ---', fileIds);
             await mockApiDelay();
             return { taskId: 'mock-task-id' };
@@ -105,7 +106,7 @@ export const statementsService = {
     },
 
     getTransactions: async (clientId: string, accountId?: string): Promise<Transaction[]> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: getTransactions ---', { clientId, accountId });
             await mockApiDelay();
             return accountId ? mockTransactions.filter(t => t.accountId === accountId) : mockTransactions;
@@ -119,7 +120,7 @@ export const statementsService = {
     },
 
     getClientStatements: async (clientId: string): Promise<StatementFile[]> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: getClientStatements ---', clientId);
             await mockApiDelay();
             return mockStatementFiles.filter(s => s.clientId === clientId);
@@ -130,7 +131,7 @@ export const statementsService = {
     },
 
     connectBank: async (connectionData: Omit<BankConnection, 'id' | 'lastSync'>): Promise<BankConnection> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: connectBank ---', connectionData);
             await mockApiDelay();
             return {
@@ -145,7 +146,7 @@ export const statementsService = {
     },
 
     getBankConnections: async (clientId: string): Promise<BankConnection[]> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: getBankConnections ---', clientId);
             await mockApiDelay();
             return mockBankConnections;
@@ -156,7 +157,7 @@ export const statementsService = {
     },
 
     syncBankConnection: async (connectionId: string): Promise<{ taskId: string }> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: syncBankConnection ---', connectionId);
             await mockApiDelay();
             return { taskId: 'sync-task-id' };
@@ -167,7 +168,7 @@ export const statementsService = {
     },
 
     getUploadProgress: async (clientId: string): Promise<UploadProgress[]> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: getUploadProgress ---', clientId);
             await mockApiDelay();
             return mockUploadProgress;
@@ -178,7 +179,7 @@ export const statementsService = {
     },
 
     deleteStatement: async (fileId: string): Promise<void> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: deleteStatement ---', fileId);
             await mockApiDelay();
             return;
@@ -188,7 +189,7 @@ export const statementsService = {
     },
 
     downloadStatement: async (fileId: string): Promise<Blob> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: downloadStatement ---', fileId);
             await mockApiDelay();
             return new Blob(['Mock file content'], { type: 'application/pdf' });

@@ -1,4 +1,5 @@
 import { api } from '@/lib/api';
+import { USE_MOCK_DATA } from '@/lib/constants';
 import { mockApiDelay } from '@/lib/utils';
 import { emitter } from '@/agentSdk';
 import { mockRecommendations, mockTreasuryProducts, mockRecommendationSummary } from '@/data/mockRecommendations';
@@ -11,7 +12,7 @@ import type {
 
 export const recommendationsService = {
     getRecommendations: async (clientId: string): Promise<Recommendation[]> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: getRecommendations ---', clientId);
             await mockApiDelay();
             return mockRecommendations.filter(r => r.clientId === clientId);
@@ -44,7 +45,7 @@ export const recommendationsService = {
         }
 
         // Fallback to standard API or mock data
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: generateRecommendations ---', clientId);
             await mockApiDelay();
             return { taskId: 'mock-generation-task-id' };
@@ -55,7 +56,7 @@ export const recommendationsService = {
     },
 
     getRecommendationById: async (recommendationId: string): Promise<Recommendation> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: getRecommendationById ---', recommendationId);
             await mockApiDelay();
             const recommendation = mockRecommendations.find(r => r.id === recommendationId);
@@ -68,7 +69,7 @@ export const recommendationsService = {
     },
 
     provideFeedback: async (feedback: RecommendationFeedback): Promise<void> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: provideFeedback ---', feedback);
             await mockApiDelay();
             return;
@@ -78,7 +79,7 @@ export const recommendationsService = {
     },
 
     approveRecommendation: async (recommendationId: string, reviewerId: string, comments?: string): Promise<void> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: approveRecommendation ---', { recommendationId, reviewerId, comments });
             await mockApiDelay();
             return;
@@ -91,7 +92,7 @@ export const recommendationsService = {
     },
 
     rejectRecommendation: async (recommendationId: string, reviewerId: string, reason: string): Promise<void> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: rejectRecommendation ---', { recommendationId, reviewerId, reason });
             await mockApiDelay();
             return;
@@ -104,7 +105,7 @@ export const recommendationsService = {
     },
 
     getTreasuryProducts: async (): Promise<TreasuryProduct[]> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: getTreasuryProducts ---');
             await mockApiDelay();
             return mockTreasuryProducts;
@@ -115,7 +116,7 @@ export const recommendationsService = {
     },
 
     getProductById: async (productId: string): Promise<TreasuryProduct> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: getProductById ---', productId);
             await mockApiDelay();
             const product = mockTreasuryProducts.find(p => p.id === productId);
@@ -128,7 +129,7 @@ export const recommendationsService = {
     },
 
     getRecommendationSummary: async (clientId: string): Promise<RecommendationSummary> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: getRecommendationSummary ---', clientId);
             await mockApiDelay();
             return mockRecommendationSummary;
@@ -142,7 +143,7 @@ export const recommendationsService = {
         recommendationId: string,
         priority: 'high' | 'medium' | 'low'
     ): Promise<void> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: updateRecommendationPriority ---', { recommendationId, priority });
             await mockApiDelay();
             return;
@@ -156,7 +157,7 @@ export const recommendationsService = {
         implementationDate: string,
         notes?: string
     ): Promise<void> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: markRecommendationImplemented ---', {
                 recommendationId,
                 implementationDate,
@@ -173,7 +174,7 @@ export const recommendationsService = {
     },
 
     exportRecommendationReport: async (clientId: string, format: 'pdf' | 'excel'): Promise<Blob> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: exportRecommendationReport ---', { clientId, format });
             await mockApiDelay();
             return new Blob(['Mock recommendation report'], {
@@ -188,7 +189,7 @@ export const recommendationsService = {
     },
 
     getRecommendationHistory: async (clientId: string): Promise<Recommendation[]> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: getRecommendationHistory ---', clientId);
             await mockApiDelay();
             return mockRecommendations.filter(r => r.clientId === clientId);

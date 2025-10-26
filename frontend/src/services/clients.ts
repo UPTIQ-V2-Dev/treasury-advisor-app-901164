@@ -1,11 +1,12 @@
 import { api } from '@/lib/api';
+import { USE_MOCK_DATA } from '@/lib/constants';
 import { mockApiDelay } from '@/lib/utils';
 import { mockClients } from '@/data/mockClients';
 import type { Client, CreateClientRequest, UpdateClientRequest } from '@/types/client';
 
 export const clientsService = {
     getClients: async (page = 1, limit = 20): Promise<{ clients: Client[]; total: number; pages: number }> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: getClients ---', { page, limit });
             await mockApiDelay();
             return {
@@ -20,7 +21,7 @@ export const clientsService = {
     },
 
     getClientById: async (clientId: string): Promise<Client> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: getClientById ---', clientId);
             await mockApiDelay();
             const client = mockClients.find(c => c.id === clientId);
@@ -33,7 +34,7 @@ export const clientsService = {
     },
 
     createClient: async (clientData: CreateClientRequest): Promise<Client> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: createClient ---', clientData);
             await mockApiDelay();
             const newClient: Client = {
@@ -66,7 +67,7 @@ export const clientsService = {
     },
 
     updateClient: async (clientData: UpdateClientRequest): Promise<Client> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: updateClient ---', clientData);
             await mockApiDelay();
             const existingClient = mockClients.find(c => c.id === clientData.id);
@@ -88,7 +89,7 @@ export const clientsService = {
     },
 
     deleteClient: async (clientId: string): Promise<void> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: deleteClient ---', clientId);
             await mockApiDelay();
             return;
@@ -98,7 +99,7 @@ export const clientsService = {
     },
 
     searchClients: async (query: string): Promise<Client[]> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: searchClients ---', query);
             await mockApiDelay();
             return mockClients.filter(
@@ -114,7 +115,7 @@ export const clientsService = {
     },
 
     getClientsByRM: async (rmId: string): Promise<Client[]> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: getClientsByRM ---', rmId);
             await mockApiDelay();
             return mockClients.filter(client => client.relationshipManagerId === rmId);
@@ -125,7 +126,7 @@ export const clientsService = {
     },
 
     updateClientPreferences: async (clientId: string, preferences: Partial<Client['preferences']>): Promise<void> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: updateClientPreferences ---', { clientId, preferences });
             await mockApiDelay();
             return;
@@ -135,7 +136,7 @@ export const clientsService = {
     },
 
     getClientAccounts: async (clientId: string): Promise<Client['accounts']> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: getClientAccounts ---', clientId);
             await mockApiDelay();
             const client = mockClients.find(c => c.id === clientId);
@@ -150,7 +151,7 @@ export const clientsService = {
         clientId: string,
         accountData: Omit<Client['accounts'][0], 'id'>
     ): Promise<Client['accounts'][0]> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: addClientAccount ---', { clientId, accountData });
             await mockApiDelay();
             return {
@@ -168,7 +169,7 @@ export const clientsService = {
         accountId: string,
         accountData: Partial<Client['accounts'][0]>
     ): Promise<Client['accounts'][0]> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: updateClientAccount ---', { clientId, accountId, accountData });
             await mockApiDelay();
             const client = mockClients.find(c => c.id === clientId);

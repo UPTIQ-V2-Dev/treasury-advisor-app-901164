@@ -1,4 +1,5 @@
 import { api } from '@/lib/api';
+import { USE_MOCK_DATA } from '@/lib/constants';
 import { mockApiDelay } from '@/lib/utils';
 import type { ProcessingTask, ProcessingStatus, ProcessingMetrics, RealTimeProcessingUpdate } from '@/types/processing';
 
@@ -74,7 +75,7 @@ const mockProcessingMetrics: ProcessingMetrics = {
 
 export const processingService = {
     getProcessingTask: async (taskId: string): Promise<ProcessingTask> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: getProcessingTask ---', taskId);
             await mockApiDelay();
             return { ...mockProcessingTask, id: taskId };
@@ -85,7 +86,7 @@ export const processingService = {
     },
 
     getClientProcessingTasks: async (clientId: string): Promise<ProcessingTask[]> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: getClientProcessingTasks ---', clientId);
             await mockApiDelay();
             return [
@@ -104,7 +105,7 @@ export const processingService = {
         type: 'statement_parse' | 'analysis' | 'recommendation_generation',
         options?: Record<string, any>
     ): Promise<{ taskId: string }> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: startProcessing ---', { clientId, type, options });
             await mockApiDelay();
             return { taskId: `mock-task-${Date.now()}` };
@@ -119,7 +120,7 @@ export const processingService = {
     },
 
     cancelProcessing: async (taskId: string): Promise<void> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: cancelProcessing ---', taskId);
             await mockApiDelay();
             return;
@@ -129,7 +130,7 @@ export const processingService = {
     },
 
     retryProcessing: async (taskId: string): Promise<{ taskId: string }> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: retryProcessing ---', taskId);
             await mockApiDelay();
             return { taskId: `retry-${taskId}` };
@@ -140,7 +141,7 @@ export const processingService = {
     },
 
     getProcessingMetrics: async (): Promise<ProcessingMetrics> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: getProcessingMetrics ---');
             await mockApiDelay();
             return mockProcessingMetrics;
@@ -155,7 +156,7 @@ export const processingService = {
         limit = 10,
         offset = 0
     ): Promise<{ tasks: ProcessingTask[]; total: number }> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: getProcessingHistory ---', { clientId, limit, offset });
             await mockApiDelay();
             const tasks = Array.from({ length: limit }, (_, i) => ({
@@ -179,7 +180,7 @@ export const processingService = {
         onUpdate: (update: RealTimeProcessingUpdate) => void,
         onError?: (error: Error) => void
     ): (() => void) => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: subscribeToProcessingUpdates ---', taskId);
 
             const interval = setInterval(() => {
@@ -220,7 +221,7 @@ export const processingService = {
     },
 
     getTaskLogs: async (taskId: string, level = 'info'): Promise<string[]> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: getTaskLogs ---', { taskId, level });
             await mockApiDelay();
             return [

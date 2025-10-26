@@ -1,11 +1,12 @@
 import { mockAuthResponse } from '@/data/mockData';
 import { api, clearAuthData, getStoredRefreshToken, setAuthData } from '@/lib/api';
+import { USE_MOCK_DATA } from '@/lib/constants';
 import { mockApiDelay } from '@/lib/utils';
 import type { AuthResponse, LoginRequest, SignupRequest } from '@/types/user';
 
 export const authService = {
     login: async (credentials: LoginRequest): Promise<AuthResponse> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: login ---', credentials);
             await mockApiDelay();
             setAuthData(mockAuthResponse);
@@ -18,7 +19,7 @@ export const authService = {
     },
 
     register: async (userData: SignupRequest): Promise<AuthResponse> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: register ---', userData);
             await mockApiDelay();
             setAuthData(mockAuthResponse);
@@ -30,7 +31,7 @@ export const authService = {
     },
 
     refreshToken: async (): Promise<AuthResponse> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: refreshToken ---');
             await mockApiDelay();
             setAuthData(mockAuthResponse);
@@ -42,7 +43,7 @@ export const authService = {
     },
 
     logout: async (): Promise<void> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: logout ---');
             await mockApiDelay();
             return;

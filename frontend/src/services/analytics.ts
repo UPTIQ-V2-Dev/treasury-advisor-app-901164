@@ -1,4 +1,5 @@
 import { api } from '@/lib/api';
+import { USE_MOCK_DATA } from '@/lib/constants';
 import { mockApiDelay } from '@/lib/utils';
 import {
     mockDashboardMetrics,
@@ -20,7 +21,7 @@ import type {
 
 export const analyticsService = {
     getDashboardMetrics: async (clientId: string, filters?: AnalyticsFilters): Promise<DashboardMetrics> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: getDashboardMetrics ---', { clientId, filters });
             await mockApiDelay();
             return mockDashboardMetrics;
@@ -52,7 +53,7 @@ export const analyticsService = {
         clientId: string,
         period: 'daily' | 'weekly' | 'monthly' = 'daily'
     ): Promise<CashFlowData[]> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: getCashFlowData ---', { clientId, period });
             await mockApiDelay();
             return mockCashFlowData;
@@ -63,7 +64,7 @@ export const analyticsService = {
     },
 
     getTransactionCategories: async (clientId: string, filters?: AnalyticsFilters): Promise<TransactionCategory[]> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: getTransactionCategories ---', { clientId, filters });
             await mockApiDelay();
             return mockTransactionCategories;
@@ -80,7 +81,7 @@ export const analyticsService = {
     },
 
     getLiquidityAnalysis: async (clientId: string): Promise<LiquidityAnalysis> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: getLiquidityAnalysis ---', clientId);
             await mockApiDelay();
             return mockLiquidityAnalysis;
@@ -91,7 +92,7 @@ export const analyticsService = {
     },
 
     getSpendingPatterns: async (clientId: string): Promise<SpendingPattern[]> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: getSpendingPatterns ---', clientId);
             await mockApiDelay();
             return mockSpendingPatterns;
@@ -102,7 +103,7 @@ export const analyticsService = {
     },
 
     getAnalyticsSummary: async (clientId: string, filters?: AnalyticsFilters): Promise<AnalyticsSummary> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: getAnalyticsSummary ---', { clientId, filters });
             await mockApiDelay();
             return mockAnalyticsSummary;
@@ -123,7 +124,7 @@ export const analyticsService = {
         format: 'csv' | 'excel' | 'pdf',
         filters?: AnalyticsFilters
     ): Promise<Blob> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: exportAnalyticsData ---', { clientId, format, filters });
             await mockApiDelay();
             return new Blob(['Mock analytics export data'], {
@@ -144,7 +145,7 @@ export const analyticsService = {
     },
 
     getVendorAnalysis: async (clientId: string): Promise<any[]> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: getVendorAnalysis ---', clientId);
             await mockApiDelay();
             return mockSpendingPatterns.flatMap(pattern => pattern.vendors);
@@ -159,7 +160,7 @@ export const analyticsService = {
         metric: 'inflow' | 'outflow' | 'balance',
         period: string = '12m'
     ): Promise<any[]> => {
-        if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
+        if (USE_MOCK_DATA) {
             console.log('--- MOCK API: getTrendAnalysis ---', { clientId, metric, period });
             await mockApiDelay();
             return mockAnalyticsSummary.trends[metric];
