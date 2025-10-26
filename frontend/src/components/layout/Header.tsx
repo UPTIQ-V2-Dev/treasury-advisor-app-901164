@@ -1,4 +1,6 @@
-import { Menu, Bell, Search, User } from 'lucide-react';
+import { Menu, Bell, Search, User, LogOut } from 'lucide-react';
+import { useMutation } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -13,19 +15,28 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { formatInitials } from '@/lib/formatters';
+import { authService } from '@/services/auth';
+import { getStoredUser } from '@/lib/api';
 
 interface HeaderProps {
     onMenuClick: () => void;
 }
 
 export const Header = ({ onMenuClick }: HeaderProps) => {
-    // Mock user data - in real app this would come from auth context
-    const user = {
-        name: 'Sarah Mitchell',
-        email: 'sarah.mitchell@firstnational.com',
-        role: 'Relationship Manager',
-        avatar: null
-    };
+    const navigate = useNavigate();
+    const user = getStoredUser();
+
+    const logoutMutation = useMutation({
+        mutationFn: () => authService.logout(),
+        onSuccess: () => {
+            navigate('/login', { replace: true });
+        },
+        onError: error => {
+            console.error('Logout error:', error);
+            // Even if logout API fails, clear local data and redirect
+            navigate('/login', { replace: true });
+        }
+    });
 
     return (
         <header className='sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
@@ -130,22 +141,22 @@ export const Header = ({ onMenuClick }: HeaderProps) => {
                                 className='flex items-center gap-2'
                             >
                                 <Avatar className='h-8 w-8'>
-                                    <AvatarImage src={user.avatar || undefined} />
+                                    <AvatarImage src={undefined} />
                                     <AvatarFallback className='bg-blue-100 text-blue-600'>
-                                        {formatInitials(user.name)}
+                                        {formatInitials(user?.name || 'User')}
                                     </AvatarFallback>
                                 </Avatar>
                                 <div className='hidden sm:block text-left'>
-                                    <p className='text-sm font-medium'>{user.name}</p>
-                                    <p className='text-xs text-gray-500'>{user.role}</p>
+                                    <p className='text-sm font-medium'>{user?.name || 'User'}</p>
+                                    <p className='text-xs text-gray-500'>{user?.role || 'User'}</p>
                                 </div>
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align='end'>
                             <DropdownMenuLabel>
                                 <div className='space-y-1'>
-                                    <p className='font-medium'>{user.name}</p>
-                                    <p className='text-xs text-gray-500'>{user.email}</p>
+                                    <p className='font-medium'>{user?.name || 'User'}</p>
+                                    <p className='text-xs text-gray-500'>{user?.email || 'user@example.com'}</p>
                                 </div>
                             </DropdownMenuLabel>
                             <DropdownMenuSeparator />
@@ -155,7 +166,14 @@ export const Header = ({ onMenuClick }: HeaderProps) => {
                             </DropdownMenuItem>
                             <DropdownMenuItem>Preferences</DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem className='text-red-600'>Sign Out</DropdownMenuItem>
+                            <DropdownMenuItem
+                                className='text-red-600'
+                                onClick={() => logoutMutation.mutate()}
+                                disabled={logoutMutation.isPending}
+                            >
+                                <LogOut className='h-4 w-4 mr-2' />
+                                {logoutMutation.isPending ? 'Signing Out...' : 'Sign Out'}
+                            </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>

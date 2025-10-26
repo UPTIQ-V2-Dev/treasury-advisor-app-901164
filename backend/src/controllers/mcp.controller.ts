@@ -1,5 +1,12 @@
 import { JSONRPC_INTERNAL_ERROR, JSONRPC_INVALID_REQUEST } from '../constants/jsonrpc.constants.ts';
 import { registerMCPTools } from '../services/mcp.service.ts';
+import { analyticsTools } from '../tools/analytics.tool.ts';
+import { clientTools } from '../tools/client.tool.ts';
+import { processingTools } from '../tools/processing.tool.ts';
+import { recommendationTools } from '../tools/recommendation.tool.ts';
+import { statementTools } from '../tools/statement.tool.ts';
+import { transactionTools } from '../tools/transaction.tool.ts';
+import { treasuryProductTools } from '../tools/treasuryProduct.tool.ts';
 import { userTools } from '../tools/user.tool.ts';
 import catchAsync from '../utils/catchAsync.ts';
 import { Server } from '@modelcontextprotocol/sdk/server';
@@ -46,7 +53,19 @@ export const mcpPostController = catchAsync(async (req: Request, res: Response) 
             }
         );
 
-        registerMCPTools({ server, tools: [...userTools] });
+        registerMCPTools({
+            server,
+            tools: [
+                ...userTools,
+                ...clientTools,
+                ...statementTools,
+                ...transactionTools,
+                ...processingTools,
+                ...analyticsTools,
+                ...treasuryProductTools,
+                ...recommendationTools
+            ]
+        });
         await server.connect(transport);
     } else {
         res.status(400).json({

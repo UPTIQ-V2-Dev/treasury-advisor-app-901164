@@ -24,6 +24,7 @@ model User {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   Token           Token[]
+  Client          Client[]
 }
 
 model Token {
@@ -47,4 +48,221 @@ enum TokenType {
   REFRESH
   RESET_PASSWORD
   VERIFY_EMAIL
+}
+
+model Client {
+  id                     String           @id @default(uuid())
+  name                   String
+  businessType          String
+  industry              String
+  businessSegment       String
+  riskProfile           String           @default("medium")
+  relationshipManagerId  Int
+  relationshipManager    User             @relation(fields: [relationshipManagerId], references: [id])
+  contact                Json
+  preferences           Json             @default("{}")
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
+  ClientAccount         ClientAccount[]
+  Statement             Statement[]
+  BankConnection        BankConnection[]
+  ProcessingTask        ProcessingTask[]
+  Recommendation        Recommendation[]
+  Transaction           Transaction[]
+}
+
+model ClientAccount {
+  id            String        @id @default(uuid())
+  accountNumber String        @unique
+  accountType   String
+  bankName      String
+  routingNumber String?
+  isActive      Boolean       @default(true)
+  openDate      DateTime
+  balance       Float?
+  currency      String        @default("USD")
+  clientId      String
+  client        Client        @relation(fields: [clientId], references: [id])
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  Statement     Statement[]
+  Transaction   Transaction[]
+  BankConnection BankConnection[]
+}
+
+model Statement {
+  id          String        @id @default(uuid())
+  fileName    String
+  fileSize    Int
+  fileType    String
+  filePath    String?
+  uploadDate  DateTime      @default(now())
+  status      StatementStatus
+  clientId    String
+  client      Client        @relation(fields: [clientId], references: [id])
+  accountId   String?
+  account     ClientAccount? @relation(fields: [accountId], references: [id])
+  period      Json?
+  errorMessage String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  Transaction Transaction[]
+  ProcessingTask ProcessingTask[]
+}
+
+model BankConnection {
+  id             String   @id @default(uuid())
+  clientId       String
+  client         Client   @relation(fields: [clientId], references: [id])
+  accountId      String
+  account        ClientAccount @relation(fields: [accountId], references: [id])
+  bankName       String
+  connectionType ConnectionType
+  lastSync       DateTime?
+  status         ConnectionStatus @default(CONNECTED)
+  credentials    Json?
+  settings       Json?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Transaction {
+  id           String        @id @default(uuid())
+  accountId    String
+  account      ClientAccount @relation(fields: [accountId], references: [id])
+  clientId     String
+  client       Client        @relation(fields: [clientId], references: [id])
+  statementId  String?
+  statement    Statement?    @relation(fields: [statementId], references: [id])
+  date         DateTime
+  description  String
+  amount       Float
+  type         TransactionType
+  category     String?
+  counterparty String?
+  balanceAfter Float?
+  metadata     Json?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model ProcessingTask {
+  id                Int      @id @default(autoincrement())
+  taskId           String   @unique @default(uuid())
+  clientId         String
+  client           Client   @relation(fields: [clientId], references: [id])
+  statementId      String?
+  statement        Statement? @relation(fields: [statementId], references: [id])
+  type             TaskType
+  status           TaskStatus
+  progress         Int      @default(0)
+  startTime        DateTime @default(now())
+  endTime          DateTime?
+  estimatedDuration Int?
+  currentStep      Json?
+  steps            Json
+  error            Json?
+  results          Json?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model TreasuryProduct {
+  id                  String           @id @default(uuid())
+  name                String
+  category            String
+  description         String
+  features            String[]
+  eligibilityCriteria Json
+  pricing             Json
+  benefits            Json[]
+  riskLevel           String
+  liquidityFeatures   String[]
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+  Recommendation      Recommendation[]
+}
+
+model Recommendation {
+  id               String          @id @default(uuid())
+  clientId         String
+  client           Client          @relation(fields: [clientId], references: [id])
+  productId        String
+  product          TreasuryProduct @relation(fields: [productId], references: [id])
+  priority         RecommendationPriority @default(MEDIUM)
+  rationale        Json
+  estimatedBenefit Json
+  implementation   Json
+  supportingData   Json[]
+  confidence       Float
+  status           RecommendationStatus @default(PENDING)
+  reviewedBy       String?
+  reviewedAt       DateTime?
+  implementedAt    DateTime?
+  notes            String?
+  feedback         Json?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+}
+
+enum StatementStatus {
+  UPLOADED
+  PROCESSING
+  COMPLETED
+  FAILED
+  VALIDATED
+}
+
+enum ConnectionStatus {
+  CONNECTED
+  DISCONNECTED
+  ERROR
+  SYNCING
+}
+
+enum ConnectionType {
+  API
+  PLAID
+  YODLEE
+  MANUAL
+}
+
+enum TransactionType {
+  DEBIT
+  CREDIT
+  ACH
+  WIRE
+  CHECK
+  TRANSFER
+  FEE
+  INTEREST
+  OTHER
+}
+
+enum TaskType {
+  STATEMENT_PARSE
+  DATA_SYNC
+  ANALYSIS
+  RECOMMENDATION_GENERATION
+}
+
+enum TaskStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum RecommendationPriority {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum RecommendationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  IMPLEMENTED
 }

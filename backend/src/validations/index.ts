@@ -1,2 +1,9 @@
 export { default as authValidation } from './auth.validation.ts';
 export { default as userValidation } from './user.validation.ts';
+export { default as clientValidation } from './client.validation.ts';
+export { default as statementValidation } from './statement.validation.ts';
+export { default as transactionValidation } from './transaction.validation.ts';
+export { default as processingValidation } from './processing.validation.ts';
+export { default as analyticsValidation } from './analytics.validation.ts';
+export { default as treasuryProductValidation } from './treasuryProduct.validation.ts';
+export { default as recommendationValidation } from './recommendation.validation.ts';

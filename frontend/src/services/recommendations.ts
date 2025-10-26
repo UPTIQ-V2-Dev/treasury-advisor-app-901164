@@ -1,5 +1,6 @@
 import { api } from '@/lib/api';
 import { mockApiDelay } from '@/lib/utils';
+import { emitter } from '@/agentSdk';
 import { mockRecommendations, mockTreasuryProducts, mockRecommendationSummary } from '@/data/mockRecommendations';
 import type {
     Recommendation,
@@ -21,6 +22,28 @@ export const recommendationsService = {
     },
 
     generateRecommendations: async (clientId: string): Promise<{ taskId: string }> => {
+        try {
+            // Try to use agent for enhanced recommendations if statements are available
+            const agentRecommendations = await emitter.emit({
+                agentId: '37cff143-f7d2-4204-878f-020620e7697e',
+                event: 'Bank-Statement-Uploaded',
+                payload: {
+                    clientId,
+                    analysisType: 'recommendation_generation',
+                    requestedAt: new Date().toISOString()
+                }
+            });
+
+            if (agentRecommendations?.recommendations?.length > 0) {
+                console.log('Generated enhanced recommendations using AI agent:', agentRecommendations);
+                // Return success immediately as agent provided recommendations
+                return { taskId: `agent-enhanced-${Date.now()}` };
+            }
+        } catch (error) {
+            console.log('Agent-enhanced recommendation generation failed, falling back to standard API:', error);
+        }
+
+        // Fallback to standard API or mock data
         if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
             console.log('--- MOCK API: generateRecommendations ---', clientId);
             await mockApiDelay();

@@ -1,2 +1,9 @@
 export { default as authController } from './auth.controller.ts';
 export { default as userController } from './user.controller.ts';
+export { default as clientController } from './client.controller.ts';
+export { default as statementController } from './statement.controller.ts';
+export { default as transactionController } from './transaction.controller.ts';
+export { default as processingController } from './processing.controller.ts';
+export { default as analyticsController } from './analytics.controller.ts';
+export { default as treasuryProductController } from './treasuryProduct.controller.ts';
+export { default as recommendationController } from './recommendation.controller.ts';

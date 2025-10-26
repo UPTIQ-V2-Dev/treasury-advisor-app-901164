@@ -1,0 +1,9 @@
+export { default as authController } from "./auth.controller.js";
+export { default as userController } from "./user.controller.js";
+export { default as clientController } from "./client.controller.js";
+export { default as statementController } from "./statement.controller.js";
+export { default as transactionController } from "./transaction.controller.js";
+export { default as processingController } from "./processing.controller.js";
+export { default as analyticsController } from "./analytics.controller.js";
+export { default as treasuryProductController } from "./treasuryProduct.controller.js";
+export { default as recommendationController } from "./recommendation.controller.js";

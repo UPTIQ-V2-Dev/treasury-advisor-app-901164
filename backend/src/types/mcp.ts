@@ -6,6 +6,6 @@ export interface MCPTool {
     description: string;
     inputSchema: z.ZodObject<any>;
     // Output schema is *mandatory* if the tool returns a value
-    outputSchema?: z.ZodObject<any>;
+    outputSchema?: z.ZodObject<any> | z.ZodAny;
     fn: (inputs: any) => Promise<any> | any;
 }
