@@ -35,7 +35,7 @@ describe('ProcessingPage', () => {
 
     const mockActiveTask: ProcessingTask = {
         id: 'task-1',
-        clientId: 'client-1',
+        clientId: 'd6e8f2b5-0865-485a-a63e-d083fad36462',
         type: 'statement_parse',
         status: 'in_progress',
         progress: 65,

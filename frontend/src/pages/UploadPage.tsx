@@ -16,7 +16,7 @@ export const UploadPage = () => {
     const navigate = useNavigate();
     const [showBankModal, setShowBankModal] = useState(false);
     const [clientInfo, setClientInfo] = useState({
-        clientId: 'client-001', // In real app, this would come from routing or context
+        clientId: 'd6e8f2b5-0865-485a-a63e-d083fad36462', // Valid GUID format
         startDate: '',
         endDate: ''
     });
