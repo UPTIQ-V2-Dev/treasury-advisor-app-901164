@@ -1,13 +1,18 @@
 import { JSONRPC_INTERNAL_ERROR, JSONRPC_INVALID_REQUEST } from '../constants/jsonrpc.constants.ts';
 import { registerMCPTools } from '../services/mcp.service.ts';
+import { adminTools } from '../tools/admin.tool.ts';
+import { agentTools } from '../tools/agent.tool.ts';
 import { analyticsTools } from '../tools/analytics.tool.ts';
+import { bankConnectionTools } from '../tools/bankConnection.tool.ts';
 import { clientTools } from '../tools/client.tool.ts';
+import { notificationTools } from '../tools/notification.tool.ts';
 import { processingTools } from '../tools/processing.tool.ts';
 import { recommendationTools } from '../tools/recommendation.tool.ts';
 import { statementTools } from '../tools/statement.tool.ts';
 import { transactionTools } from '../tools/transaction.tool.ts';
 import { treasuryProductTools } from '../tools/treasuryProduct.tool.ts';
 import { userTools } from '../tools/user.tool.ts';
+import { workflowTools } from '../tools/workflow.tool.ts';
 import catchAsync from '../utils/catchAsync.ts';
 import { Server } from '@modelcontextprotocol/sdk/server';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
@@ -63,7 +68,12 @@ export const mcpPostController = catchAsync(async (req: Request, res: Response) 
                 ...processingTools,
                 ...analyticsTools,
                 ...treasuryProductTools,
-                ...recommendationTools
+                ...recommendationTools,
+                ...bankConnectionTools,
+                ...workflowTools,
+                ...notificationTools,
+                ...adminTools,
+                ...agentTools
             ]
         });
         await server.connect(transport);

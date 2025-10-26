@@ -14,7 +14,10 @@ const allRoles = {
         // Transaction permissions
         'getTransactions',
         // Product permissions
-        'getProducts'
+        'getProducts',
+        // Notification permissions
+        'getNotifications',
+        'manageNotifications'
     ],
     [Role.ADMIN]: [
         // Analytics permissions
@@ -39,7 +42,10 @@ const allRoles = {
         'manageProducts',
         // User management permissions
         'getUsers',
-        'manageUsers'
+        'manageUsers',
+        // Notification permissions
+        'getNotifications',
+        'manageNotifications'
     ]
 };
 export const roles = Object.keys(allRoles);

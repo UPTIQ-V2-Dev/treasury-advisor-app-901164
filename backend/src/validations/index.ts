@@ -7,3 +7,8 @@ export { default as processingValidation } from './processing.validation.ts';
 export { default as analyticsValidation } from './analytics.validation.ts';
 export { default as treasuryProductValidation } from './treasuryProduct.validation.ts';
 export { default as recommendationValidation } from './recommendation.validation.ts';
+export { default as bankConnectionValidation } from './bankConnection.validation.ts';
+export { default as workflowValidation } from './workflow.validation.ts';
+export { default as notificationValidation } from './notification.validation.ts';
+export { default as adminValidation } from './admin.validation.ts';
+export { default as agentValidation } from './agent.validation.ts';

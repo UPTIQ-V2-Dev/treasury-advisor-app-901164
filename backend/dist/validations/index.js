@@ -7,3 +7,8 @@ export { default as processingValidation } from "./processing.validation.js";
 export { default as analyticsValidation } from "./analytics.validation.js";
 export { default as treasuryProductValidation } from "./treasuryProduct.validation.js";
 export { default as recommendationValidation } from "./recommendation.validation.js";
+export { default as bankConnectionValidation } from "./bankConnection.validation.js";
+export { default as workflowValidation } from "./workflow.validation.js";
+export { default as notificationValidation } from "./notification.validation.js";
+export { default as adminValidation } from "./admin.validation.js";
+export { default as agentValidation } from "./agent.validation.js";

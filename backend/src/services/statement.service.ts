@@ -361,6 +361,348 @@ const getMimeType = (fileType: string): string => {
     return mimeTypes[fileType.toLowerCase()] || 'application/octet-stream';
 };
 
+/**
+ * Validate multiple statement files before processing
+ * @param {string[]} fileIds
+ * @param {Object} validationRules
+ * @returns {Promise<Object[]>}
+ */
+const validateBulkStatements = async (
+    fileIds: string[],
+    validationRules?: {
+        strictMode?: boolean;
+        requireTransactionCount?: number;
+        allowedDateRange?: { startDate: string; endDate: string };
+    }
+): Promise<
+    Array<{
+        fileId: string;
+        isValid: boolean;
+        errors: string[];
+        warnings: string[];
+        metadata: {
+            accountsFound: string[];
+            dateRange?: { start: string; end: string };
+            transactionCount: number;
+        };
+    }>
+> => {
+    // Validate all file IDs exist
+    const statements = await prisma.statement.findMany({
+        where: { id: { in: fileIds } },
+        include: { account: true }
+    });
+
+    if (statements.length !== fileIds.length) {
+        const foundIds = statements.map(s => s.id);
+        const missingIds = fileIds.filter(id => !foundIds.includes(id));
+        throw new ApiError(httpStatus.BAD_REQUEST, `Statement files not found: ${missingIds.join(', ')}`);
+    }
+
+    const validationResults = [];
+
+    for (const statement of statements) {
+        const result = {
+            fileId: statement.id,
+            isValid: true,
+            errors: [] as string[],
+            warnings: [] as string[],
+            metadata: {
+                accountsFound: statement.account ? [statement.account.accountNumber] : [],
+                dateRange: statement.period
+                    ? {
+                          start: (statement.period as any)?.startDate || '2024-01-01',
+                          end: (statement.period as any)?.endDate || '2024-01-31'
+                      }
+                    : undefined,
+                transactionCount: Math.floor(Math.random() * 300) + 50 // Mock data
+            }
+        };
+
+        // Apply validation rules
+        if (validationRules?.strictMode) {
+            if (!statement.account) {
+                result.errors.push('No account associated with statement');
+                result.isValid = false;
+            }
+            if (statement.fileSize > 10 * 1024 * 1024) {
+                // 10MB
+                result.warnings.push('Large file size may affect processing time');
+            }
+        }
+
+        if (validationRules?.requireTransactionCount) {
+            if (result.metadata.transactionCount < validationRules.requireTransactionCount) {
+                result.warnings.push(`Low transaction count: ${result.metadata.transactionCount}`);
+            }
+        }
+
+        // Mock additional validation checks
+        if (statement.fileType === 'pdf' && Math.random() > 0.8) {
+            result.warnings.push('PDF format may have parsing limitations');
+        }
+
+        if (statement.fileName.includes('draft') || statement.fileName.includes('temp')) {
+            result.warnings.push('Filename suggests this may be a draft or temporary file');
+        }
+
+        validationResults.push(result);
+    }
+
+    return validationResults;
+};
+
+/**
+ * Get current statement processing queue status
+ * @param {string} statusFilter
+ * @returns {Promise<Object>}
+ */
+const getProcessingQueue = async (
+    statusFilter?: string
+): Promise<{
+    queue: Array<{
+        fileId: string;
+        fileName: string;
+        clientId: string;
+        status: string;
+        position: number;
+        estimatedWaitTime: number; // in seconds
+    }>;
+    metrics: {
+        queueLength: number;
+        averageProcessingTime: number; // in seconds
+        systemLoad: number; // 0-1
+    };
+}> => {
+    let whereClause: any = {
+        status: {
+            in: [StatementStatus.UPLOADED, StatementStatus.PROCESSING, StatementStatus.VALIDATED]
+        }
+    };
+
+    if (statusFilter) {
+        whereClause.status = statusFilter;
+    }
+
+    const statements = await prisma.statement.findMany({
+        where: whereClause,
+        include: {
+            client: true,
+            ProcessingTask: {
+                orderBy: { createdAt: 'desc' },
+                take: 1
+            }
+        },
+        orderBy: { createdAt: 'asc' }
+    });
+
+    const queue = statements.map((statement, index) => ({
+        fileId: statement.id,
+        fileName: statement.fileName,
+        clientId: statement.clientId,
+        status: statement.status,
+        position: index + 1,
+        estimatedWaitTime: index * 90 + Math.floor(Math.random() * 60) // Mock calculation
+    }));
+
+    // Mock system metrics
+    const metrics = {
+        queueLength: statements.length,
+        averageProcessingTime: 85, // seconds
+        systemLoad: Math.random() * 0.8 + 0.1 // 0.1-0.9
+    };
+
+    return { queue, metrics };
+};
+
+/**
+ * Reprocess failed or corrupted statement files
+ * @param {string[]} fileIds
+ * @param {Object} options
+ * @returns {Promise<ProcessingTask[]>}
+ */
+const reprocessStatements = async (
+    fileIds: string[],
+    options?: {
+        forceReprocess?: boolean;
+        preserveExisting?: boolean;
+    }
+): Promise<{ taskIds: string[] }> => {
+    // Validate all file IDs exist
+    const statements = await prisma.statement.findMany({
+        where: { id: { in: fileIds } },
+        include: { client: true }
+    });
+
+    if (statements.length !== fileIds.length) {
+        const foundIds = statements.map(s => s.id);
+        const missingIds = fileIds.filter(id => !foundIds.includes(id));
+        throw new ApiError(httpStatus.BAD_REQUEST, `Statement files not found: ${missingIds.join(', ')}`);
+    }
+
+    // Check if files are eligible for reprocessing
+    const eligibleStatuses: StatementStatus[] = [StatementStatus.FAILED, StatementStatus.COMPLETED];
+    if (options?.forceReprocess) {
+        eligibleStatuses.push(StatementStatus.PROCESSING, StatementStatus.VALIDATED, StatementStatus.UPLOADED);
+    }
+
+    const ineligibleStatements = statements.filter(
+        statement => !eligibleStatuses.includes(statement.status as StatementStatus)
+    );
+
+    if (ineligibleStatements.length > 0 && !options?.forceReprocess) {
+        throw new ApiError(
+            httpStatus.CONFLICT,
+            `Files not eligible for reprocessing: ${ineligibleStatements.map(s => s.fileName).join(', ')}`
+        );
+    }
+
+    const taskIds: string[] = [];
+
+    // Create reprocessing tasks
+    for (const statement of statements) {
+        const processingTask = await prisma.processingTask.create({
+            data: {
+                clientId: statement.clientId,
+                statementId: statement.id,
+                type: TaskType.STATEMENT_PARSE,
+                status: TaskStatus.PENDING,
+                steps: {
+                    total: 6,
+                    steps: [
+                        { id: 1, name: 'File Validation', status: 'pending' },
+                        { id: 2, name: 'Data Extraction', status: 'pending' },
+                        { id: 3, name: 'Transaction Parsing', status: 'pending' },
+                        { id: 4, name: 'Data Validation', status: 'pending' },
+                        { id: 5, name: 'Data Correction', status: 'pending' },
+                        { id: 6, name: 'Storage', status: 'pending' }
+                    ]
+                },
+                estimatedDuration: 420000 // 7 minutes for reprocessing
+            }
+        });
+
+        taskIds.push(processingTask.taskId);
+
+        // Update statement status
+        await prisma.statement.update({
+            where: { id: statement.id },
+            data: {
+                status: StatementStatus.PROCESSING,
+                errorMessage: null // Clear previous error
+            }
+        });
+    }
+
+    return { taskIds };
+};
+
+/**
+ * Get detailed data quality assessment for processed statement
+ * @param {string} fileId
+ * @returns {Promise<Object>}
+ */
+const getDataQuality = async (
+    fileId: string
+): Promise<{
+    overallScore: number;
+    dimensions: {
+        completeness: number;
+        accuracy: number;
+        consistency: number;
+        validity: number;
+    };
+    issues: Array<{
+        type: string;
+        severity: 'low' | 'medium' | 'high';
+        description: string;
+        affectedRecords: number;
+        suggestions: string[];
+    }>;
+    recommendations: string[];
+}> => {
+    const statement = await getStatementById(fileId);
+    if (!statement) {
+        throw new ApiError(httpStatus.NOT_FOUND, 'Statement not found');
+    }
+
+    // Check if statement has been processed
+    const processedStatuses: StatementStatus[] = [StatementStatus.COMPLETED, StatementStatus.FAILED];
+    if (!processedStatuses.includes(statement.status as StatementStatus)) {
+        throw new ApiError(httpStatus.BAD_REQUEST, 'Data quality assessment only available for processed statements');
+    }
+
+    // Mock data quality assessment - in real implementation, this would analyze actual processed data
+    const completeness = Math.random() * 0.3 + 0.7; // 0.7-1.0
+    const accuracy = Math.random() * 0.3 + 0.7; // 0.7-1.0
+    const consistency = Math.random() * 0.3 + 0.7; // 0.7-1.0
+    const validity = Math.random() * 0.3 + 0.7; // 0.7-1.0
+
+    const overallScore = (completeness + accuracy + consistency + validity) / 4;
+
+    const issues = [];
+    const recommendations = [];
+
+    // Generate realistic quality issues
+    if (completeness < 0.9) {
+        issues.push({
+            type: 'missing_data',
+            severity: 'medium' as const,
+            description: 'Some transaction records are missing required fields',
+            affectedRecords: Math.floor(Math.random() * 20) + 5,
+            suggestions: ['Request complete statement from client', 'Use data imputation techniques']
+        });
+        recommendations.push('Improve statement quality by requesting standardized format from client');
+    }
+
+    if (accuracy < 0.85) {
+        issues.push({
+            type: 'data_inconsistency',
+            severity: 'high' as const,
+            description: 'Detected inconsistencies in transaction amounts or dates',
+            affectedRecords: Math.floor(Math.random() * 15) + 3,
+            suggestions: ['Manual verification required', 'Cross-reference with source documents']
+        });
+        recommendations.push('Implement automated data validation rules');
+    }
+
+    if (validity < 0.8) {
+        issues.push({
+            type: 'format_issues',
+            severity: 'low' as const,
+            description: 'Some data fields do not conform to expected formats',
+            affectedRecords: Math.floor(Math.random() * 25) + 10,
+            suggestions: ['Apply data standardization rules', 'Update parsing logic']
+        });
+        recommendations.push('Consider using more advanced OCR or parsing tools');
+    }
+
+    if (statement.fileType === 'pdf' && overallScore < 0.85) {
+        recommendations.push('Request statement in CSV or Excel format for better data quality');
+    }
+
+    // Add general recommendations based on overall score
+    if (overallScore >= 0.9) {
+        recommendations.push('Data quality is excellent - no immediate action required');
+    } else if (overallScore >= 0.8) {
+        recommendations.push('Data quality is good with minor improvements needed');
+    } else {
+        recommendations.push('Data quality needs significant improvement - consider reprocessing');
+    }
+
+    return {
+        overallScore: Math.round(overallScore * 100) / 100,
+        dimensions: {
+            completeness: Math.round(completeness * 100) / 100,
+            accuracy: Math.round(accuracy * 100) / 100,
+            consistency: Math.round(consistency * 100) / 100,
+            validity: Math.round(validity * 100) / 100
+        },
+        issues,
+        recommendations
+    };
+};
+
 export default {
     createStatement,
     queryStatements,
@@ -372,5 +714,9 @@ export default {
     getStatementStatus,
     startStatementParsing,
     getUploadProgress,
-    downloadStatement
+    downloadStatement,
+    validateBulkStatements,
+    getProcessingQueue,
+    reprocessStatements,
+    getDataQuality
 };

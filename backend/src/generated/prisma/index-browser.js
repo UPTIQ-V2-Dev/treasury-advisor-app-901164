@@ -257,6 +257,116 @@ exports.Prisma.RecommendationScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.BankConnectionScalarFieldEnum = {
+  id: 'id',
+  clientId: 'clientId',
+  accountId: 'accountId',
+  bankName: 'bankName',
+  connectionType: 'connectionType',
+  lastSync: 'lastSync',
+  status: 'status',
+  credentials: 'credentials',
+  settings: 'settings',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.WorkflowTaskScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  status: 'status',
+  priority: 'priority',
+  clientId: 'clientId',
+  clientName: 'clientName',
+  assignedTo: 'assignedTo',
+  createdAt: 'createdAt',
+  dueDate: 'dueDate',
+  metadata: 'metadata',
+  resolution: 'resolution',
+  comments: 'comments',
+  completedAt: 'completedAt',
+  completedBy: 'completedBy',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.WorkflowAuditScalarFieldEnum = {
+  id: 'id',
+  timestamp: 'timestamp',
+  activityType: 'activityType',
+  userId: 'userId',
+  userName: 'userName',
+  description: 'description',
+  changes: 'changes',
+  metadata: 'metadata',
+  clientId: 'clientId'
+};
+
+exports.Prisma.NotificationScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  title: 'title',
+  message: 'message',
+  data: 'data',
+  read: 'read',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  expiresAt: 'expiresAt'
+};
+
+exports.Prisma.SystemLogScalarFieldEnum = {
+  id: 'id',
+  timestamp: 'timestamp',
+  level: 'level',
+  service: 'service',
+  message: 'message',
+  metadata: 'metadata',
+  traceId: 'traceId'
+};
+
+exports.Prisma.MaintenanceTaskScalarFieldEnum = {
+  id: 'id',
+  operation: 'operation',
+  status: 'status',
+  parameters: 'parameters',
+  startTime: 'startTime',
+  endTime: 'endTime',
+  estimatedDuration: 'estimatedDuration',
+  results: 'results',
+  error: 'error',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AgentTaskScalarFieldEnum = {
+  id: 'id',
+  clientId: 'clientId',
+  agentType: 'agentType',
+  status: 'status',
+  progress: 'progress',
+  results: 'results',
+  startTime: 'startTime',
+  endTime: 'endTime',
+  logs: 'logs',
+  context: 'context',
+  options: 'options',
+  estimatedDuration: 'estimatedDuration',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AgentAnalysisScalarFieldEnum = {
+  id: 'id',
+  clientId: 'clientId',
+  fileIds: 'fileIds',
+  analysisType: 'analysisType',
+  status: 'status',
+  results: 'results',
+  confidence: 'confidence',
+  processingTime: 'processingTime',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -346,6 +456,71 @@ exports.RecommendationStatus = exports.$Enums.RecommendationStatus = {
   IMPLEMENTED: 'IMPLEMENTED'
 };
 
+exports.ConnectionType = exports.$Enums.ConnectionType = {
+  API: 'API',
+  PLAID: 'PLAID',
+  YODLEE: 'YODLEE',
+  MANUAL: 'MANUAL'
+};
+
+exports.ConnectionStatus = exports.$Enums.ConnectionStatus = {
+  CONNECTED: 'CONNECTED',
+  DISCONNECTED: 'DISCONNECTED',
+  ERROR: 'ERROR',
+  SYNCING: 'SYNCING'
+};
+
+exports.WorkflowTaskType = exports.$Enums.WorkflowTaskType = {
+  RECOMMENDATION_APPROVAL: 'RECOMMENDATION_APPROVAL',
+  CLIENT_REVIEW: 'CLIENT_REVIEW',
+  STATEMENT_REVIEW: 'STATEMENT_REVIEW',
+  RISK_ASSESSMENT: 'RISK_ASSESSMENT',
+  GENERAL_TASK: 'GENERAL_TASK'
+};
+
+exports.WorkflowTaskStatus = exports.$Enums.WorkflowTaskStatus = {
+  PENDING: 'PENDING',
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED'
+};
+
+exports.WorkflowTaskPriority = exports.$Enums.WorkflowTaskPriority = {
+  HIGH: 'HIGH',
+  MEDIUM: 'MEDIUM',
+  LOW: 'LOW'
+};
+
+exports.WorkflowActivityType = exports.$Enums.WorkflowActivityType = {
+  TASK_CREATED: 'TASK_CREATED',
+  TASK_ASSIGNED: 'TASK_ASSIGNED',
+  TASK_COMPLETED: 'TASK_COMPLETED',
+  RECOMMENDATION_APPROVED: 'RECOMMENDATION_APPROVED',
+  RECOMMENDATION_REJECTED: 'RECOMMENDATION_REJECTED',
+  CLIENT_UPDATED: 'CLIENT_UPDATED',
+  STATEMENT_PROCESSED: 'STATEMENT_PROCESSED'
+};
+
+exports.NotificationType = exports.$Enums.NotificationType = {
+  PROCESSING_COMPLETE: 'PROCESSING_COMPLETE',
+  PROCESSING_FAILED: 'PROCESSING_FAILED',
+  RECOMMENDATION_READY: 'RECOMMENDATION_READY',
+  STATEMENT_UPLOADED: 'STATEMENT_UPLOADED',
+  CLIENT_UPDATED: 'CLIENT_UPDATED',
+  WORKFLOW_TASK_ASSIGNED: 'WORKFLOW_TASK_ASSIGNED',
+  WORKFLOW_TASK_COMPLETED: 'WORKFLOW_TASK_COMPLETED',
+  SYSTEM_ALERT: 'SYSTEM_ALERT',
+  GENERAL: 'GENERAL'
+};
+
+exports.AgentTaskStatus = exports.$Enums.AgentTaskStatus = {
+  PENDING: 'PENDING',
+  RUNNING: 'RUNNING',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED',
+  CANCELLED: 'CANCELLED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Token: 'Token',
@@ -355,7 +530,15 @@ exports.Prisma.ModelName = {
   Transaction: 'Transaction',
   ProcessingTask: 'ProcessingTask',
   TreasuryProduct: 'TreasuryProduct',
-  Recommendation: 'Recommendation'
+  Recommendation: 'Recommendation',
+  BankConnection: 'BankConnection',
+  WorkflowTask: 'WorkflowTask',
+  WorkflowAudit: 'WorkflowAudit',
+  Notification: 'Notification',
+  SystemLog: 'SystemLog',
+  MaintenanceTask: 'MaintenanceTask',
+  AgentTask: 'AgentTask',
+  AgentAnalysis: 'AgentAnalysis'
 };
 
 /**

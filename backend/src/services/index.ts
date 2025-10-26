@@ -9,3 +9,8 @@ export { default as processingService } from './processing.service.ts';
 export { default as analyticsService } from './analytics.service.ts';
 export { default as treasuryProductService } from './treasuryProduct.service.ts';
 export { default as recommendationService } from './recommendation.service.ts';
+export { default as bankConnectionService } from './bankConnection.service.ts';
+export { default as workflowService } from './workflow.service.ts';
+export { default as notificationService } from './notification.service.ts';
+export { default as adminService } from './admin.service.ts';
+export { default as agentService } from './agent.service.ts';

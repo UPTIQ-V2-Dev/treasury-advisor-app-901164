@@ -250,6 +250,148 @@ const getAllStatementsTool: MCPTool = {
     }
 };
 
+// Enhanced statement processing tools
+const validateBulkStatementsTool: MCPTool = {
+    id: 'statement_validate_bulk',
+    name: 'Validate Bulk Statements',
+    description: 'Validate multiple statement files before processing with customizable validation rules',
+    inputSchema: z.object({
+        fileIds: z.array(z.string().uuid()).min(1).max(10),
+        validationRules: z
+            .object({
+                strictMode: z.boolean().optional(),
+                requireTransactionCount: z.number().int().min(1).optional(),
+                allowedDateRange: z
+                    .object({
+                        startDate: z.string(),
+                        endDate: z.string()
+                    })
+                    .optional()
+            })
+            .optional()
+    }),
+    outputSchema: z.array(
+        z.object({
+            fileId: z.string(),
+            isValid: z.boolean(),
+            errors: z.array(z.string()),
+            warnings: z.array(z.string()),
+            metadata: z.object({
+                accountsFound: z.array(z.string()),
+                dateRange: z
+                    .object({
+                        start: z.string(),
+                        end: z.string()
+                    })
+                    .optional(),
+                transactionCount: z.number()
+            })
+        })
+    ),
+    fn: async (inputs: {
+        fileIds: string[];
+        validationRules?: {
+            strictMode?: boolean;
+            requireTransactionCount?: number;
+            allowedDateRange?: { startDate: string; endDate: string };
+        };
+    }) => {
+        const result = await statementService.validateBulkStatements(inputs.fileIds, inputs.validationRules);
+        return result;
+    }
+};
+
+const getProcessingQueueTool: MCPTool = {
+    id: 'statement_get_processing_queue',
+    name: 'Get Processing Queue',
+    description: 'Get current statement processing queue status with positions, wait times and system metrics',
+    inputSchema: z.object({
+        status: z.enum(['UPLOADED', 'PROCESSING', 'COMPLETED', 'FAILED', 'VALIDATED']).optional()
+    }),
+    outputSchema: z.object({
+        queue: z.array(
+            z.object({
+                fileId: z.string(),
+                fileName: z.string(),
+                clientId: z.string(),
+                status: z.string(),
+                position: z.number(),
+                estimatedWaitTime: z.number()
+            })
+        ),
+        metrics: z.object({
+            queueLength: z.number(),
+            averageProcessingTime: z.number(),
+            systemLoad: z.number()
+        })
+    }),
+    fn: async (inputs: { status?: string }) => {
+        const result = await statementService.getProcessingQueue(inputs.status);
+        return result;
+    }
+};
+
+const reprocessStatementsTool: MCPTool = {
+    id: 'statement_reprocess',
+    name: 'Reprocess Statements',
+    description: 'Reprocess failed or corrupted statement files with configurable options',
+    inputSchema: z.object({
+        fileIds: z.array(z.string().uuid()).min(1).max(5),
+        options: z
+            .object({
+                forceReprocess: z.boolean().optional(),
+                preserveExisting: z.boolean().optional()
+            })
+            .optional()
+    }),
+    outputSchema: z.object({
+        taskIds: z.array(z.string())
+    }),
+    fn: async (inputs: {
+        fileIds: string[];
+        options?: {
+            forceReprocess?: boolean;
+            preserveExisting?: boolean;
+        };
+    }) => {
+        const result = await statementService.reprocessStatements(inputs.fileIds, inputs.options);
+        return result;
+    }
+};
+
+const getDataQualityTool: MCPTool = {
+    id: 'statement_get_data_quality',
+    name: 'Get Data Quality Assessment',
+    description:
+        'Get detailed data quality assessment for processed statement including scores, issues and recommendations',
+    inputSchema: z.object({
+        fileId: z.string().uuid()
+    }),
+    outputSchema: z.object({
+        overallScore: z.number(),
+        dimensions: z.object({
+            completeness: z.number(),
+            accuracy: z.number(),
+            consistency: z.number(),
+            validity: z.number()
+        }),
+        issues: z.array(
+            z.object({
+                type: z.string(),
+                severity: z.enum(['low', 'medium', 'high']),
+                description: z.string(),
+                affectedRecords: z.number(),
+                suggestions: z.array(z.string())
+            })
+        ),
+        recommendations: z.array(z.string())
+    }),
+    fn: async (inputs: { fileId: string }) => {
+        const result = await statementService.getDataQuality(inputs.fileId);
+        return result;
+    }
+};
+
 export const statementTools: MCPTool[] = [
     getClientStatementsTool,
     validateStatementTool,
@@ -257,5 +399,9 @@ export const statementTools: MCPTool[] = [
     parseStatementsTool,
     deleteStatementTool,
     getUploadProgressTool,
-    getAllStatementsTool
+    getAllStatementsTool,
+    validateBulkStatementsTool,
+    getProcessingQueueTool,
+    reprocessStatementsTool,
+    getDataQualityTool
 ];

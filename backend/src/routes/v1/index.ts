@@ -1,10 +1,14 @@
 import config from '../../config/config.ts';
+import adminRoute from './admin.route.ts';
+import agentRoute from './agent.route.ts';
 import analyticsRoute from './analytics.route.ts';
 import authRoute from './auth.route.ts';
+import bankConnectionRoute from './bank-connection.route.ts';
 import clientStatementsRoute from './client-statements.route.ts';
 import clientRoute from './client.route.ts';
 import docsRoute from './docs.route.ts';
 import mcpRoute from './mcp.route.ts';
+import notificationRoute from './notification.route.ts';
 import processingRoute from './processing.route.ts';
 import recommendationRoute from './recommendation.route.ts';
 import relationshipManagerRoute from './relationship-manager.route.ts';
@@ -12,6 +16,7 @@ import statementRoute from './statement.route.ts';
 import transactionRoute from './transaction.route.ts';
 import treasuryProductRoute from './treasuryProduct.route.ts';
 import userRoute from './user.route.ts';
+import workflowRoute from './workflow.route.ts';
 import express from 'express';
 
 const router = express.Router();
@@ -64,6 +69,26 @@ const defaultRoutes = [
     {
         path: '/mcp',
         route: mcpRoute
+    },
+    {
+        path: '/bank-connections',
+        route: bankConnectionRoute
+    },
+    {
+        path: '/workflow',
+        route: workflowRoute
+    },
+    {
+        path: '/notifications',
+        route: notificationRoute
+    },
+    {
+        path: '/admin',
+        route: adminRoute
+    },
+    {
+        path: '/agents',
+        route: agentRoute
     }
 ];
 

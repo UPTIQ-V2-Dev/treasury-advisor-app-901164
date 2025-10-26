@@ -153,6 +153,27 @@ const updateStatement = catchAsyncWithAuth(async (req, res) => {
     const statement = await statementService.updateStatementById(req.params.fileId, updateBody);
     res.send(statement);
 });
+// Enhanced statement processing endpoints
+const validateBulkStatements = catchAsyncWithAuth(async (req, res) => {
+    const { fileIds, validationRules } = req.body;
+    const result = await statementService.validateBulkStatements(fileIds, validationRules);
+    res.send(result);
+});
+const getProcessingQueue = catchAsyncWithAuth(async (req, res) => {
+    const { status } = req.validatedQuery;
+    const result = await statementService.getProcessingQueue(status);
+    res.send(result);
+});
+const reprocessStatements = catchAsyncWithAuth(async (req, res) => {
+    const { fileIds, options } = req.body;
+    const result = await statementService.reprocessStatements(fileIds, options);
+    res.status(httpStatus.ACCEPTED).send(result);
+});
+const getDataQuality = catchAsyncWithAuth(async (req, res) => {
+    const { fileId } = req.params;
+    const result = await statementService.getDataQuality(fileId);
+    res.send(result);
+});
 const statementController = {
     uploadStatements,
     validateStatement,
@@ -164,7 +185,11 @@ const statementController = {
     downloadStatement,
     getAllStatements,
     getStatementById,
-    updateStatement
+    updateStatement,
+    validateBulkStatements,
+    getProcessingQueue,
+    reprocessStatements,
+    getDataQuality
 };
 export { statementController };
 export default statementController;

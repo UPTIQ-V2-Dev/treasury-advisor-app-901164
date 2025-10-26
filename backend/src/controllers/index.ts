@@ -7,3 +7,8 @@ export { default as processingController } from './processing.controller.ts';
 export { default as analyticsController } from './analytics.controller.ts';
 export { default as treasuryProductController } from './treasuryProduct.controller.ts';
 export { default as recommendationController } from './recommendation.controller.ts';
+export { default as bankConnectionController } from './bankConnection.controller.ts';
+export { default as workflowController } from './workflow.controller.ts';
+export { default as notificationController } from './notification.controller.ts';
+export { default as adminController } from './admin.controller.ts';
+export { default as agentController } from './agent.controller.ts';

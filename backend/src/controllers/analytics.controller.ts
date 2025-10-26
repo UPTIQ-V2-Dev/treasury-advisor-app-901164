@@ -143,6 +143,66 @@ const getDashboard = catchAsyncWithAuth(async (req, res) => {
     res.send(dashboard);
 });
 
+const getForecastingAnalytics = catchAsyncWithAuth(async (req, res) => {
+    const { clientId } = req.params;
+    const { forecastPeriod, confidenceLevel } = req.validatedQuery;
+
+    const forecasting = await analyticsService.getForecastingAnalytics(clientId, forecastPeriod, confidenceLevel);
+    res.send(forecasting);
+});
+
+const getBenchmarkingAnalytics = catchAsyncWithAuth(async (req, res) => {
+    const { clientId } = req.params;
+    const { industry, businessSegment } = req.validatedQuery;
+
+    const benchmarking = await analyticsService.getBenchmarkingAnalytics(clientId, industry, businessSegment);
+    res.send(benchmarking);
+});
+
+const exportEnhancedAnalytics = catchAsyncWithAuth(async (req, res) => {
+    const { clientId } = req.params;
+    const { format, template, startDate, endDate, sections } = req.validatedQuery;
+
+    const exportData = await analyticsService.exportEnhancedAnalytics(
+        clientId,
+        format,
+        template,
+        startDate,
+        endDate,
+        sections
+    );
+
+    // Set appropriate headers based on format
+    const filename = (exportData as any).filename;
+    switch (format?.toLowerCase()) {
+        case 'csv':
+            res.setHeader('Content-Type', 'text/csv');
+            res.setHeader(
+                'Content-Disposition',
+                `attachment; filename="${filename || `analytics-enhanced-${clientId}.csv`}"`
+            );
+            break;
+        case 'pdf':
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader(
+                'Content-Disposition',
+                `attachment; filename="${filename || `analytics-enhanced-${clientId}.pdf`}"`
+            );
+            break;
+        case 'excel':
+            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            res.setHeader(
+                'Content-Disposition',
+                `attachment; filename="${filename || `analytics-enhanced-${clientId}.xlsx`}"`
+            );
+            break;
+        default:
+            res.setHeader('Content-Type', 'application/json');
+    }
+
+    res.send(exportData);
+});
+
 export default {
     getAnalyticsOverview,
     getCashFlowAnalytics,
@@ -153,5 +213,8 @@ export default {
     exportAnalyticsData,
     getVendorAnalytics,
     getTrendAnalytics,
-    getDashboard
+    getDashboard,
+    getForecastingAnalytics,
+    getBenchmarkingAnalytics,
+    exportEnhancedAnalytics
 };

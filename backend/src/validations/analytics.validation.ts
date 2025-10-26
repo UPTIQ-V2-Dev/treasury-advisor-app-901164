@@ -83,6 +83,56 @@ const getDashboard = {
     })
 };
 
+const getForecastingAnalytics = {
+    ...clientIdParams,
+    query: Joi.object().keys({
+        forecastPeriod: Joi.string()
+            .regex(/^\d+d$/)
+            .default('90d')
+            .description('Forecast period in days (e.g., "90d")'),
+        confidenceLevel: Joi.number().min(0.1).max(1.0).default(0.85).description('Confidence level (0.1-1.0)')
+    })
+};
+
+const getBenchmarkingAnalytics = {
+    ...clientIdParams,
+    query: Joi.object().keys({
+        industry: Joi.string()
+            .optional()
+            .description('Industry for benchmarking (optional, defaults to client industry)'),
+        businessSegment: Joi.string()
+            .optional()
+            .description('Business segment for benchmarking (optional, defaults to client segment)')
+    })
+};
+
+const exportEnhancedAnalytics = {
+    ...clientIdParams,
+    query: Joi.object().keys({
+        format: Joi.string().valid('csv', 'pdf', 'excel', 'json').required(),
+        template: Joi.string()
+            .valid('executive_summary', 'detailed_report', 'board_presentation', 'regulatory')
+            .optional(),
+        startDate: Joi.date().iso().optional(),
+        endDate: Joi.date().iso().greater(Joi.ref('startDate')).optional(),
+        sections: Joi.array()
+            .items(
+                Joi.string().valid(
+                    'overview',
+                    'cashflow',
+                    'categories',
+                    'liquidity',
+                    'patterns',
+                    'trends',
+                    'forecasting',
+                    'benchmarking'
+                )
+            )
+            .optional()
+            .description('Sections to include in export')
+    })
+};
+
 export default {
     getAnalyticsOverview,
     getCashFlowAnalytics,
@@ -93,5 +143,8 @@ export default {
     exportAnalyticsData,
     getVendorAnalytics,
     getTrendAnalytics,
-    getDashboard
+    getDashboard,
+    getForecastingAnalytics,
+    getBenchmarkingAnalytics,
+    exportEnhancedAnalytics
 };

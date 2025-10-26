@@ -455,6 +455,194 @@ const getDashboardTool: MCPTool = {
     }
 };
 
+// Enhanced Analytics Tools
+
+// Forecasting Analytics Tool
+const getForecastingAnalyticsTool: MCPTool = {
+    id: 'analytics_get_forecasting',
+    name: 'Get Cash Flow Forecasting Analytics',
+    description:
+        'Get predictive cash flow analysis with seasonality patterns and strategic recommendations based on historical data',
+    inputSchema: z.object({
+        clientId: z.string().uuid(),
+        forecastPeriod: z
+            .string()
+            .regex(/^\d+d$/)
+            .optional()
+            .default('90d'),
+        confidenceLevel: z.number().min(0.1).max(1.0).optional().default(0.85)
+    }),
+    outputSchema: z.object({
+        forecast: z.array(
+            z.object({
+                date: z.string(),
+                predictedInflow: z.number(),
+                predictedOutflow: z.number(),
+                predictedBalance: z.number(),
+                confidence: z.number()
+            })
+        ),
+        seasonality: z.object({
+            patterns: z.array(z.any()),
+            factors: z.array(z.any())
+        }),
+        recommendations: z.array(z.string())
+    }),
+    fn: async (inputs: { clientId: string; forecastPeriod?: string; confidenceLevel?: number }) => {
+        const forecasting = await analyticsService.getForecastingAnalytics(
+            inputs.clientId,
+            inputs.forecastPeriod || '90d',
+            inputs.confidenceLevel || 0.85
+        );
+        return forecasting;
+    }
+};
+
+// Benchmarking Analytics Tool
+const getBenchmarkingAnalyticsTool: MCPTool = {
+    id: 'analytics_get_benchmarking',
+    name: 'Get Industry Benchmarking Analytics',
+    description:
+        'Compare client financial metrics against industry standards with percentile ranking and performance analysis',
+    inputSchema: z.object({
+        clientId: z.string().uuid(),
+        industry: z.string().optional(),
+        businessSegment: z.string().optional()
+    }),
+    outputSchema: z.object({
+        clientMetrics: z.any(),
+        industryBenchmarks: z.any(),
+        percentileRank: z.number().min(0).max(100),
+        comparisonAreas: z.array(
+            z.object({
+                metric: z.string(),
+                clientValue: z.number(),
+                benchmarkValue: z.number(),
+                performance: z.enum(['above_average', 'below_average'])
+            })
+        )
+    }),
+    fn: async (inputs: { clientId: string; industry?: string; businessSegment?: string }) => {
+        const benchmarking = await analyticsService.getBenchmarkingAnalytics(
+            inputs.clientId,
+            inputs.industry,
+            inputs.businessSegment
+        );
+        return benchmarking;
+    }
+};
+
+// Enhanced Export Analytics Tool
+const exportEnhancedAnalyticsTool: MCPTool = {
+    id: 'analytics_export_enhanced',
+    name: 'Export Enhanced Analytics Data',
+    description:
+        'Export comprehensive analytics with professional templates, enhanced formatting, and customizable sections',
+    inputSchema: z.object({
+        clientId: z.string().uuid(),
+        format: z.enum(['csv', 'pdf', 'excel', 'json']),
+        template: z.enum(['executive_summary', 'detailed_report', 'board_presentation', 'regulatory']).optional(),
+        startDate: z.string().optional(),
+        endDate: z.string().optional(),
+        sections: z
+            .array(
+                z.enum([
+                    'overview',
+                    'cashflow',
+                    'categories',
+                    'liquidity',
+                    'patterns',
+                    'trends',
+                    'forecasting',
+                    'benchmarking'
+                ])
+            )
+            .optional()
+    }),
+    outputSchema: z.object({
+        format: z.string(),
+        template: z.string().optional(),
+        content: z.string(),
+        filename: z.string(),
+        data: z.any()
+    }),
+    fn: async (inputs: {
+        clientId: string;
+        format: string;
+        template?: string;
+        startDate?: string;
+        endDate?: string;
+        sections?: string[];
+    }) => {
+        const exportData = await analyticsService.exportEnhancedAnalytics(
+            inputs.clientId,
+            inputs.format,
+            inputs.template,
+            inputs.startDate,
+            inputs.endDate,
+            inputs.sections
+        );
+        return exportData;
+    }
+};
+
+// Cash Flow Forecasting Tool (Simplified for quick access)
+const quickForecastTool: MCPTool = {
+    id: 'analytics_quick_forecast',
+    name: 'Quick Cash Flow Forecast',
+    description: 'Get a simplified 30-day cash flow forecast with key insights for immediate planning needs',
+    inputSchema: z.object({
+        clientId: z.string().uuid()
+    }),
+    outputSchema: z.object({
+        thirtyDayForecast: z.array(
+            z.object({
+                date: z.string(),
+                predictedBalance: z.number(),
+                confidence: z.number()
+            })
+        ),
+        keyInsights: z.array(z.string()),
+        riskAlerts: z.array(z.string())
+    }),
+    fn: async (inputs: { clientId: string }) => {
+        const fullForecast = await analyticsService.getForecastingAnalytics(inputs.clientId, '30d', 0.8);
+
+        // Extract key insights and risk alerts
+        const keyInsights = [];
+        const riskAlerts = [];
+
+        if (fullForecast.forecast.length > 0) {
+            const avgBalance =
+                fullForecast.forecast.reduce((sum, day) => sum + day.predictedBalance, 0) /
+                fullForecast.forecast.length;
+            const minBalance = Math.min(...fullForecast.forecast.map(day => day.predictedBalance));
+            const maxBalance = Math.max(...fullForecast.forecast.map(day => day.predictedBalance));
+
+            keyInsights.push(`Forecasted average balance: $${avgBalance.toFixed(2)}`);
+            keyInsights.push(`Balance range: $${minBalance.toFixed(2)} - $${maxBalance.toFixed(2)}`);
+
+            if (minBalance < 10000) {
+                riskAlerts.push('Low balance alert: Projected to fall below $10,000');
+            }
+
+            if (maxBalance > avgBalance * 2) {
+                riskAlerts.push('High cash periods detected - consider investment opportunities');
+            }
+        }
+
+        return {
+            thirtyDayForecast: fullForecast.forecast.slice(0, 30).map(day => ({
+                date: day.date,
+                predictedBalance: day.predictedBalance,
+                confidence: day.confidence
+            })),
+            keyInsights,
+            riskAlerts
+        };
+    }
+};
+
 export const analyticsTools: MCPTool[] = [
     getAnalyticsOverviewTool,
     getCashFlowAnalyticsTool,
@@ -467,5 +655,9 @@ export const analyticsTools: MCPTool[] = [
     exportAnalyticsDataTool,
     getFinancialHealthScoreTool,
     getComparativeAnalyticsTool,
-    getDashboardTool
+    getDashboardTool,
+    getForecastingAnalyticsTool,
+    getBenchmarkingAnalyticsTool,
+    exportEnhancedAnalyticsTool,
+    quickForecastTool
 ];

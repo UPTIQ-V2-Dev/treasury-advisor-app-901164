@@ -442,6 +442,195 @@ const exportAnalyticsData = async (clientId: string, format: string, filters: An
 };
 
 /**
+ * Get cash flow forecasting and predictive analytics
+ */
+const getForecastingAnalytics = async (
+    clientId: string,
+    forecastPeriod: string = '90d',
+    confidenceLevel: number = 0.85
+) => {
+    // Verify client exists
+    const client = await prisma.client.findUnique({
+        where: { id: clientId }
+    });
+    if (!client) {
+        throw new ApiError(httpStatus.NOT_FOUND, 'Client not found');
+    }
+
+    // Parse forecast period
+    const days = parseInt(forecastPeriod.replace('d', ''));
+    if (isNaN(days) || days < 1 || days > 365) {
+        throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid forecast period. Use format like "90d" (1-365 days)');
+    }
+
+    if (confidenceLevel < 0.1 || confidenceLevel > 1.0) {
+        throw new ApiError(httpStatus.BAD_REQUEST, 'Confidence level must be between 0.1 and 1.0');
+    }
+
+    // Get historical transaction data (last 6 months for analysis)
+    const historicalStartDate = new Date();
+    historicalStartDate.setMonth(historicalStartDate.getMonth() - 6);
+
+    const historicalTransactions = await prisma.transaction.findMany({
+        where: {
+            clientId,
+            date: { gte: historicalStartDate }
+        },
+        orderBy: { date: 'asc' },
+        select: {
+            date: true,
+            amount: true,
+            category: true,
+            type: true
+        }
+    });
+
+    // Generate forecast using simplified predictive model
+    const forecast = generateCashFlowForecast(historicalTransactions, days, confidenceLevel);
+
+    // Analyze seasonality patterns
+    const seasonality = analyzeSeasonalPatterns(historicalTransactions);
+
+    // Generate recommendations based on forecast
+    const recommendations = generateForecastRecommendations(forecast, seasonality);
+
+    return {
+        forecast,
+        seasonality,
+        recommendations
+    };
+};
+
+/**
+ * Compare client metrics against industry benchmarks
+ */
+const getBenchmarkingAnalytics = async (clientId: string, industry?: string, businessSegment?: string) => {
+    // Verify client exists and get client data
+    const client = await prisma.client.findUnique({
+        where: { id: clientId },
+        select: {
+            id: true,
+            name: true,
+            industry: true,
+            businessSegment: true
+        }
+    });
+    if (!client) {
+        throw new ApiError(httpStatus.NOT_FOUND, 'Client not found');
+    }
+
+    // Use provided industry/segment or fallback to client's data
+    const targetIndustry = industry || client.industry;
+    const targetSegment = businessSegment || client.businessSegment;
+
+    // Get client's current metrics
+    const clientMetrics = await getAnalyticsOverview(clientId);
+    const liquidityData = await getLiquidityAnalytics(clientId);
+
+    // Get industry benchmarks (in real implementation, this would come from external data sources)
+    const industryBenchmarks = getIndustryBenchmarks(targetIndustry, targetSegment);
+
+    // Calculate client's percentile ranking
+    const percentileRank = calculatePercentileRank(clientMetrics, liquidityData, industryBenchmarks);
+
+    // Generate comparison areas
+    const comparisonAreas = generateBenchmarkComparisons(clientMetrics, liquidityData, industryBenchmarks);
+
+    return {
+        clientMetrics: {
+            ...clientMetrics,
+            liquidity: liquidityData
+        },
+        industryBenchmarks,
+        percentileRank,
+        comparisonAreas
+    };
+};
+
+/**
+ * Export analytics with enhanced formatting and templates
+ */
+const exportEnhancedAnalytics = async (
+    clientId: string,
+    format: string,
+    template?: string,
+    startDate?: string,
+    endDate?: string,
+    sections?: string[]
+) => {
+    const validFormats = ['csv', 'pdf', 'excel', 'json'];
+    if (!validFormats.includes(format.toLowerCase())) {
+        throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid export format');
+    }
+
+    const validTemplates = ['executive_summary', 'detailed_report', 'board_presentation', 'regulatory'];
+    if (template && !validTemplates.includes(template)) {
+        throw new ApiError(
+            httpStatus.BAD_REQUEST,
+            'Invalid template. Valid options: executive_summary, detailed_report, board_presentation, regulatory'
+        );
+    }
+
+    // Parse date filters
+    const filters: AnalyticsFilter = {};
+    if (startDate) {
+        filters.startDate = new Date(startDate);
+    }
+    if (endDate) {
+        filters.endDate = new Date(endDate);
+    }
+
+    // Get comprehensive analytics data
+    const [summary, forecasting, benchmarking] = await Promise.all([
+        getAnalyticsSummary(clientId, filters),
+        getForecastingAnalytics(clientId),
+        getBenchmarkingAnalytics(clientId)
+    ]);
+
+    // Filter sections if specified
+    const includedSections = sections || [
+        'overview',
+        'cashflow',
+        'categories',
+        'liquidity',
+        'patterns',
+        'trends',
+        'forecasting',
+        'benchmarking'
+    ];
+
+    const enhancedData = {
+        metadata: {
+            clientId,
+            generatedAt: new Date().toISOString(),
+            template: template || 'standard',
+            format,
+            sections: includedSections
+        },
+        summary: includedSections.includes('overview') ? summary.metrics : undefined,
+        cashFlow: includedSections.includes('cashflow') ? summary.cashFlow : undefined,
+        categories: includedSections.includes('categories') ? summary.categories : undefined,
+        liquidity: includedSections.includes('liquidity') ? summary.liquidity : undefined,
+        patterns: includedSections.includes('patterns') ? summary.patterns : undefined,
+        trends: includedSections.includes('trends') ? summary.trends : undefined,
+        forecasting: includedSections.includes('forecasting') ? forecasting : undefined,
+        benchmarking: includedSections.includes('benchmarking') ? benchmarking : undefined
+    };
+
+    // Generate enhanced export based on format and template
+    switch (format.toLowerCase()) {
+        case 'excel':
+            return generateEnhancedExcelData(enhancedData, template);
+        case 'pdf':
+            return generateEnhancedPDFData(enhancedData, template);
+        case 'csv':
+            return generateEnhancedCSVData(enhancedData);
+        default:
+            return enhancedData;
+    }
+};
+
+/**
  * Get comprehensive dashboard data with KPIs and visualizations
  */
 const getDashboard = async (clientId: string, dateRange: string = '30d', compareMode: string = 'previous') => {
@@ -958,6 +1147,348 @@ const generateDashboardKPIs = (currentMetrics: any, comparisonMetrics: any = nul
     return kpis;
 };
 
+// Helper functions for new analytics features
+
+/**
+ * Generate cash flow forecast using simplified predictive model
+ */
+const generateCashFlowForecast = (historicalData: any[], forecastDays: number, confidenceLevel: number) => {
+    if (historicalData.length < 30) {
+        // Not enough data for meaningful forecast
+        return [];
+    }
+
+    // Group by day and calculate averages
+    const dailyData = groupTransactionsByPeriod(historicalData, 'daily');
+
+    // Calculate moving averages and trends
+    const recentDays = dailyData.slice(-30); // Last 30 days
+    const avgInflow = recentDays.reduce((sum, day) => sum + day.inflow, 0) / recentDays.length;
+    const avgOutflow = recentDays.reduce((sum, day) => sum + day.outflow, 0) / recentDays.length;
+
+    // Calculate trend (simplified linear regression)
+    const inflowTrend = calculateTrend(recentDays.map((d, i) => ({ x: i, y: d.inflow })));
+    const outflowTrend = calculateTrend(recentDays.map((d, i) => ({ x: i, y: d.outflow })));
+
+    // Generate forecast for each day
+    const forecast = [];
+    const currentBalance = recentDays.length > 0 ? recentDays[recentDays.length - 1].balance : 0;
+    let runningBalance = currentBalance;
+
+    for (let day = 1; day <= forecastDays; day++) {
+        // Apply trend and seasonality
+        const seasonalFactor = getSeasonalFactor(day);
+        const predictedInflow = Math.max(0, avgInflow + inflowTrend * day * seasonalFactor);
+        const predictedOutflow = Math.max(0, avgOutflow + outflowTrend * day * seasonalFactor);
+
+        runningBalance += predictedInflow - predictedOutflow;
+
+        const forecastDate = new Date();
+        forecastDate.setDate(forecastDate.getDate() + day);
+
+        forecast.push({
+            date: forecastDate.toISOString().split('T')[0],
+            predictedInflow: Math.round(predictedInflow * 100) / 100,
+            predictedOutflow: Math.round(predictedOutflow * 100) / 100,
+            predictedBalance: Math.round(runningBalance * 100) / 100,
+            confidence: Math.max(0.5, confidenceLevel - (day / forecastDays) * 0.3) // Confidence decreases over time
+        });
+    }
+
+    return forecast;
+};
+
+/**
+ * Analyze seasonal patterns in transaction data
+ */
+const analyzeSeasonalPatterns = (historicalData: any[]) => {
+    const monthlyData = new Map();
+    const weeklyData = new Map();
+
+    historicalData.forEach(transaction => {
+        const date = new Date(transaction.date);
+        const month = date.getMonth();
+        const dayOfWeek = date.getDay();
+
+        // Monthly patterns
+        if (!monthlyData.has(month)) {
+            monthlyData.set(month, { inflow: 0, outflow: 0, count: 0 });
+        }
+        const monthData = monthlyData.get(month);
+        if (transaction.amount > 0) {
+            monthData.inflow += transaction.amount;
+        } else {
+            monthData.outflow += Math.abs(transaction.amount);
+        }
+        monthData.count += 1;
+
+        // Weekly patterns
+        if (!weeklyData.has(dayOfWeek)) {
+            weeklyData.set(dayOfWeek, { inflow: 0, outflow: 0, count: 0 });
+        }
+        const weekData = weeklyData.get(dayOfWeek);
+        if (transaction.amount > 0) {
+            weekData.inflow += transaction.amount;
+        } else {
+            weekData.outflow += Math.abs(transaction.amount);
+        }
+        weekData.count += 1;
+    });
+
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+    return {
+        patterns: [
+            {
+                type: 'monthly',
+                data: Array.from(monthlyData.entries()).map(([month, data]) => ({
+                    period: monthNames[month],
+                    avgInflow: data.count > 0 ? data.inflow / data.count : 0,
+                    avgOutflow: data.count > 0 ? data.outflow / data.count : 0,
+                    transactionCount: data.count
+                }))
+            },
+            {
+                type: 'weekly',
+                data: Array.from(weeklyData.entries()).map(([day, data]) => ({
+                    period: dayNames[day],
+                    avgInflow: data.count > 0 ? data.inflow / data.count : 0,
+                    avgOutflow: data.count > 0 ? data.outflow / data.count : 0,
+                    transactionCount: data.count
+                }))
+            }
+        ],
+        factors: [
+            {
+                name: 'High Activity Months',
+                description: 'Months with above-average transaction volume',
+                value: Array.from(monthlyData.entries())
+                    .filter(([, data]) => data.count > 0)
+                    .sort(([, a], [, b]) => b.count - a.count)
+                    .slice(0, 3)
+                    .map(([month]) => monthNames[month])
+            },
+            {
+                name: 'High Activity Days',
+                description: 'Days of week with above-average transaction volume',
+                value: Array.from(weeklyData.entries())
+                    .filter(([, data]) => data.count > 0)
+                    .sort(([, a], [, b]) => b.count - a.count)
+                    .slice(0, 3)
+                    .map(([day]) => dayNames[day])
+            }
+        ]
+    };
+};
+
+/**
+ * Generate recommendations based on forecast
+ */
+const generateForecastRecommendations = (forecast: any[], seasonality: any) => {
+    const recommendations = [];
+
+    if (forecast.length === 0) {
+        return [
+            'Insufficient historical data for detailed recommendations. Consider accumulating more transaction history.'
+        ];
+    }
+
+    // Check for potential cash flow issues
+    const lowBalanceDays = forecast.filter(day => day.predictedBalance < 10000);
+    if (lowBalanceDays.length > 0) {
+        recommendations.push(
+            `Potential low balance periods detected in forecast. Consider establishing credit facilities or adjusting cash management strategy.`
+        );
+    }
+
+    // Check for excess cash periods
+    const highBalanceDays = forecast.filter(day => day.predictedBalance > 100000);
+    if (highBalanceDays.length > forecast.length * 0.5) {
+        recommendations.push(
+            'Consistently high cash balances predicted. Consider investment options to optimize idle cash returns.'
+        );
+    }
+
+    // Seasonality recommendations
+    if (seasonality.factors.length > 0) {
+        const highActivityMonths = seasonality.factors.find((f: any) => f.name === 'High Activity Months');
+        if (highActivityMonths) {
+            recommendations.push(
+                `Plan for increased activity during ${highActivityMonths.value.join(', ')} based on historical patterns.`
+            );
+        }
+    }
+
+    // General recommendations
+    const avgConfidence = forecast.reduce((sum, day) => sum + day.confidence, 0) / forecast.length;
+    if (avgConfidence < 0.7) {
+        recommendations.push(
+            'Forecast confidence is moderate. Monitor actual performance closely and update predictions regularly.'
+        );
+    }
+
+    return recommendations;
+};
+
+/**
+ * Get industry benchmarks (mock implementation)
+ */
+const getIndustryBenchmarks = (industry: string, businessSegment: string) => {
+    // In a real implementation, this would fetch from external benchmark databases
+    const benchmarkData: { [key: string]: any } = {
+        technology: {
+            small: { liquidityRatio: 1.2, avgDailyBalance: 75000, volatility: 0.12 },
+            medium: { liquidityRatio: 1.5, avgDailyBalance: 200000, volatility: 0.08 },
+            large: { liquidityRatio: 2.0, avgDailyBalance: 500000, volatility: 0.06 }
+        },
+        manufacturing: {
+            small: { liquidityRatio: 1.1, avgDailyBalance: 100000, volatility: 0.15 },
+            medium: { liquidityRatio: 1.3, avgDailyBalance: 300000, volatility: 0.1 },
+            large: { liquidityRatio: 1.8, avgDailyBalance: 750000, volatility: 0.07 }
+        },
+        retail: {
+            small: { liquidityRatio: 0.9, avgDailyBalance: 50000, volatility: 0.2 },
+            medium: { liquidityRatio: 1.1, avgDailyBalance: 150000, volatility: 0.15 },
+            large: { liquidityRatio: 1.4, avgDailyBalance: 400000, volatility: 0.1 }
+        }
+    };
+
+    return (
+        benchmarkData[industry?.toLowerCase()]?.[businessSegment?.toLowerCase()] || {
+            liquidityRatio: 1.2,
+            avgDailyBalance: 150000,
+            volatility: 0.12
+        }
+    );
+};
+
+/**
+ * Calculate client's percentile rank against industry
+ */
+const calculatePercentileRank = (clientMetrics: any, liquidityData: any, benchmarks: any) => {
+    let score = 0;
+    let factors = 0;
+
+    // Liquidity ratio comparison
+    if (liquidityData.liquidityRatio >= benchmarks.liquidityRatio * 1.2) score += 25;
+    else if (liquidityData.liquidityRatio >= benchmarks.liquidityRatio) score += 20;
+    else if (liquidityData.liquidityRatio >= benchmarks.liquidityRatio * 0.8) score += 15;
+    else score += 10;
+    factors++;
+
+    // Average balance comparison
+    if (clientMetrics.averageDailyBalance >= benchmarks.avgDailyBalance * 1.5) score += 25;
+    else if (clientMetrics.averageDailyBalance >= benchmarks.avgDailyBalance) score += 20;
+    else if (clientMetrics.averageDailyBalance >= benchmarks.avgDailyBalance * 0.7) score += 15;
+    else score += 10;
+    factors++;
+
+    // Volatility comparison (lower is better)
+    if (liquidityData.volatility <= benchmarks.volatility * 0.7) score += 25;
+    else if (liquidityData.volatility <= benchmarks.volatility) score += 20;
+    else if (liquidityData.volatility <= benchmarks.volatility * 1.3) score += 15;
+    else score += 10;
+    factors++;
+
+    return Math.round((score / factors / 25) * 100); // Convert to percentile
+};
+
+/**
+ * Generate benchmark comparison areas
+ */
+const generateBenchmarkComparisons = (clientMetrics: any, liquidityData: any, benchmarks: any) => {
+    return [
+        {
+            metric: 'Liquidity Ratio',
+            clientValue: liquidityData.liquidityRatio,
+            benchmarkValue: benchmarks.liquidityRatio,
+            performance: liquidityData.liquidityRatio >= benchmarks.liquidityRatio ? 'above_average' : 'below_average'
+        },
+        {
+            metric: 'Average Daily Balance',
+            clientValue: clientMetrics.averageDailyBalance,
+            benchmarkValue: benchmarks.avgDailyBalance,
+            performance:
+                clientMetrics.averageDailyBalance >= benchmarks.avgDailyBalance ? 'above_average' : 'below_average'
+        },
+        {
+            metric: 'Balance Volatility',
+            clientValue: liquidityData.volatility,
+            benchmarkValue: benchmarks.volatility,
+            performance: liquidityData.volatility <= benchmarks.volatility ? 'above_average' : 'below_average'
+        }
+    ];
+};
+
+// Enhanced export helper functions
+
+/**
+ * Generate enhanced Excel export
+ */
+const generateEnhancedExcelData = (data: any, template?: string) => {
+    return {
+        format: 'excel',
+        template: template || 'standard',
+        content: 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,...',
+        filename: `analytics-enhanced-${data.metadata.clientId}-${template || 'standard'}.xlsx`,
+        data
+    };
+};
+
+/**
+ * Generate enhanced PDF export
+ */
+const generateEnhancedPDFData = (data: any, template?: string) => {
+    return {
+        format: 'pdf',
+        template: template || 'standard',
+        content: 'data:application/pdf;base64,...',
+        filename: `analytics-enhanced-${data.metadata.clientId}-${template || 'standard'}.pdf`,
+        data
+    };
+};
+
+/**
+ * Generate enhanced CSV export
+ */
+const generateEnhancedCSVData = (data: any) => {
+    return {
+        format: 'csv',
+        content: 'data:text/csv;base64,...',
+        filename: `analytics-enhanced-${data.metadata.clientId}.csv`,
+        data
+    };
+};
+
+// Math helper functions
+
+/**
+ * Calculate trend using simple linear regression
+ */
+const calculateTrend = (points: { x: number; y: number }[]) => {
+    if (points.length < 2) return 0;
+
+    const n = points.length;
+    const sumX = points.reduce((sum, p) => sum + p.x, 0);
+    const sumY = points.reduce((sum, p) => sum + p.y, 0);
+    const sumXY = points.reduce((sum, p) => sum + p.x * p.y, 0);
+    const sumXX = points.reduce((sum, p) => sum + p.x * p.x, 0);
+
+    const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+    return isNaN(slope) ? 0 : slope;
+};
+
+/**
+ * Get seasonal factor for a given day
+ */
+const getSeasonalFactor = (dayOffset: number) => {
+    // Simple seasonal model - could be made more sophisticated
+    const weekCycle = Math.sin((dayOffset * 2 * Math.PI) / 7) * 0.1; // Weekly cycle
+    const monthCycle = Math.sin((dayOffset * 2 * Math.PI) / 30) * 0.05; // Monthly cycle
+    return 1 + weekCycle + monthCycle;
+};
+
 export default {
     getAnalyticsOverview,
     getCashFlowAnalytics,
@@ -968,5 +1499,8 @@ export default {
     getTrendAnalytics,
     getAnalyticsSummary,
     exportAnalyticsData,
-    getDashboard
+    getDashboard,
+    getForecastingAnalytics,
+    getBenchmarkingAnalytics,
+    exportEnhancedAnalytics
 };

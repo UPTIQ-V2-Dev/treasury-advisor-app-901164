@@ -85,6 +85,51 @@ const queryStatements = {
     })
 };
 
+// Enhanced statement processing validations
+const validateBulkStatements = {
+    body: Joi.object().keys({
+        fileIds: Joi.array().items(Joi.string().uuid()).min(1).max(10).required(),
+        validationRules: Joi.object()
+            .keys({
+                strictMode: Joi.boolean().optional(),
+                requireTransactionCount: Joi.number().integer().min(1).optional(),
+                allowedDateRange: Joi.object()
+                    .keys({
+                        startDate: Joi.date().iso().required(),
+                        endDate: Joi.date().iso().min(Joi.ref('startDate')).required()
+                    })
+                    .optional()
+            })
+            .optional()
+    })
+};
+
+const getProcessingQueue = {
+    query: Joi.object().keys({
+        status: Joi.string()
+            .valid(...Object.values(StatementStatus))
+            .optional()
+    })
+};
+
+const reprocessStatements = {
+    body: Joi.object().keys({
+        fileIds: Joi.array().items(Joi.string().uuid()).min(1).max(5).required(),
+        options: Joi.object()
+            .keys({
+                forceReprocess: Joi.boolean().optional(),
+                preserveExisting: Joi.boolean().optional()
+            })
+            .optional()
+    })
+};
+
+const getDataQuality = {
+    params: Joi.object().keys({
+        fileId: Joi.string().uuid().required()
+    })
+};
+
 export default {
     uploadStatement,
     validateStatement,
@@ -94,5 +139,9 @@ export default {
     getUploadProgress,
     deleteStatement,
     downloadStatement,
-    queryStatements
+    queryStatements,
+    validateBulkStatements,
+    getProcessingQueue,
+    reprocessStatements,
+    getDataQuality
 };

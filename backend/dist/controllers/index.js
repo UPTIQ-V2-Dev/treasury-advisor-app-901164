@@ -7,3 +7,8 @@ export { default as processingController } from "./processing.controller.js";
 export { default as analyticsController } from "./analytics.controller.js";
 export { default as treasuryProductController } from "./treasuryProduct.controller.js";
 export { default as recommendationController } from "./recommendation.controller.js";
+export { default as bankConnectionController } from "./bankConnection.controller.js";
+export { default as workflowController } from "./workflow.controller.js";
+export { default as notificationController } from "./notification.controller.js";
+export { default as adminController } from "./admin.controller.js";
+export { default as agentController } from "./agent.controller.js";

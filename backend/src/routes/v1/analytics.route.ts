@@ -78,6 +78,30 @@ router
     .route('/dashboard/:clientId')
     .get(auth('getAnalytics'), validate(analyticsValidation.getDashboard), analyticsController.getDashboard);
 
+router
+    .route('/forecasting/:clientId')
+    .get(
+        auth('getAnalytics'),
+        validate(analyticsValidation.getForecastingAnalytics),
+        analyticsController.getForecastingAnalytics
+    );
+
+router
+    .route('/benchmarking/:clientId')
+    .get(
+        auth('getAnalytics'),
+        validate(analyticsValidation.getBenchmarkingAnalytics),
+        analyticsController.getBenchmarkingAnalytics
+    );
+
+router
+    .route('/export-enhanced/:clientId')
+    .get(
+        auth('getAnalytics'),
+        validate(analyticsValidation.exportEnhancedAnalytics),
+        analyticsController.exportEnhancedAnalytics
+    );
+
 export default router;
 
 /**
@@ -835,6 +859,311 @@ export default router;
  *                       type: string
  *                       format: date-time
  *                       description: Dashboard data end date
+ *       "401":
+ *         $ref: '#/components/responses/Unauthorized'
+ *       "404":
+ *         $ref: '#/components/responses/NotFound'
+ *       "500":
+ *         $ref: '#/components/responses/InternalError'
+ */
+
+/**
+ * @swagger
+ * /analytics/forecasting/{clientId}:
+ *   get:
+ *     summary: Get cash flow forecasting and predictive analytics
+ *     description: Returns predicted cash flow patterns based on historical transaction data with confidence levels and seasonality analysis
+ *     tags: [Analytics]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: clientId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: Client ID
+ *       - in: query
+ *         name: forecastPeriod
+ *         schema:
+ *           type: string
+ *           pattern: '^\\d+d$'
+ *           default: '90d'
+ *         description: Forecast period in days (e.g., "90d", "180d")
+ *       - in: query
+ *         name: confidenceLevel
+ *         schema:
+ *           type: number
+ *           minimum: 0.1
+ *           maximum: 1.0
+ *           default: 0.85
+ *         description: Confidence level for predictions (0.1-1.0)
+ *     responses:
+ *       "200":
+ *         description: Cash flow forecast and predictive analytics
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 forecast:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       date:
+ *                         type: string
+ *                         format: date
+ *                         description: Forecast date
+ *                       predictedInflow:
+ *                         type: number
+ *                         description: Predicted money coming in
+ *                       predictedOutflow:
+ *                         type: number
+ *                         description: Predicted money going out
+ *                       predictedBalance:
+ *                         type: number
+ *                         description: Predicted account balance
+ *                       confidence:
+ *                         type: number
+ *                         description: Confidence level for this prediction
+ *                 seasonality:
+ *                   type: object
+ *                   properties:
+ *                     patterns:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           type:
+ *                             type: string
+ *                             enum: [monthly, weekly]
+ *                           data:
+ *                             type: array
+ *                             items:
+ *                               type: object
+ *                               properties:
+ *                                 period:
+ *                                   type: string
+ *                                 avgInflow:
+ *                                   type: number
+ *                                 avgOutflow:
+ *                                   type: number
+ *                                 transactionCount:
+ *                                   type: integer
+ *                     factors:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           name:
+ *                             type: string
+ *                           description:
+ *                             type: string
+ *                           value:
+ *                             type: array
+ *                             items:
+ *                               type: string
+ *                 recommendations:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   description: Strategic recommendations based on forecast
+ *       "400":
+ *         description: Invalid forecast parameters
+ *       "401":
+ *         $ref: '#/components/responses/Unauthorized'
+ *       "404":
+ *         $ref: '#/components/responses/NotFound'
+ *       "500":
+ *         $ref: '#/components/responses/InternalError'
+ */
+
+/**
+ * @swagger
+ * /analytics/benchmarking/{clientId}:
+ *   get:
+ *     summary: Compare client metrics against industry benchmarks
+ *     description: Returns client performance metrics compared against industry standards with percentile ranking and comparison areas
+ *     tags: [Analytics]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: clientId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: Client ID
+ *       - in: query
+ *         name: industry
+ *         schema:
+ *           type: string
+ *         description: Industry for benchmarking (optional, defaults to client's industry)
+ *       - in: query
+ *         name: businessSegment
+ *         schema:
+ *           type: string
+ *         description: Business segment for benchmarking (optional, defaults to client's segment)
+ *     responses:
+ *       "200":
+ *         description: Benchmarking analysis results
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 clientMetrics:
+ *                   type: object
+ *                   description: Client's current financial metrics including liquidity data
+ *                 industryBenchmarks:
+ *                   type: object
+ *                   description: Industry benchmark values for comparison
+ *                 percentileRank:
+ *                   type: integer
+ *                   minimum: 0
+ *                   maximum: 100
+ *                   description: Client's percentile rank within industry (0-100)
+ *                 comparisonAreas:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       metric:
+ *                         type: string
+ *                         description: Name of the metric being compared
+ *                       clientValue:
+ *                         type: number
+ *                         description: Client's value for this metric
+ *                       benchmarkValue:
+ *                         type: number
+ *                         description: Industry benchmark value
+ *                       performance:
+ *                         type: string
+ *                         enum: [above_average, below_average]
+ *                         description: How client performs vs benchmark
+ *       "401":
+ *         $ref: '#/components/responses/Unauthorized'
+ *       "404":
+ *         $ref: '#/components/responses/NotFound'
+ *       "500":
+ *         $ref: '#/components/responses/InternalError'
+ */
+
+/**
+ * @swagger
+ * /analytics/export-enhanced/{clientId}:
+ *   get:
+ *     summary: Export analytics with enhanced formatting and templates
+ *     description: Export comprehensive analytics data with professional templates and enhanced formatting options
+ *     tags: [Analytics]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: clientId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: Client ID
+ *       - in: query
+ *         name: format
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum: [csv, pdf, excel, json]
+ *         description: Export format
+ *       - in: query
+ *         name: template
+ *         schema:
+ *           type: string
+ *           enum: [executive_summary, detailed_report, board_presentation, regulatory]
+ *         description: Professional template to use for formatting
+ *       - in: query
+ *         name: startDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Data start date for export
+ *       - in: query
+ *         name: endDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Data end date for export
+ *       - in: query
+ *         name: sections
+ *         schema:
+ *           type: array
+ *           items:
+ *             type: string
+ *             enum: [overview, cashflow, categories, liquidity, patterns, trends, forecasting, benchmarking]
+ *         description: Specific sections to include in export
+ *     responses:
+ *       "200":
+ *         description: Enhanced exported analytics data
+ *         content:
+ *           text/csv:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *           application/pdf:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *           application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 metadata:
+ *                   type: object
+ *                   properties:
+ *                     clientId:
+ *                       type: string
+ *                     generatedAt:
+ *                       type: string
+ *                       format: date-time
+ *                     template:
+ *                       type: string
+ *                     format:
+ *                       type: string
+ *                     sections:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                 summary:
+ *                   type: object
+ *                   description: Overview metrics (if included)
+ *                 cashFlow:
+ *                   type: array
+ *                   description: Cash flow data (if included)
+ *                 categories:
+ *                   type: array
+ *                   description: Category breakdown (if included)
+ *                 liquidity:
+ *                   type: object
+ *                   description: Liquidity analysis (if included)
+ *                 patterns:
+ *                   type: array
+ *                   description: Spending patterns (if included)
+ *                 trends:
+ *                   type: object
+ *                   description: Trend analysis (if included)
+ *                 forecasting:
+ *                   type: object
+ *                   description: Forecasting data (if included)
+ *                 benchmarking:
+ *                   type: object
+ *                   description: Benchmarking analysis (if included)
+ *       "400":
+ *         description: Invalid export parameters or template
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "404":

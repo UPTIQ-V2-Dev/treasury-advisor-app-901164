@@ -9,3 +9,8 @@ export { default as processingService } from "./processing.service.js";
 export { default as analyticsService } from "./analytics.service.js";
 export { default as treasuryProductService } from "./treasuryProduct.service.js";
 export { default as recommendationService } from "./recommendation.service.js";
+export { default as bankConnectionService } from "./bankConnection.service.js";
+export { default as workflowService } from "./workflow.service.js";
+export { default as notificationService } from "./notification.service.js";
+export { default as adminService } from "./admin.service.js";
+export { default as agentService } from "./agent.service.js";

@@ -1,7 +1,8 @@
+import { bankConnectionController } from '../../controllers/index.ts';
 import statementController from '../../controllers/statement.controller.ts';
 import auth from '../../middlewares/auth.ts';
 import validate from '../../middlewares/validate.ts';
-import { statementValidation } from '../../validations/index.ts';
+import { bankConnectionValidation, statementValidation } from '../../validations/index.ts';
 import express from 'express';
 
 const router = express.Router();
@@ -19,6 +20,15 @@ router
 router
     .route('/:clientId/upload-progress')
     .get(auth('getStatements'), validate(statementValidation.getUploadProgress), statementController.getUploadProgress);
+
+// Client bank connections
+router
+    .route('/:clientId/bank-connections')
+    .get(
+        auth('getBankConnections'),
+        validate(bankConnectionValidation.getBankConnectionsByClient),
+        bankConnectionController.getBankConnectionsByClient
+    );
 
 export default router;
 
@@ -167,6 +177,63 @@ export default router;
  *                     type: string
  *                   error:
  *                     type: string
+ *       "401":
+ *         $ref: '#/components/responses/Unauthorized'
+ *       "404":
+ *         $ref: '#/components/responses/NotFound'
+ */
+
+/**
+ * @swagger
+ * /clients/{clientId}/bank-connections:
+ *   get:
+ *     summary: Get all bank connections for a client
+ *     description: Retrieve all bank connections for a specific client
+ *     tags: [Bank Connections]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: clientId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: Client ID
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                   bankName:
+ *                     type: string
+ *                   accountId:
+ *                     type: string
+ *                   connectionType:
+ *                     type: string
+ *                     enum: [API, PLAID, YODLEE, MANUAL]
+ *                   lastSync:
+ *                     type: string
+ *                     format: date-time
+ *                   status:
+ *                     type: string
+ *                     enum: [CONNECTED, DISCONNECTED, ERROR, SYNCING]
+ *                   account:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       accountNumber:
+ *                         type: string
+ *                       bankName:
+ *                         type: string
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "404":
