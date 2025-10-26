@@ -23,5 +23,5 @@
         "rewriteRelativeImportExtensions": true /* Rewrite relative import paths to include file extensions. This is useful for projects that want to ensure all imports are explicit about their file types. */,
         "types": ["vitest/globals"]
     },
-    "exclude": ["prisma.config.ts", "vitest.config.ts"]
+    "exclude": ["prisma.config.ts", "vitest.config.ts", "create-user.ts", "create-user.js"]
 }

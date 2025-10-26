@@ -750,3 +750,273 @@ OUT: 200:arr[obj{id:str, clientId:str, productId:str, product:obj, priority:str,
 ERR: {"401":"Unauthorized", "404":"Client not found", "500":"Internal server error"}
 EX_REQ: curl -X GET /recommendations/history/client-123 -H "Authorization: Bearer eyJ..."
 EX_RES_200: [{"id":"rec-456","clientId":"client-123","productId":"prod-789","product":{},"priority":"high","rationale":{},"estimatedBenefit":{},"implementation":{},"supportingData":[],"confidence":0.85,"status":"implemented","createdAt":"2024-01-15T10:00:00Z","reviewedBy":"user-456","reviewedAt":"2024-01-20T14:30:00Z","notes":"Successfully implemented"}]
+
+## User Management APIs
+
+EP: GET /users
+DESC: Retrieve paginated list of users.
+IN: query:{page:int, limit:int, role:str}
+OUT: 200:{users:arr[obj{id:int, email:str, name:str, role:str, isEmailVerified:bool, createdAt:str, updatedAt:str}], total:int, pages:int}
+ERR: {"401":"Unauthorized", "403":"Forbidden", "500":"Internal server error"}
+EX_REQ: curl -X GET "/users?page=1&limit=10&role=USER" -H "Authorization: Bearer eyJ..."
+EX_RES_200: {"users":[{"id":1,"email":"user@example.com","name":"John Doe","role":"USER","isEmailVerified":true,"createdAt":"2024-01-15T10:00:00Z","updatedAt":"2024-01-15T10:00:00Z"}],"total":1,"pages":1}
+
+---
+
+EP: GET /users/{userId}
+DESC: Get specific user details by ID.
+IN: params:{userId:int!}
+OUT: 200:{id:int, email:str, name:str, role:str, isEmailVerified:bool, createdAt:str, updatedAt:str}
+ERR: {"401":"Unauthorized", "403":"Forbidden", "404":"User not found", "500":"Internal server error"}
+EX_REQ: curl -X GET /users/1 -H "Authorization: Bearer eyJ..."
+EX_RES_200: {"id":1,"email":"user@example.com","name":"John Doe","role":"USER","isEmailVerified":true,"createdAt":"2024-01-15T10:00:00Z","updatedAt":"2024-01-15T10:00:00Z"}
+
+---
+
+EP: PUT /users/{userId}
+DESC: Update user information.
+IN: params:{userId:int!}, body:{name:str, email:str, role:str}
+OUT: 200:{id:int, email:str, name:str, role:str, isEmailVerified:bool, createdAt:str, updatedAt:str}
+ERR: {"400":"Invalid input data", "401":"Unauthorized", "403":"Forbidden", "404":"User not found", "409":"Email already exists", "500":"Internal server error"}
+EX_REQ: curl -X PUT /users/1 -H "Content-Type: application/json" -H "Authorization: Bearer eyJ..." -d '{"name":"John Smith","role":"ADMIN"}'
+EX_RES_200: {"id":1,"email":"user@example.com","name":"John Smith","role":"ADMIN","isEmailVerified":true,"createdAt":"2024-01-15T10:00:00Z","updatedAt":"2024-01-15T11:00:00Z"}
+
+---
+
+EP: DELETE /users/{userId}
+DESC: Delete a user account.
+IN: params:{userId:int!}
+OUT: 204:{}
+ERR: {"401":"Unauthorized", "403":"Forbidden", "404":"User not found", "409":"Cannot delete user with active assignments", "500":"Internal server error"}
+EX_REQ: curl -X DELETE /users/1 -H "Authorization: Bearer eyJ..."
+EX_RES_204: {}
+
+---
+
+EP: POST /auth/send-verification-email
+DESC: Send email verification to user.
+IN: body:{email:str!}
+OUT: 204:{}
+ERR: {"400":"Invalid email", "404":"User not found", "500":"Internal server error"}
+EX_REQ: curl -X POST /auth/send-verification-email -H "Content-Type: application/json" -d '{"email":"user@example.com"}'
+EX_RES_204: {}
+
+---
+
+EP: POST /auth/verify-email
+DESC: Verify user email with token.
+IN: body:{token:str!}
+OUT: 204:{}
+ERR: {"400":"Invalid token", "401":"Token expired", "500":"Internal server error"}
+EX_REQ: curl -X POST /auth/verify-email -H "Content-Type: application/json" -d '{"token":"verification-token"}'
+EX_RES_204: {}
+
+---
+
+EP: POST /auth/forgot-password
+DESC: Send password reset email.
+IN: body:{email:str!}
+OUT: 204:{}
+ERR: {"400":"Invalid email", "404":"User not found", "500":"Internal server error"}
+EX_REQ: curl -X POST /auth/forgot-password -H "Content-Type: application/json" -d '{"email":"user@example.com"}'
+EX_RES_204: {}
+
+---
+
+EP: POST /auth/reset-password
+DESC: Reset password with token.
+IN: body:{token:str!, password:str!}
+OUT: 204:{}
+ERR: {"400":"Invalid token or password", "401":"Token expired", "500":"Internal server error"}
+EX_REQ: curl -X POST /auth/reset-password -H "Content-Type: application/json" -d '{"token":"reset-token","password":"newpassword123"}'
+EX_RES_204: {}
+
+---
+
+EP: POST /auth/change-password
+DESC: Change user password while authenticated.
+IN: body:{oldPassword:str!, newPassword:str!}
+OUT: 204:{}
+ERR: {"400":"Invalid password", "401":"Unauthorized", "403":"Incorrect old password", "500":"Internal server error"}
+EX_REQ: curl -X POST /auth/change-password -H "Content-Type: application/json" -H "Authorization: Bearer eyJ..." -d '{"oldPassword":"oldpass","newPassword":"newpass123"}'
+EX_RES_204: {}
+
+## Enhanced Analytics APIs
+
+EP: GET /analytics/dashboard/{clientId}
+DESC: Get comprehensive dashboard data with KPIs and visualizations.
+IN: params:{clientId:str!}, query:{dateRange:str, compareMode:str}
+OUT: 200:{metrics:obj{totalInflow:float, totalOutflow:float, netCashFlow:float, averageDailyBalance:float, liquidityRatio:float, idleBalance:float, transactionCount:int}, charts:obj{cashFlow:arr[obj], categories:arr[obj], trends:arr[obj]}, kpis:arr[obj{name:str, value:float, unit:str, trend:str, change:float}], period:obj{startDate:str, endDate:str}}
+ERR: {"401":"Unauthorized", "404":"Client not found", "500":"Internal server error"}
+EX_REQ: curl -X GET "/analytics/dashboard/client-123?dateRange=30d&compareMode=previous" -H "Authorization: Bearer eyJ..."
+EX_RES_200: {"metrics":{"totalInflow":500000.00,"totalOutflow":350000.00,"netCashFlow":150000.00,"averageDailyBalance":175000.00,"liquidityRatio":1.43,"idleBalance":25000.00,"transactionCount":247},"charts":{"cashFlow":[],"categories":[],"trends":[]},"kpis":[{"name":"Net Cash Flow","value":150000.00,"unit":"USD","trend":"up","change":5.2}],"period":{"startDate":"2024-01-01","endDate":"2024-01-31"}}
+
+---
+
+EP: GET /analytics/forecasting/{clientId}
+DESC: Get cash flow forecasting and predictive analytics.
+IN: params:{clientId:str!}, query:{forecastPeriod:str, confidenceLevel:float}
+OUT: 200:{forecast:arr[obj{date:str, predictedInflow:float, predictedOutflow:float, predictedBalance:float, confidence:float}], seasonality:obj{patterns:arr[obj], factors:arr[obj]}, recommendations:arr[str]}
+ERR: {"401":"Unauthorized", "404":"Client not found", "500":"Internal server error"}
+EX_REQ: curl -X GET "/analytics/forecasting/client-123?forecastPeriod=90d&confidenceLevel=0.85" -H "Authorization: Bearer eyJ..."
+EX_RES_200: {"forecast":[{"date":"2024-02-01","predictedInflow":45000.00,"predictedOutflow":38000.00,"predictedBalance":182000.00,"confidence":0.87}],"seasonality":{"patterns":[],"factors":[]},"recommendations":["Consider investing excess cash during low-activity periods"]}
+
+---
+
+EP: GET /analytics/benchmarking/{clientId}
+DESC: Compare client metrics against industry benchmarks.
+IN: params:{clientId:str!}, query:{industry:str, businessSegment:str}
+OUT: 200:{clientMetrics:obj, industryBenchmarks:obj, percentileRank:int, comparisonAreas:arr[obj{metric:str, clientValue:float, benchmarkValue:float, performance:str}]}
+ERR: {"401":"Unauthorized", "404":"Client not found", "500":"Internal server error"}
+EX_REQ: curl -X GET "/analytics/benchmarking/client-123?industry=technology&businessSegment=medium" -H "Authorization: Bearer eyJ..."
+EX_RES_200: {"clientMetrics":{},"industryBenchmarks":{},"percentileRank":75,"comparisonAreas":[{"metric":"Liquidity Ratio","clientValue":1.43,"benchmarkValue":1.25,"performance":"above_average"}]}
+
+## Advanced File Processing APIs
+
+EP: POST /statements/validate-bulk
+DESC: Validate multiple statement files before processing.
+IN: body:{fileIds:arr[str]!, validationRules:obj}
+OUT: 200:arr[obj{fileId:str, isValid:bool, errors:arr[str], warnings:arr[str], metadata:obj{accountsFound:arr[str], dateRange:obj, transactionCount:int}}]
+ERR: {"400":"Invalid file IDs", "401":"Unauthorized", "500":"Internal server error"}
+EX_REQ: curl -X POST /statements/validate-bulk -H "Content-Type: application/json" -H "Authorization: Bearer eyJ..." -d '{"fileIds":["stmt-456","stmt-789"],"validationRules":{"strictMode":true}}'
+EX_RES_200: [{"fileId":"stmt-456","isValid":true,"errors":[],"warnings":["Date format inconsistency"],"metadata":{"accountsFound":["123456789"],"dateRange":{"start":"2024-01-01","end":"2024-01-31"},"transactionCount":247}}]
+
+---
+
+EP: GET /statements/processing-queue
+DESC: Get current statement processing queue status.
+IN: query:{status:str}
+OUT: 200:{queue:arr[obj{fileId:str, fileName:str, clientId:str, status:str, position:int, estimatedWaitTime:int}], metrics:obj{queueLength:int, averageProcessingTime:int, systemLoad:float}}
+ERR: {"401":"Unauthorized", "500":"Internal server error"}
+EX_REQ: curl -X GET "/statements/processing-queue?status=pending" -H "Authorization: Bearer eyJ..."
+EX_RES_200: {"queue":[{"fileId":"stmt-456","fileName":"statement.pdf","clientId":"client-123","status":"pending","position":2,"estimatedWaitTime":120}],"metrics":{"queueLength":5,"averageProcessingTime":85,"systemLoad":0.6}}
+
+---
+
+EP: POST /statements/reprocess
+DESC: Reprocess failed or corrupted statement files.
+IN: body:{fileIds:arr[str]!, options:obj{forceReprocess:bool, preserveExisting:bool}}
+OUT: 202:{taskIds:arr[str]}
+ERR: {"400":"Invalid file IDs", "401":"Unauthorized", "409":"Files not eligible for reprocessing", "500":"Internal server error"}
+EX_REQ: curl -X POST /statements/reprocess -H "Content-Type: application/json" -H "Authorization: Bearer eyJ..." -d '{"fileIds":["stmt-456"],"options":{"forceReprocess":true,"preserveExisting":false}}'
+EX_RES_202: {"taskIds":["task-789"]}
+
+---
+
+EP: GET /statements/data-quality/{fileId}
+DESC: Get detailed data quality assessment for processed statement.
+IN: params:{fileId:str!}
+OUT: 200:{overallScore:float, dimensions:obj{completeness:float, accuracy:float, consistency:float, validity:float}, issues:arr[obj{type:str, severity:str, description:str, affectedRecords:int, suggestions:arr[str]}], recommendations:arr[str]}
+ERR: {"401":"Unauthorized", "404":"Statement file not found", "500":"Internal server error"}
+EX_REQ: curl -X GET /statements/data-quality/stmt-456 -H "Authorization: Bearer eyJ..."
+EX_RES_200: {"overallScore":8.5,"dimensions":{"completeness":0.95,"accuracy":0.88,"consistency":0.92,"validity":0.85},"issues":[{"type":"missing_category","severity":"medium","description":"15 transactions missing category classification","affectedRecords":15,"suggestions":["Run auto-categorization","Manual review required"]}],"recommendations":["Improve statement quality by requesting standardized format"]}
+
+## Workflow and Approval APIs
+
+EP: GET /workflow/tasks
+DESC: Get workflow tasks for current user.
+IN: query:{status:str, type:str, assignedTo:str}
+OUT: 200:arr[obj{id:str, type:str, status:str, priority:str, clientId:str, clientName:str, assignedTo:str, createdAt:str, dueDate:str, metadata:obj}]
+ERR: {"401":"Unauthorized", "500":"Internal server error"}
+EX_REQ: curl -X GET "/workflow/tasks?status=pending&type=approval" -H "Authorization: Bearer eyJ..."
+EX_RES_200: [{"id":"workflow-123","type":"recommendation_approval","status":"pending","priority":"high","clientId":"client-123","clientName":"ABC Corp","assignedTo":"user-456","createdAt":"2024-01-15T10:00:00Z","dueDate":"2024-01-17T10:00:00Z","metadata":{}}]
+
+---
+
+EP: POST /workflow/tasks/{taskId}/complete
+DESC: Complete a workflow task with resolution.
+IN: params:{taskId:str!}, body:{resolution:str!, comments:str, attachments:arr[str]}
+OUT: 200:{nextSteps:arr[obj], notifications:arr[obj]}
+ERR: {"400":"Invalid resolution", "401":"Unauthorized", "404":"Task not found", "409":"Task cannot be completed", "500":"Internal server error"}
+EX_REQ: curl -X POST /workflow/tasks/workflow-123/complete -H "Content-Type: application/json" -H "Authorization: Bearer eyJ..." -d '{"resolution":"approved","comments":"Looks good for implementation"}'
+EX_RES_200: {"nextSteps":[{"type":"implementation","assignedTo":"user-789","dueDate":"2024-01-20T10:00:00Z"}],"notifications":[]}
+
+---
+
+EP: GET /workflow/audit/{clientId}
+DESC: Get audit trail for client workflow activities.
+IN: params:{clientId:str!}, query:{startDate:str, endDate:str, activityType:str}
+OUT: 200:arr[obj{id:str, timestamp:str, activityType:str, userId:str, userName:str, description:str, changes:arr[obj], metadata:obj}]
+ERR: {"401":"Unauthorized", "404":"Client not found", "500":"Internal server error"}
+EX_REQ: curl -X GET "/workflow/audit/client-123?startDate=2024-01-01&activityType=approval" -H "Authorization: Bearer eyJ..."
+EX_RES_200: [{"id":"audit-456","timestamp":"2024-01-15T10:30:00Z","activityType":"recommendation_approved","userId":"user-456","userName":"Jane Smith","description":"Approved high-yield savings recommendation","changes":[],"metadata":{}}]
+
+## System Administration APIs
+
+EP: GET /admin/system/health
+DESC: Get comprehensive system health status.
+IN: {}
+OUT: 200:{status:str, version:str, uptime:int, services:obj{database:obj{status:str, responseTime:int}, storage:obj{status:str, usage:float}, processing:obj{status:str, queueLength:int}}, metrics:obj{activeUsers:int, totalClients:int, processingLoad:float}}
+ERR: {"401":"Unauthorized", "403":"Admin access required", "500":"Internal server error"}
+EX_REQ: curl -X GET /admin/system/health -H "Authorization: Bearer eyJ..."
+EX_RES_200: {"status":"healthy","version":"1.0.0","uptime":86400,"services":{"database":{"status":"connected","responseTime":15},"storage":{"status":"available","usage":0.65},"processing":{"status":"operational","queueLength":3}},"metrics":{"activeUsers":25,"totalClients":150,"processingLoad":0.3}}
+
+---
+
+EP: GET /admin/system/logs
+DESC: Get system logs with filtering capabilities.
+IN: query:{level:str, service:str, startTime:str, endTime:str, limit:int}
+OUT: 200:arr[obj{timestamp:str, level:str, service:str, message:str, metadata:obj, traceId:str}]
+ERR: {"401":"Unauthorized", "403":"Admin access required", "500":"Internal server error"}
+EX_REQ: curl -X GET "/admin/system/logs?level=error&service=processing&limit=50" -H "Authorization: Bearer eyJ..."
+EX_RES_200: [{"timestamp":"2024-01-15T10:00:00Z","level":"error","service":"processing","message":"Failed to parse statement file","metadata":{"fileId":"stmt-789","error":"Invalid format"},"traceId":"trace-123"}]
+
+---
+
+EP: POST /admin/system/maintenance
+DESC: Trigger system maintenance operations.
+IN: body:{operation:str!, parameters:obj}
+OUT: 202:{taskId:str, estimatedDuration:int}
+ERR: {"400":"Invalid operation", "401":"Unauthorized", "403":"Admin access required", "500":"Internal server error"}
+EX_REQ: curl -X POST /admin/system/maintenance -H "Content-Type: application/json" -H "Authorization: Bearer eyJ..." -d '{"operation":"database_cleanup","parameters":{"retentionDays":30}}'
+EX_RES_202: {"taskId":"maint-456","estimatedDuration":600}
+
+---
+
+EP: GET /admin/analytics/usage
+DESC: Get system usage analytics and metrics.
+IN: query:{period:str, granularity:str}
+OUT: 200:{usage:arr[obj{timestamp:str, activeUsers:int, apiCalls:int, storageUsed:int, processingJobs:int}], trends:obj{userGrowth:float, apiGrowth:float, storageGrowth:float}, topUsers:arr[obj{userId:str, userName:str, apiCalls:int, storageUsed:int}]}
+ERR: {"401":"Unauthorized", "403":"Admin access required", "500":"Internal server error"}
+EX_REQ: curl -X GET "/admin/analytics/usage?period=30d&granularity=daily" -H "Authorization: Bearer eyJ..."
+EX_RES_200: {"usage":[{"timestamp":"2024-01-15","activeUsers":25,"apiCalls":1250,"storageUsed":1048576,"processingJobs":15}],"trends":{"userGrowth":0.15,"apiGrowth":0.22,"storageGrowth":0.08},"topUsers":[{"userId":"user-123","userName":"John Doe","apiCalls":250,"storageUsed":204800}]}
+
+## Real-time Updates and Notifications
+
+EP: GET /notifications/stream
+DESC: Server-sent events stream for real-time notifications.
+IN: query:{types:arr[str]}
+OUT: 200:{stream}
+ERR: {"401":"Unauthorized", "500":"Internal server error"}
+EX_REQ: curl -X GET "/notifications/stream?types=processing,recommendation" -H "Authorization: Bearer eyJ..." -H "Accept: text/event-stream"
+EX_RES_200: {stream}
+
+---
+
+EP: GET /notifications
+DESC: Get user notifications with pagination.
+IN: query:{page:int, limit:int, read:bool, type:str}
+OUT: 200:{notifications:arr[obj{id:str, type:str, title:str, message:str, data:obj, read:bool, createdAt:str}], total:int, unreadCount:int}
+ERR: {"401":"Unauthorized", "500":"Internal server error"}
+EX_REQ: curl -X GET "/notifications?page=1&limit=10&read=false" -H "Authorization: Bearer eyJ..."
+EX_RES_200: {"notifications":[{"id":"notif-123","type":"processing_complete","title":"Statement Processing Complete","message":"Processing completed for ABC Corp statements","data":{"clientId":"client-123","taskId":"task-456"},"read":false,"createdAt":"2024-01-15T10:00:00Z"}],"total":5,"unreadCount":3}
+
+---
+
+EP: POST /notifications/{notificationId}/read
+DESC: Mark notification as read.
+IN: params:{notificationId:str!}
+OUT: 200:{}
+ERR: {"401":"Unauthorized", "404":"Notification not found", "500":"Internal server error"}
+EX_REQ: curl -X POST /notifications/notif-123/read -H "Authorization: Bearer eyJ..."
+EX_RES_200: {}
+
+---
+
+EP: POST /notifications/read-all
+DESC: Mark all notifications as read for current user.
+IN: {}
+OUT: 200:{markedCount:int}
+ERR: {"401":"Unauthorized", "500":"Internal server error"}
+EX_REQ: curl -X POST /notifications/read-all -H "Authorization: Bearer eyJ..."
+EX_RES_200: {"markedCount":5}

@@ -42,6 +42,20 @@ async function main() {
         }
     });
     console.log('✅ Created relationship managers:', rm1.email, rm2.email);
+    // Create specific user: anand@uptiq.ai
+    const anandPassword = await bcrypt.hash('Uptiq@2025', 12);
+    const anand = await prisma.user.upsert({
+        where: { email: 'anand@uptiq.ai' },
+        update: {},
+        create: {
+            email: 'anand@uptiq.ai',
+            name: 'Anand',
+            password: anandPassword,
+            role: Role.USER,
+            isEmailVerified: true
+        }
+    });
+    console.log('✅ Created specific user:', anand.email);
     // Create sample clients
     const client1 = await prisma.client.upsert({
         where: { id: '123e4567-e89b-12d3-a456-426614174000' },
