@@ -333,6 +333,52 @@ const getComparativeAnalyticsTool = {
         };
     }
 };
+// Dashboard Analytics Tool
+const getDashboardTool = {
+    id: 'analytics_get_dashboard',
+    name: 'Get Dashboard Analytics',
+    description: 'Get comprehensive dashboard data with KPIs, charts, and visualizations for executive reporting',
+    inputSchema: z.object({
+        clientId: z.string().uuid(),
+        dateRange: z.enum(['7d', '30d', '90d', '6m', '1y']).optional().default('30d'),
+        compareMode: z.enum(['previous', 'year_over_year', 'none']).optional().default('previous')
+    }),
+    outputSchema: z.object({
+        metrics: z.object({
+            totalInflow: z.number(),
+            totalOutflow: z.number(),
+            netCashFlow: z.number(),
+            averageDailyBalance: z.number(),
+            liquidityRatio: z.number(),
+            idleBalance: z.number(),
+            transactionCount: z.number(),
+            period: z.object({
+                startDate: z.string().nullable(),
+                endDate: z.string().nullable()
+            })
+        }),
+        charts: z.object({
+            cashFlow: z.array(z.any()),
+            categories: z.array(z.any()),
+            trends: z.array(z.any())
+        }),
+        kpis: z.array(z.object({
+            name: z.string(),
+            value: z.number(),
+            unit: z.string(),
+            trend: z.string(),
+            change: z.number()
+        })),
+        period: z.object({
+            startDate: z.string(),
+            endDate: z.string()
+        })
+    }),
+    fn: async (inputs) => {
+        const dashboard = await analyticsService.getDashboard(inputs.clientId, inputs.dateRange || '30d', inputs.compareMode || 'previous');
+        return dashboard;
+    }
+};
 export const analyticsTools = [
     getAnalyticsOverviewTool,
     getCashFlowAnalyticsTool,
@@ -344,5 +390,6 @@ export const analyticsTools = [
     getAnalyticsSummaryTool,
     exportAnalyticsDataTool,
     getFinancialHealthScoreTool,
-    getComparativeAnalyticsTool
+    getComparativeAnalyticsTool,
+    getDashboardTool
 ];

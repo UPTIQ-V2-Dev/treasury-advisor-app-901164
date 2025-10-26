@@ -31,6 +31,9 @@ router
 router
     .route('/trends/:clientId')
     .get(auth('getAnalytics'), validate(analyticsValidation.getTrendAnalytics), analyticsController.getTrendAnalytics);
+router
+    .route('/dashboard/:clientId')
+    .get(auth('getAnalytics'), validate(analyticsValidation.getDashboard), analyticsController.getDashboard);
 export default router;
 /**
  * @swagger
@@ -625,4 +628,162 @@ export default router;
  *         $ref: '#/components/responses/Unauthorized'
  *       "404":
  *         $ref: '#/components/responses/NotFound'
+ */
+/**
+ * @swagger
+ * /analytics/dashboard/{clientId}:
+ *   get:
+ *     summary: Get comprehensive dashboard data with KPIs and visualizations
+ *     description: Returns dashboard analytics including metrics, charts, KPIs, and period information with optional comparison data
+ *     tags: [Analytics]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: clientId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: Client ID
+ *       - in: query
+ *         name: dateRange
+ *         schema:
+ *           type: string
+ *           enum: [7d, 30d, 90d, 6m, 1y]
+ *           default: 30d
+ *         description: Time range for dashboard data
+ *       - in: query
+ *         name: compareMode
+ *         schema:
+ *           type: string
+ *           enum: [previous, year_over_year, none]
+ *           default: previous
+ *         description: Comparison mode for KPI trends
+ *     responses:
+ *       "200":
+ *         description: Comprehensive dashboard data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 metrics:
+ *                   type: object
+ *                   properties:
+ *                     totalInflow:
+ *                       type: number
+ *                       description: Total money coming in
+ *                     totalOutflow:
+ *                       type: number
+ *                       description: Total money going out
+ *                     netCashFlow:
+ *                       type: number
+ *                       description: Net cash flow (inflow - outflow)
+ *                     averageDailyBalance:
+ *                       type: number
+ *                       description: Average daily account balance
+ *                     liquidityRatio:
+ *                       type: number
+ *                       description: Liquidity ratio indicator
+ *                     idleBalance:
+ *                       type: number
+ *                       description: Potentially optimizable idle balance
+ *                     transactionCount:
+ *                       type: integer
+ *                       description: Total number of transactions
+ *                     period:
+ *                       type: object
+ *                       properties:
+ *                         startDate:
+ *                           type: string
+ *                           format: date-time
+ *                         endDate:
+ *                           type: string
+ *                           format: date-time
+ *                 charts:
+ *                   type: object
+ *                   properties:
+ *                     cashFlow:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           date:
+ *                             type: string
+ *                           inflow:
+ *                             type: number
+ *                           outflow:
+ *                             type: number
+ *                           balance:
+ *                             type: number
+ *                           netFlow:
+ *                             type: number
+ *                     categories:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           category:
+ *                             type: string
+ *                           amount:
+ *                             type: number
+ *                           count:
+ *                             type: integer
+ *                           percentage:
+ *                             type: number
+ *                           trend:
+ *                             type: string
+ *                             enum: [up, down, stable, new]
+ *                     trends:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           period:
+ *                             type: string
+ *                           value:
+ *                             type: number
+ *                           change:
+ *                             type: number
+ *                           changePercent:
+ *                             type: number
+ *                 kpis:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       name:
+ *                         type: string
+ *                         description: KPI name
+ *                       value:
+ *                         type: number
+ *                         description: KPI value
+ *                       unit:
+ *                         type: string
+ *                         description: Unit of measurement (USD, ratio, count)
+ *                       trend:
+ *                         type: string
+ *                         enum: [up, down, stable]
+ *                         description: Trend direction compared to previous period
+ *                       change:
+ *                         type: number
+ *                         description: Percentage change from comparison period
+ *                 period:
+ *                   type: object
+ *                   properties:
+ *                     startDate:
+ *                       type: string
+ *                       format: date-time
+ *                       description: Dashboard data start date
+ *                     endDate:
+ *                       type: string
+ *                       format: date-time
+ *                       description: Dashboard data end date
+ *       "401":
+ *         $ref: '#/components/responses/Unauthorized'
+ *       "404":
+ *         $ref: '#/components/responses/NotFound'
+ *       "500":
+ *         $ref: '#/components/responses/InternalError'
  */

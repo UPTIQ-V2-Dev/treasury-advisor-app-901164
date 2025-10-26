@@ -441,6 +441,68 @@ const exportAnalyticsData = async (clientId: string, format: string, filters: An
     }
 };
 
+/**
+ * Get comprehensive dashboard data with KPIs and visualizations
+ */
+const getDashboard = async (clientId: string, dateRange: string = '30d', compareMode: string = 'previous') => {
+    // Verify client exists
+    const client = await prisma.client.findUnique({
+        where: { id: clientId }
+    });
+    if (!client) {
+        throw new ApiError(httpStatus.NOT_FOUND, 'Client not found');
+    }
+
+    // Calculate date ranges
+    const { currentPeriod, comparisonPeriod } = calculateDashboardDateRanges(dateRange, compareMode);
+
+    // Get current period data
+    const [metrics, cashFlowData, categoriesData] = await Promise.all([
+        getAnalyticsOverview(clientId, {
+            startDate: currentPeriod.startDate,
+            endDate: currentPeriod.endDate
+        }),
+        getCashFlowAnalytics(clientId, {
+            period: 'daily',
+            startDate: currentPeriod.startDate,
+            endDate: currentPeriod.endDate
+        }),
+        getCategoryAnalytics(clientId, {
+            startDate: currentPeriod.startDate,
+            endDate: currentPeriod.endDate
+        })
+    ]);
+
+    // Get comparison data if compareMode is not 'none'
+    let comparisonMetrics = null;
+    if (compareMode !== 'none' && comparisonPeriod) {
+        comparisonMetrics = await getAnalyticsOverview(clientId, {
+            startDate: comparisonPeriod.startDate,
+            endDate: comparisonPeriod.endDate
+        });
+    }
+
+    // Generate KPIs with trends
+    const kpis = generateDashboardKPIs(metrics, comparisonMetrics);
+
+    // Generate chart data
+    const charts = {
+        cashFlow: cashFlowData.slice(-30), // Last 30 data points
+        categories: categoriesData.slice(0, 10), // Top 10 categories
+        trends: await getTrendAnalytics(clientId, 'balance', '3m') // 3 months balance trend
+    };
+
+    return {
+        metrics,
+        charts,
+        kpis,
+        period: {
+            startDate: currentPeriod.startDate.toISOString(),
+            endDate: currentPeriod.endDate.toISOString()
+        }
+    };
+};
+
 // Helper functions
 
 const buildTransactionWhereClause = (clientId: string, filters: AnalyticsFilter): Prisma.TransactionWhereInput => {
@@ -732,6 +794,170 @@ const generateExcelData = (summary: any) => {
     };
 };
 
+// Dashboard helper functions
+const calculateDashboardDateRanges = (dateRange: string, compareMode: string) => {
+    const now = new Date();
+    let currentPeriod = {
+        startDate: new Date(),
+        endDate: new Date(now)
+    };
+
+    // Calculate current period based on dateRange
+    switch (dateRange) {
+        case '7d':
+            currentPeriod.startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            break;
+        case '30d':
+            currentPeriod.startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+            break;
+        case '90d':
+            currentPeriod.startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+            break;
+        case '6m':
+            currentPeriod.startDate = new Date(now);
+            currentPeriod.startDate.setMonth(now.getMonth() - 6);
+            break;
+        case '1y':
+            currentPeriod.startDate = new Date(now);
+            currentPeriod.startDate.setFullYear(now.getFullYear() - 1);
+            break;
+        default:
+            currentPeriod.startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    }
+
+    let comparisonPeriod = null;
+    if (compareMode !== 'none') {
+        const periodLength = currentPeriod.endDate.getTime() - currentPeriod.startDate.getTime();
+        if (compareMode === 'previous') {
+            // Previous period of same length
+            comparisonPeriod = {
+                startDate: new Date(currentPeriod.startDate.getTime() - periodLength),
+                endDate: new Date(currentPeriod.startDate)
+            };
+        } else if (compareMode === 'year_over_year') {
+            // Same period last year
+            comparisonPeriod = {
+                startDate: new Date(currentPeriod.startDate),
+                endDate: new Date(currentPeriod.endDate)
+            };
+            comparisonPeriod.startDate.setFullYear(comparisonPeriod.startDate.getFullYear() - 1);
+            comparisonPeriod.endDate.setFullYear(comparisonPeriod.endDate.getFullYear() - 1);
+        }
+    }
+
+    return { currentPeriod, comparisonPeriod };
+};
+
+const generateDashboardKPIs = (currentMetrics: any, comparisonMetrics: any = null) => {
+    const kpis = [];
+
+    // Net Cash Flow KPI
+    const netCashFlowKPI = {
+        name: 'Net Cash Flow',
+        value: currentMetrics.netCashFlow,
+        unit: 'USD',
+        trend: 'stable',
+        change: 0
+    };
+
+    if (comparisonMetrics) {
+        const change = currentMetrics.netCashFlow - comparisonMetrics.netCashFlow;
+        netCashFlowKPI.change = Math.round((change / Math.abs(comparisonMetrics.netCashFlow || 1)) * 100 * 100) / 100;
+        netCashFlowKPI.trend = change > 0 ? 'up' : change < 0 ? 'down' : 'stable';
+    }
+
+    kpis.push(netCashFlowKPI);
+
+    // Average Daily Balance KPI
+    const avgBalanceKPI = {
+        name: 'Average Daily Balance',
+        value: currentMetrics.averageDailyBalance,
+        unit: 'USD',
+        trend: 'stable',
+        change: 0
+    };
+
+    if (comparisonMetrics) {
+        const change = currentMetrics.averageDailyBalance - comparisonMetrics.averageDailyBalance;
+        avgBalanceKPI.change =
+            Math.round((change / Math.abs(comparisonMetrics.averageDailyBalance || 1)) * 100 * 100) / 100;
+        avgBalanceKPI.trend = change > 0 ? 'up' : change < 0 ? 'down' : 'stable';
+    }
+
+    kpis.push(avgBalanceKPI);
+
+    // Liquidity Ratio KPI
+    const liquidityKPI = {
+        name: 'Liquidity Ratio',
+        value: currentMetrics.liquidityRatio,
+        unit: 'ratio',
+        trend: 'stable',
+        change: 0
+    };
+
+    if (comparisonMetrics) {
+        const change = currentMetrics.liquidityRatio - comparisonMetrics.liquidityRatio;
+        liquidityKPI.change = Math.round((change / Math.abs(comparisonMetrics.liquidityRatio || 1)) * 100 * 100) / 100;
+        liquidityKPI.trend = change > 0 ? 'up' : change < 0 ? 'down' : 'stable';
+    }
+
+    kpis.push(liquidityKPI);
+
+    // Total Inflow KPI
+    const inflowKPI = {
+        name: 'Total Inflow',
+        value: currentMetrics.totalInflow,
+        unit: 'USD',
+        trend: 'stable',
+        change: 0
+    };
+
+    if (comparisonMetrics) {
+        const change = currentMetrics.totalInflow - comparisonMetrics.totalInflow;
+        inflowKPI.change = Math.round((change / Math.abs(comparisonMetrics.totalInflow || 1)) * 100 * 100) / 100;
+        inflowKPI.trend = change > 0 ? 'up' : change < 0 ? 'down' : 'stable';
+    }
+
+    kpis.push(inflowKPI);
+
+    // Total Outflow KPI
+    const outflowKPI = {
+        name: 'Total Outflow',
+        value: currentMetrics.totalOutflow,
+        unit: 'USD',
+        trend: 'stable',
+        change: 0
+    };
+
+    if (comparisonMetrics) {
+        const change = currentMetrics.totalOutflow - comparisonMetrics.totalOutflow;
+        outflowKPI.change = Math.round((change / Math.abs(comparisonMetrics.totalOutflow || 1)) * 100 * 100) / 100;
+        outflowKPI.trend = change > 0 ? 'up' : change < 0 ? 'down' : 'stable';
+    }
+
+    kpis.push(outflowKPI);
+
+    // Transaction Count KPI
+    const transactionKPI = {
+        name: 'Transaction Count',
+        value: currentMetrics.transactionCount,
+        unit: 'count',
+        trend: 'stable',
+        change: 0
+    };
+
+    if (comparisonMetrics) {
+        const change = currentMetrics.transactionCount - comparisonMetrics.transactionCount;
+        transactionKPI.change =
+            Math.round((change / Math.abs(comparisonMetrics.transactionCount || 1)) * 100 * 100) / 100;
+        transactionKPI.trend = change > 0 ? 'up' : change < 0 ? 'down' : 'stable';
+    }
+
+    kpis.push(transactionKPI);
+
+    return kpis;
+};
+
 export default {
     getAnalyticsOverview,
     getCashFlowAnalytics,
@@ -741,5 +967,6 @@ export default {
     getVendorAnalytics,
     getTrendAnalytics,
     getAnalyticsSummary,
-    exportAnalyticsData
+    exportAnalyticsData,
+    getDashboard
 };

@@ -63,6 +63,13 @@ const getTrendAnalytics = {
         period: Joi.string().valid('3m', '6m', '12m', '24m').default('12m')
     })
 };
+const getDashboard = {
+    ...clientIdParams,
+    query: Joi.object().keys({
+        dateRange: Joi.string().valid('7d', '30d', '90d', '6m', '1y').default('30d'),
+        compareMode: Joi.string().valid('previous', 'year_over_year', 'none').default('previous')
+    })
+};
 export default {
     getAnalyticsOverview,
     getCashFlowAnalytics,
@@ -72,5 +79,6 @@ export default {
     getAnalyticsSummary,
     exportAnalyticsData,
     getVendorAnalytics,
-    getTrendAnalytics
+    getTrendAnalytics,
+    getDashboard
 };

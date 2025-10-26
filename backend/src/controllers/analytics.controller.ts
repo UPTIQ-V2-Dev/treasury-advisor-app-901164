@@ -135,6 +135,14 @@ const getTrendAnalytics = catchAsyncWithAuth(async (req, res) => {
     res.send(trends);
 });
 
+const getDashboard = catchAsyncWithAuth(async (req, res) => {
+    const { clientId } = req.params;
+    const { dateRange, compareMode } = req.validatedQuery;
+
+    const dashboard = await analyticsService.getDashboard(clientId, dateRange, compareMode);
+    res.send(dashboard);
+});
+
 export default {
     getAnalyticsOverview,
     getCashFlowAnalytics,
@@ -144,5 +152,6 @@ export default {
     getAnalyticsSummary,
     exportAnalyticsData,
     getVendorAnalytics,
-    getTrendAnalytics
+    getTrendAnalytics,
+    getDashboard
 };

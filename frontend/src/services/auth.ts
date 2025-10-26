@@ -8,6 +8,7 @@ export const authService = {
         if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
             console.log('--- MOCK API: login ---', credentials);
             await mockApiDelay();
+            setAuthData(mockAuthResponse);
             return mockAuthResponse;
         }
         const response = await api.post('/auth/login', credentials);
@@ -20,6 +21,7 @@ export const authService = {
         if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
             console.log('--- MOCK API: register ---', userData);
             await mockApiDelay();
+            setAuthData(mockAuthResponse);
             return mockAuthResponse;
         }
         const response = await api.post('/auth/register', userData);
@@ -31,6 +33,7 @@ export const authService = {
         if (import.meta.env.VITE_USE_MOCK_DATA === 'true') {
             console.log('--- MOCK API: refreshToken ---');
             await mockApiDelay();
+            setAuthData(mockAuthResponse);
             return mockAuthResponse;
         }
         const response = await api.post('/auth/refresh');
