@@ -9,12 +9,21 @@ import { Button } from '@/components/ui/button';
 import { formatCurrency, formatDate, formatBusinessSegment } from '@/lib/formatters';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
 
 export const DashboardPage = () => {
     const navigate = useNavigate();
+    const { clientId, isAuthenticated } = useAuth();
 
-    // Mock client ID - in real app this would come from auth context or routing
-    const clientId = 'client-001';
+    if (!isAuthenticated || !clientId) {
+        return (
+            <div className='container mx-auto px-4 py-8'>
+                <Alert variant='destructive'>
+                    <AlertDescription>Please log in to view your dashboard.</AlertDescription>
+                </Alert>
+            </div>
+        );
+    }
 
     // Fetch dashboard data
     const {
