@@ -39,11 +39,6 @@ export type ClientAccount = $Result.DefaultSelection<Prisma.$ClientAccountPayloa
  */
 export type Statement = $Result.DefaultSelection<Prisma.$StatementPayload>
 /**
- * Model BankConnection
- * 
- */
-export type BankConnection = $Result.DefaultSelection<Prisma.$BankConnectionPayload>
-/**
  * Model Transaction
  * 
  */
@@ -95,26 +90,6 @@ export const StatementStatus: {
 };
 
 export type StatementStatus = (typeof StatementStatus)[keyof typeof StatementStatus]
-
-
-export const ConnectionStatus: {
-  CONNECTED: 'CONNECTED',
-  DISCONNECTED: 'DISCONNECTED',
-  ERROR: 'ERROR',
-  SYNCING: 'SYNCING'
-};
-
-export type ConnectionStatus = (typeof ConnectionStatus)[keyof typeof ConnectionStatus]
-
-
-export const ConnectionType: {
-  API: 'API',
-  PLAID: 'PLAID',
-  YODLEE: 'YODLEE',
-  MANUAL: 'MANUAL'
-};
-
-export type ConnectionType = (typeof ConnectionType)[keyof typeof ConnectionType]
 
 
 export const TransactionType: {
@@ -184,14 +159,6 @@ export const TokenType: typeof $Enums.TokenType
 export type StatementStatus = $Enums.StatementStatus
 
 export const StatementStatus: typeof $Enums.StatementStatus
-
-export type ConnectionStatus = $Enums.ConnectionStatus
-
-export const ConnectionStatus: typeof $Enums.ConnectionStatus
-
-export type ConnectionType = $Enums.ConnectionType
-
-export const ConnectionType: typeof $Enums.ConnectionType
 
 export type TransactionType = $Enums.TransactionType
 
@@ -380,16 +347,6 @@ export class PrismaClient<
     * ```
     */
   get statement(): Prisma.StatementDelegate<ExtArgs, ClientOptions>;
-
-  /**
-   * `prisma.bankConnection`: Exposes CRUD operations for the **BankConnection** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more BankConnections
-    * const bankConnections = await prisma.bankConnection.findMany()
-    * ```
-    */
-  get bankConnection(): Prisma.BankConnectionDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.transaction`: Exposes CRUD operations for the **Transaction** model.
@@ -875,7 +832,6 @@ export namespace Prisma {
     Client: 'Client',
     ClientAccount: 'ClientAccount',
     Statement: 'Statement',
-    BankConnection: 'BankConnection',
     Transaction: 'Transaction',
     ProcessingTask: 'ProcessingTask',
     TreasuryProduct: 'TreasuryProduct',
@@ -898,7 +854,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "token" | "client" | "clientAccount" | "statement" | "bankConnection" | "transaction" | "processingTask" | "treasuryProduct" | "recommendation"
+      modelProps: "user" | "token" | "client" | "clientAccount" | "statement" | "transaction" | "processingTask" | "treasuryProduct" | "recommendation"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1269,80 +1225,6 @@ export namespace Prisma {
           count: {
             args: Prisma.StatementCountArgs<ExtArgs>
             result: $Utils.Optional<StatementCountAggregateOutputType> | number
-          }
-        }
-      }
-      BankConnection: {
-        payload: Prisma.$BankConnectionPayload<ExtArgs>
-        fields: Prisma.BankConnectionFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.BankConnectionFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BankConnectionPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.BankConnectionFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BankConnectionPayload>
-          }
-          findFirst: {
-            args: Prisma.BankConnectionFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BankConnectionPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.BankConnectionFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BankConnectionPayload>
-          }
-          findMany: {
-            args: Prisma.BankConnectionFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BankConnectionPayload>[]
-          }
-          create: {
-            args: Prisma.BankConnectionCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BankConnectionPayload>
-          }
-          createMany: {
-            args: Prisma.BankConnectionCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.BankConnectionCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BankConnectionPayload>[]
-          }
-          delete: {
-            args: Prisma.BankConnectionDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BankConnectionPayload>
-          }
-          update: {
-            args: Prisma.BankConnectionUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BankConnectionPayload>
-          }
-          deleteMany: {
-            args: Prisma.BankConnectionDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.BankConnectionUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateManyAndReturn: {
-            args: Prisma.BankConnectionUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BankConnectionPayload>[]
-          }
-          upsert: {
-            args: Prisma.BankConnectionUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$BankConnectionPayload>
-          }
-          aggregate: {
-            args: Prisma.BankConnectionAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateBankConnection>
-          }
-          groupBy: {
-            args: Prisma.BankConnectionGroupByArgs<ExtArgs>
-            result: $Utils.Optional<BankConnectionGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.BankConnectionCountArgs<ExtArgs>
-            result: $Utils.Optional<BankConnectionCountAggregateOutputType> | number
           }
         }
       }
@@ -1743,7 +1625,6 @@ export namespace Prisma {
     client?: ClientOmit
     clientAccount?: ClientAccountOmit
     statement?: StatementOmit
-    bankConnection?: BankConnectionOmit
     transaction?: TransactionOmit
     processingTask?: ProcessingTaskOmit
     treasuryProduct?: TreasuryProductOmit
@@ -1870,7 +1751,6 @@ export namespace Prisma {
   export type ClientCountOutputType = {
     ClientAccount: number
     Statement: number
-    BankConnection: number
     ProcessingTask: number
     Recommendation: number
     Transaction: number
@@ -1879,7 +1759,6 @@ export namespace Prisma {
   export type ClientCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     ClientAccount?: boolean | ClientCountOutputTypeCountClientAccountArgs
     Statement?: boolean | ClientCountOutputTypeCountStatementArgs
-    BankConnection?: boolean | ClientCountOutputTypeCountBankConnectionArgs
     ProcessingTask?: boolean | ClientCountOutputTypeCountProcessingTaskArgs
     Recommendation?: boolean | ClientCountOutputTypeCountRecommendationArgs
     Transaction?: boolean | ClientCountOutputTypeCountTransactionArgs
@@ -1913,13 +1792,6 @@ export namespace Prisma {
   /**
    * ClientCountOutputType without action
    */
-  export type ClientCountOutputTypeCountBankConnectionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: BankConnectionWhereInput
-  }
-
-  /**
-   * ClientCountOutputType without action
-   */
   export type ClientCountOutputTypeCountProcessingTaskArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ProcessingTaskWhereInput
   }
@@ -1946,13 +1818,11 @@ export namespace Prisma {
   export type ClientAccountCountOutputType = {
     Statement: number
     Transaction: number
-    BankConnection: number
   }
 
   export type ClientAccountCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     Statement?: boolean | ClientAccountCountOutputTypeCountStatementArgs
     Transaction?: boolean | ClientAccountCountOutputTypeCountTransactionArgs
-    BankConnection?: boolean | ClientAccountCountOutputTypeCountBankConnectionArgs
   }
 
   // Custom InputTypes
@@ -1978,13 +1848,6 @@ export namespace Prisma {
    */
   export type ClientAccountCountOutputTypeCountTransactionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: TransactionWhereInput
-  }
-
-  /**
-   * ClientAccountCountOutputType without action
-   */
-  export type ClientAccountCountOutputTypeCountBankConnectionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: BankConnectionWhereInput
   }
 
 
@@ -4597,7 +4460,6 @@ export namespace Prisma {
     relationshipManager?: boolean | UserDefaultArgs<ExtArgs>
     ClientAccount?: boolean | Client$ClientAccountArgs<ExtArgs>
     Statement?: boolean | Client$StatementArgs<ExtArgs>
-    BankConnection?: boolean | Client$BankConnectionArgs<ExtArgs>
     ProcessingTask?: boolean | Client$ProcessingTaskArgs<ExtArgs>
     Recommendation?: boolean | Client$RecommendationArgs<ExtArgs>
     Transaction?: boolean | Client$TransactionArgs<ExtArgs>
@@ -4653,7 +4515,6 @@ export namespace Prisma {
     relationshipManager?: boolean | UserDefaultArgs<ExtArgs>
     ClientAccount?: boolean | Client$ClientAccountArgs<ExtArgs>
     Statement?: boolean | Client$StatementArgs<ExtArgs>
-    BankConnection?: boolean | Client$BankConnectionArgs<ExtArgs>
     ProcessingTask?: boolean | Client$ProcessingTaskArgs<ExtArgs>
     Recommendation?: boolean | Client$RecommendationArgs<ExtArgs>
     Transaction?: boolean | Client$TransactionArgs<ExtArgs>
@@ -4672,7 +4533,6 @@ export namespace Prisma {
       relationshipManager: Prisma.$UserPayload<ExtArgs>
       ClientAccount: Prisma.$ClientAccountPayload<ExtArgs>[]
       Statement: Prisma.$StatementPayload<ExtArgs>[]
-      BankConnection: Prisma.$BankConnectionPayload<ExtArgs>[]
       ProcessingTask: Prisma.$ProcessingTaskPayload<ExtArgs>[]
       Recommendation: Prisma.$RecommendationPayload<ExtArgs>[]
       Transaction: Prisma.$TransactionPayload<ExtArgs>[]
@@ -5086,7 +4946,6 @@ export namespace Prisma {
     relationshipManager<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     ClientAccount<T extends Client$ClientAccountArgs<ExtArgs> = {}>(args?: Subset<T, Client$ClientAccountArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ClientAccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     Statement<T extends Client$StatementArgs<ExtArgs> = {}>(args?: Subset<T, Client$StatementArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StatementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    BankConnection<T extends Client$BankConnectionArgs<ExtArgs> = {}>(args?: Subset<T, Client$BankConnectionArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BankConnectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     ProcessingTask<T extends Client$ProcessingTaskArgs<ExtArgs> = {}>(args?: Subset<T, Client$ProcessingTaskArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProcessingTaskPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     Recommendation<T extends Client$RecommendationArgs<ExtArgs> = {}>(args?: Subset<T, Client$RecommendationArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RecommendationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     Transaction<T extends Client$TransactionArgs<ExtArgs> = {}>(args?: Subset<T, Client$TransactionArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -5574,30 +5433,6 @@ export namespace Prisma {
   }
 
   /**
-   * Client.BankConnection
-   */
-  export type Client$BankConnectionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BankConnection
-     */
-    select?: BankConnectionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the BankConnection
-     */
-    omit?: BankConnectionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BankConnectionInclude<ExtArgs> | null
-    where?: BankConnectionWhereInput
-    orderBy?: BankConnectionOrderByWithRelationInput | BankConnectionOrderByWithRelationInput[]
-    cursor?: BankConnectionWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: BankConnectionScalarFieldEnum | BankConnectionScalarFieldEnum[]
-  }
-
-  /**
    * Client.ProcessingTask
    */
   export type Client$ProcessingTaskArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5945,7 +5780,6 @@ export namespace Prisma {
     client?: boolean | ClientDefaultArgs<ExtArgs>
     Statement?: boolean | ClientAccount$StatementArgs<ExtArgs>
     Transaction?: boolean | ClientAccount$TransactionArgs<ExtArgs>
-    BankConnection?: boolean | ClientAccount$BankConnectionArgs<ExtArgs>
     _count?: boolean | ClientAccountCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["clientAccount"]>
 
@@ -6001,7 +5835,6 @@ export namespace Prisma {
     client?: boolean | ClientDefaultArgs<ExtArgs>
     Statement?: boolean | ClientAccount$StatementArgs<ExtArgs>
     Transaction?: boolean | ClientAccount$TransactionArgs<ExtArgs>
-    BankConnection?: boolean | ClientAccount$BankConnectionArgs<ExtArgs>
     _count?: boolean | ClientAccountCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ClientAccountIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6017,7 +5850,6 @@ export namespace Prisma {
       client: Prisma.$ClientPayload<ExtArgs>
       Statement: Prisma.$StatementPayload<ExtArgs>[]
       Transaction: Prisma.$TransactionPayload<ExtArgs>[]
-      BankConnection: Prisma.$BankConnectionPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -6429,7 +6261,6 @@ export namespace Prisma {
     client<T extends ClientDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ClientDefaultArgs<ExtArgs>>): Prisma__ClientClient<$Result.GetResult<Prisma.$ClientPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     Statement<T extends ClientAccount$StatementArgs<ExtArgs> = {}>(args?: Subset<T, ClientAccount$StatementArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StatementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     Transaction<T extends ClientAccount$TransactionArgs<ExtArgs> = {}>(args?: Subset<T, ClientAccount$TransactionArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    BankConnection<T extends ClientAccount$BankConnectionArgs<ExtArgs> = {}>(args?: Subset<T, ClientAccount$BankConnectionArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BankConnectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6912,30 +6743,6 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: TransactionScalarFieldEnum | TransactionScalarFieldEnum[]
-  }
-
-  /**
-   * ClientAccount.BankConnection
-   */
-  export type ClientAccount$BankConnectionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BankConnection
-     */
-    select?: BankConnectionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the BankConnection
-     */
-    omit?: BankConnectionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BankConnectionInclude<ExtArgs> | null
-    where?: BankConnectionWhereInput
-    orderBy?: BankConnectionOrderByWithRelationInput | BankConnectionOrderByWithRelationInput[]
-    cursor?: BankConnectionWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: BankConnectionScalarFieldEnum | BankConnectionScalarFieldEnum[]
   }
 
   /**
@@ -8231,1142 +8038,6 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: StatementInclude<ExtArgs> | null
-  }
-
-
-  /**
-   * Model BankConnection
-   */
-
-  export type AggregateBankConnection = {
-    _count: BankConnectionCountAggregateOutputType | null
-    _min: BankConnectionMinAggregateOutputType | null
-    _max: BankConnectionMaxAggregateOutputType | null
-  }
-
-  export type BankConnectionMinAggregateOutputType = {
-    id: string | null
-    clientId: string | null
-    accountId: string | null
-    bankName: string | null
-    connectionType: $Enums.ConnectionType | null
-    lastSync: Date | null
-    status: $Enums.ConnectionStatus | null
-    createdAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type BankConnectionMaxAggregateOutputType = {
-    id: string | null
-    clientId: string | null
-    accountId: string | null
-    bankName: string | null
-    connectionType: $Enums.ConnectionType | null
-    lastSync: Date | null
-    status: $Enums.ConnectionStatus | null
-    createdAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type BankConnectionCountAggregateOutputType = {
-    id: number
-    clientId: number
-    accountId: number
-    bankName: number
-    connectionType: number
-    lastSync: number
-    status: number
-    credentials: number
-    settings: number
-    createdAt: number
-    updatedAt: number
-    _all: number
-  }
-
-
-  export type BankConnectionMinAggregateInputType = {
-    id?: true
-    clientId?: true
-    accountId?: true
-    bankName?: true
-    connectionType?: true
-    lastSync?: true
-    status?: true
-    createdAt?: true
-    updatedAt?: true
-  }
-
-  export type BankConnectionMaxAggregateInputType = {
-    id?: true
-    clientId?: true
-    accountId?: true
-    bankName?: true
-    connectionType?: true
-    lastSync?: true
-    status?: true
-    createdAt?: true
-    updatedAt?: true
-  }
-
-  export type BankConnectionCountAggregateInputType = {
-    id?: true
-    clientId?: true
-    accountId?: true
-    bankName?: true
-    connectionType?: true
-    lastSync?: true
-    status?: true
-    credentials?: true
-    settings?: true
-    createdAt?: true
-    updatedAt?: true
-    _all?: true
-  }
-
-  export type BankConnectionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which BankConnection to aggregate.
-     */
-    where?: BankConnectionWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of BankConnections to fetch.
-     */
-    orderBy?: BankConnectionOrderByWithRelationInput | BankConnectionOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: BankConnectionWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` BankConnections from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` BankConnections.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned BankConnections
-    **/
-    _count?: true | BankConnectionCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: BankConnectionMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: BankConnectionMaxAggregateInputType
-  }
-
-  export type GetBankConnectionAggregateType<T extends BankConnectionAggregateArgs> = {
-        [P in keyof T & keyof AggregateBankConnection]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateBankConnection[P]>
-      : GetScalarType<T[P], AggregateBankConnection[P]>
-  }
-
-
-
-
-  export type BankConnectionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: BankConnectionWhereInput
-    orderBy?: BankConnectionOrderByWithAggregationInput | BankConnectionOrderByWithAggregationInput[]
-    by: BankConnectionScalarFieldEnum[] | BankConnectionScalarFieldEnum
-    having?: BankConnectionScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: BankConnectionCountAggregateInputType | true
-    _min?: BankConnectionMinAggregateInputType
-    _max?: BankConnectionMaxAggregateInputType
-  }
-
-  export type BankConnectionGroupByOutputType = {
-    id: string
-    clientId: string
-    accountId: string
-    bankName: string
-    connectionType: $Enums.ConnectionType
-    lastSync: Date | null
-    status: $Enums.ConnectionStatus
-    credentials: JsonValue | null
-    settings: JsonValue | null
-    createdAt: Date
-    updatedAt: Date
-    _count: BankConnectionCountAggregateOutputType | null
-    _min: BankConnectionMinAggregateOutputType | null
-    _max: BankConnectionMaxAggregateOutputType | null
-  }
-
-  type GetBankConnectionGroupByPayload<T extends BankConnectionGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<BankConnectionGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof BankConnectionGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], BankConnectionGroupByOutputType[P]>
-            : GetScalarType<T[P], BankConnectionGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type BankConnectionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    clientId?: boolean
-    accountId?: boolean
-    bankName?: boolean
-    connectionType?: boolean
-    lastSync?: boolean
-    status?: boolean
-    credentials?: boolean
-    settings?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    client?: boolean | ClientDefaultArgs<ExtArgs>
-    account?: boolean | ClientAccountDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["bankConnection"]>
-
-  export type BankConnectionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    clientId?: boolean
-    accountId?: boolean
-    bankName?: boolean
-    connectionType?: boolean
-    lastSync?: boolean
-    status?: boolean
-    credentials?: boolean
-    settings?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    client?: boolean | ClientDefaultArgs<ExtArgs>
-    account?: boolean | ClientAccountDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["bankConnection"]>
-
-  export type BankConnectionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    clientId?: boolean
-    accountId?: boolean
-    bankName?: boolean
-    connectionType?: boolean
-    lastSync?: boolean
-    status?: boolean
-    credentials?: boolean
-    settings?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    client?: boolean | ClientDefaultArgs<ExtArgs>
-    account?: boolean | ClientAccountDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["bankConnection"]>
-
-  export type BankConnectionSelectScalar = {
-    id?: boolean
-    clientId?: boolean
-    accountId?: boolean
-    bankName?: boolean
-    connectionType?: boolean
-    lastSync?: boolean
-    status?: boolean
-    credentials?: boolean
-    settings?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-  }
-
-  export type BankConnectionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "clientId" | "accountId" | "bankName" | "connectionType" | "lastSync" | "status" | "credentials" | "settings" | "createdAt" | "updatedAt", ExtArgs["result"]["bankConnection"]>
-  export type BankConnectionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    client?: boolean | ClientDefaultArgs<ExtArgs>
-    account?: boolean | ClientAccountDefaultArgs<ExtArgs>
-  }
-  export type BankConnectionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    client?: boolean | ClientDefaultArgs<ExtArgs>
-    account?: boolean | ClientAccountDefaultArgs<ExtArgs>
-  }
-  export type BankConnectionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    client?: boolean | ClientDefaultArgs<ExtArgs>
-    account?: boolean | ClientAccountDefaultArgs<ExtArgs>
-  }
-
-  export type $BankConnectionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "BankConnection"
-    objects: {
-      client: Prisma.$ClientPayload<ExtArgs>
-      account: Prisma.$ClientAccountPayload<ExtArgs>
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      clientId: string
-      accountId: string
-      bankName: string
-      connectionType: $Enums.ConnectionType
-      lastSync: Date | null
-      status: $Enums.ConnectionStatus
-      credentials: Prisma.JsonValue | null
-      settings: Prisma.JsonValue | null
-      createdAt: Date
-      updatedAt: Date
-    }, ExtArgs["result"]["bankConnection"]>
-    composites: {}
-  }
-
-  type BankConnectionGetPayload<S extends boolean | null | undefined | BankConnectionDefaultArgs> = $Result.GetResult<Prisma.$BankConnectionPayload, S>
-
-  type BankConnectionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<BankConnectionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: BankConnectionCountAggregateInputType | true
-    }
-
-  export interface BankConnectionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['BankConnection'], meta: { name: 'BankConnection' } }
-    /**
-     * Find zero or one BankConnection that matches the filter.
-     * @param {BankConnectionFindUniqueArgs} args - Arguments to find a BankConnection
-     * @example
-     * // Get one BankConnection
-     * const bankConnection = await prisma.bankConnection.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends BankConnectionFindUniqueArgs>(args: SelectSubset<T, BankConnectionFindUniqueArgs<ExtArgs>>): Prisma__BankConnectionClient<$Result.GetResult<Prisma.$BankConnectionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find one BankConnection that matches the filter or throw an error with `error.code='P2025'`
-     * if no matches were found.
-     * @param {BankConnectionFindUniqueOrThrowArgs} args - Arguments to find a BankConnection
-     * @example
-     * // Get one BankConnection
-     * const bankConnection = await prisma.bankConnection.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends BankConnectionFindUniqueOrThrowArgs>(args: SelectSubset<T, BankConnectionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__BankConnectionClient<$Result.GetResult<Prisma.$BankConnectionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first BankConnection that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {BankConnectionFindFirstArgs} args - Arguments to find a BankConnection
-     * @example
-     * // Get one BankConnection
-     * const bankConnection = await prisma.bankConnection.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends BankConnectionFindFirstArgs>(args?: SelectSubset<T, BankConnectionFindFirstArgs<ExtArgs>>): Prisma__BankConnectionClient<$Result.GetResult<Prisma.$BankConnectionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first BankConnection that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {BankConnectionFindFirstOrThrowArgs} args - Arguments to find a BankConnection
-     * @example
-     * // Get one BankConnection
-     * const bankConnection = await prisma.bankConnection.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends BankConnectionFindFirstOrThrowArgs>(args?: SelectSubset<T, BankConnectionFindFirstOrThrowArgs<ExtArgs>>): Prisma__BankConnectionClient<$Result.GetResult<Prisma.$BankConnectionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more BankConnections that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {BankConnectionFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all BankConnections
-     * const bankConnections = await prisma.bankConnection.findMany()
-     * 
-     * // Get first 10 BankConnections
-     * const bankConnections = await prisma.bankConnection.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const bankConnectionWithIdOnly = await prisma.bankConnection.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends BankConnectionFindManyArgs>(args?: SelectSubset<T, BankConnectionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BankConnectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
-
-    /**
-     * Create a BankConnection.
-     * @param {BankConnectionCreateArgs} args - Arguments to create a BankConnection.
-     * @example
-     * // Create one BankConnection
-     * const BankConnection = await prisma.bankConnection.create({
-     *   data: {
-     *     // ... data to create a BankConnection
-     *   }
-     * })
-     * 
-     */
-    create<T extends BankConnectionCreateArgs>(args: SelectSubset<T, BankConnectionCreateArgs<ExtArgs>>): Prisma__BankConnectionClient<$Result.GetResult<Prisma.$BankConnectionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Create many BankConnections.
-     * @param {BankConnectionCreateManyArgs} args - Arguments to create many BankConnections.
-     * @example
-     * // Create many BankConnections
-     * const bankConnection = await prisma.bankConnection.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends BankConnectionCreateManyArgs>(args?: SelectSubset<T, BankConnectionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many BankConnections and returns the data saved in the database.
-     * @param {BankConnectionCreateManyAndReturnArgs} args - Arguments to create many BankConnections.
-     * @example
-     * // Create many BankConnections
-     * const bankConnection = await prisma.bankConnection.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many BankConnections and only return the `id`
-     * const bankConnectionWithIdOnly = await prisma.bankConnection.createManyAndReturn({
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends BankConnectionCreateManyAndReturnArgs>(args?: SelectSubset<T, BankConnectionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BankConnectionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Delete a BankConnection.
-     * @param {BankConnectionDeleteArgs} args - Arguments to delete one BankConnection.
-     * @example
-     * // Delete one BankConnection
-     * const BankConnection = await prisma.bankConnection.delete({
-     *   where: {
-     *     // ... filter to delete one BankConnection
-     *   }
-     * })
-     * 
-     */
-    delete<T extends BankConnectionDeleteArgs>(args: SelectSubset<T, BankConnectionDeleteArgs<ExtArgs>>): Prisma__BankConnectionClient<$Result.GetResult<Prisma.$BankConnectionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Update one BankConnection.
-     * @param {BankConnectionUpdateArgs} args - Arguments to update one BankConnection.
-     * @example
-     * // Update one BankConnection
-     * const bankConnection = await prisma.bankConnection.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends BankConnectionUpdateArgs>(args: SelectSubset<T, BankConnectionUpdateArgs<ExtArgs>>): Prisma__BankConnectionClient<$Result.GetResult<Prisma.$BankConnectionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Delete zero or more BankConnections.
-     * @param {BankConnectionDeleteManyArgs} args - Arguments to filter BankConnections to delete.
-     * @example
-     * // Delete a few BankConnections
-     * const { count } = await prisma.bankConnection.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends BankConnectionDeleteManyArgs>(args?: SelectSubset<T, BankConnectionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more BankConnections.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {BankConnectionUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many BankConnections
-     * const bankConnection = await prisma.bankConnection.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends BankConnectionUpdateManyArgs>(args: SelectSubset<T, BankConnectionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more BankConnections and returns the data updated in the database.
-     * @param {BankConnectionUpdateManyAndReturnArgs} args - Arguments to update many BankConnections.
-     * @example
-     * // Update many BankConnections
-     * const bankConnection = await prisma.bankConnection.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more BankConnections and only return the `id`
-     * const bankConnectionWithIdOnly = await prisma.bankConnection.updateManyAndReturn({
-     *   select: { id: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends BankConnectionUpdateManyAndReturnArgs>(args: SelectSubset<T, BankConnectionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BankConnectionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Create or update one BankConnection.
-     * @param {BankConnectionUpsertArgs} args - Arguments to update or create a BankConnection.
-     * @example
-     * // Update or create a BankConnection
-     * const bankConnection = await prisma.bankConnection.upsert({
-     *   create: {
-     *     // ... data to create a BankConnection
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the BankConnection we want to update
-     *   }
-     * })
-     */
-    upsert<T extends BankConnectionUpsertArgs>(args: SelectSubset<T, BankConnectionUpsertArgs<ExtArgs>>): Prisma__BankConnectionClient<$Result.GetResult<Prisma.$BankConnectionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-
-    /**
-     * Count the number of BankConnections.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {BankConnectionCountArgs} args - Arguments to filter BankConnections to count.
-     * @example
-     * // Count the number of BankConnections
-     * const count = await prisma.bankConnection.count({
-     *   where: {
-     *     // ... the filter for the BankConnections we want to count
-     *   }
-     * })
-    **/
-    count<T extends BankConnectionCountArgs>(
-      args?: Subset<T, BankConnectionCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], BankConnectionCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a BankConnection.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {BankConnectionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends BankConnectionAggregateArgs>(args: Subset<T, BankConnectionAggregateArgs>): Prisma.PrismaPromise<GetBankConnectionAggregateType<T>>
-
-    /**
-     * Group by BankConnection.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {BankConnectionGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends BankConnectionGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: BankConnectionGroupByArgs['orderBy'] }
-        : { orderBy?: BankConnectionGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, BankConnectionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetBankConnectionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the BankConnection model
-   */
-  readonly fields: BankConnectionFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for BankConnection.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__BankConnectionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    client<T extends ClientDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ClientDefaultArgs<ExtArgs>>): Prisma__ClientClient<$Result.GetResult<Prisma.$ClientPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    account<T extends ClientAccountDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ClientAccountDefaultArgs<ExtArgs>>): Prisma__ClientAccountClient<$Result.GetResult<Prisma.$ClientAccountPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the BankConnection model
-   */
-  interface BankConnectionFieldRefs {
-    readonly id: FieldRef<"BankConnection", 'String'>
-    readonly clientId: FieldRef<"BankConnection", 'String'>
-    readonly accountId: FieldRef<"BankConnection", 'String'>
-    readonly bankName: FieldRef<"BankConnection", 'String'>
-    readonly connectionType: FieldRef<"BankConnection", 'ConnectionType'>
-    readonly lastSync: FieldRef<"BankConnection", 'DateTime'>
-    readonly status: FieldRef<"BankConnection", 'ConnectionStatus'>
-    readonly credentials: FieldRef<"BankConnection", 'Json'>
-    readonly settings: FieldRef<"BankConnection", 'Json'>
-    readonly createdAt: FieldRef<"BankConnection", 'DateTime'>
-    readonly updatedAt: FieldRef<"BankConnection", 'DateTime'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * BankConnection findUnique
-   */
-  export type BankConnectionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BankConnection
-     */
-    select?: BankConnectionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the BankConnection
-     */
-    omit?: BankConnectionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BankConnectionInclude<ExtArgs> | null
-    /**
-     * Filter, which BankConnection to fetch.
-     */
-    where: BankConnectionWhereUniqueInput
-  }
-
-  /**
-   * BankConnection findUniqueOrThrow
-   */
-  export type BankConnectionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BankConnection
-     */
-    select?: BankConnectionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the BankConnection
-     */
-    omit?: BankConnectionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BankConnectionInclude<ExtArgs> | null
-    /**
-     * Filter, which BankConnection to fetch.
-     */
-    where: BankConnectionWhereUniqueInput
-  }
-
-  /**
-   * BankConnection findFirst
-   */
-  export type BankConnectionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BankConnection
-     */
-    select?: BankConnectionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the BankConnection
-     */
-    omit?: BankConnectionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BankConnectionInclude<ExtArgs> | null
-    /**
-     * Filter, which BankConnection to fetch.
-     */
-    where?: BankConnectionWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of BankConnections to fetch.
-     */
-    orderBy?: BankConnectionOrderByWithRelationInput | BankConnectionOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for BankConnections.
-     */
-    cursor?: BankConnectionWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` BankConnections from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` BankConnections.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of BankConnections.
-     */
-    distinct?: BankConnectionScalarFieldEnum | BankConnectionScalarFieldEnum[]
-  }
-
-  /**
-   * BankConnection findFirstOrThrow
-   */
-  export type BankConnectionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BankConnection
-     */
-    select?: BankConnectionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the BankConnection
-     */
-    omit?: BankConnectionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BankConnectionInclude<ExtArgs> | null
-    /**
-     * Filter, which BankConnection to fetch.
-     */
-    where?: BankConnectionWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of BankConnections to fetch.
-     */
-    orderBy?: BankConnectionOrderByWithRelationInput | BankConnectionOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for BankConnections.
-     */
-    cursor?: BankConnectionWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` BankConnections from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` BankConnections.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of BankConnections.
-     */
-    distinct?: BankConnectionScalarFieldEnum | BankConnectionScalarFieldEnum[]
-  }
-
-  /**
-   * BankConnection findMany
-   */
-  export type BankConnectionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BankConnection
-     */
-    select?: BankConnectionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the BankConnection
-     */
-    omit?: BankConnectionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BankConnectionInclude<ExtArgs> | null
-    /**
-     * Filter, which BankConnections to fetch.
-     */
-    where?: BankConnectionWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of BankConnections to fetch.
-     */
-    orderBy?: BankConnectionOrderByWithRelationInput | BankConnectionOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing BankConnections.
-     */
-    cursor?: BankConnectionWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` BankConnections from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` BankConnections.
-     */
-    skip?: number
-    distinct?: BankConnectionScalarFieldEnum | BankConnectionScalarFieldEnum[]
-  }
-
-  /**
-   * BankConnection create
-   */
-  export type BankConnectionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BankConnection
-     */
-    select?: BankConnectionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the BankConnection
-     */
-    omit?: BankConnectionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BankConnectionInclude<ExtArgs> | null
-    /**
-     * The data needed to create a BankConnection.
-     */
-    data: XOR<BankConnectionCreateInput, BankConnectionUncheckedCreateInput>
-  }
-
-  /**
-   * BankConnection createMany
-   */
-  export type BankConnectionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many BankConnections.
-     */
-    data: BankConnectionCreateManyInput | BankConnectionCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * BankConnection createManyAndReturn
-   */
-  export type BankConnectionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BankConnection
-     */
-    select?: BankConnectionSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the BankConnection
-     */
-    omit?: BankConnectionOmit<ExtArgs> | null
-    /**
-     * The data used to create many BankConnections.
-     */
-    data: BankConnectionCreateManyInput | BankConnectionCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BankConnectionIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * BankConnection update
-   */
-  export type BankConnectionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BankConnection
-     */
-    select?: BankConnectionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the BankConnection
-     */
-    omit?: BankConnectionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BankConnectionInclude<ExtArgs> | null
-    /**
-     * The data needed to update a BankConnection.
-     */
-    data: XOR<BankConnectionUpdateInput, BankConnectionUncheckedUpdateInput>
-    /**
-     * Choose, which BankConnection to update.
-     */
-    where: BankConnectionWhereUniqueInput
-  }
-
-  /**
-   * BankConnection updateMany
-   */
-  export type BankConnectionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update BankConnections.
-     */
-    data: XOR<BankConnectionUpdateManyMutationInput, BankConnectionUncheckedUpdateManyInput>
-    /**
-     * Filter which BankConnections to update
-     */
-    where?: BankConnectionWhereInput
-    /**
-     * Limit how many BankConnections to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * BankConnection updateManyAndReturn
-   */
-  export type BankConnectionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BankConnection
-     */
-    select?: BankConnectionSelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the BankConnection
-     */
-    omit?: BankConnectionOmit<ExtArgs> | null
-    /**
-     * The data used to update BankConnections.
-     */
-    data: XOR<BankConnectionUpdateManyMutationInput, BankConnectionUncheckedUpdateManyInput>
-    /**
-     * Filter which BankConnections to update
-     */
-    where?: BankConnectionWhereInput
-    /**
-     * Limit how many BankConnections to update.
-     */
-    limit?: number
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BankConnectionIncludeUpdateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * BankConnection upsert
-   */
-  export type BankConnectionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BankConnection
-     */
-    select?: BankConnectionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the BankConnection
-     */
-    omit?: BankConnectionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BankConnectionInclude<ExtArgs> | null
-    /**
-     * The filter to search for the BankConnection to update in case it exists.
-     */
-    where: BankConnectionWhereUniqueInput
-    /**
-     * In case the BankConnection found by the `where` argument doesn't exist, create a new BankConnection with this data.
-     */
-    create: XOR<BankConnectionCreateInput, BankConnectionUncheckedCreateInput>
-    /**
-     * In case the BankConnection was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<BankConnectionUpdateInput, BankConnectionUncheckedUpdateInput>
-  }
-
-  /**
-   * BankConnection delete
-   */
-  export type BankConnectionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BankConnection
-     */
-    select?: BankConnectionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the BankConnection
-     */
-    omit?: BankConnectionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BankConnectionInclude<ExtArgs> | null
-    /**
-     * Filter which BankConnection to delete.
-     */
-    where: BankConnectionWhereUniqueInput
-  }
-
-  /**
-   * BankConnection deleteMany
-   */
-  export type BankConnectionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which BankConnections to delete
-     */
-    where?: BankConnectionWhereInput
-    /**
-     * Limit how many BankConnections to delete.
-     */
-    limit?: number
-  }
-
-  /**
-   * BankConnection without action
-   */
-  export type BankConnectionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the BankConnection
-     */
-    select?: BankConnectionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the BankConnection
-     */
-    omit?: BankConnectionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: BankConnectionInclude<ExtArgs> | null
   }
 
 
@@ -14340,23 +13011,6 @@ export namespace Prisma {
   export type StatementScalarFieldEnum = (typeof StatementScalarFieldEnum)[keyof typeof StatementScalarFieldEnum]
 
 
-  export const BankConnectionScalarFieldEnum: {
-    id: 'id',
-    clientId: 'clientId',
-    accountId: 'accountId',
-    bankName: 'bankName',
-    connectionType: 'connectionType',
-    lastSync: 'lastSync',
-    status: 'status',
-    credentials: 'credentials',
-    settings: 'settings',
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
-  };
-
-  export type BankConnectionScalarFieldEnum = (typeof BankConnectionScalarFieldEnum)[keyof typeof BankConnectionScalarFieldEnum]
-
-
   export const TransactionScalarFieldEnum: {
     id: 'id',
     accountId: 'accountId',
@@ -14613,34 +13267,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'ConnectionType'
-   */
-  export type EnumConnectionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ConnectionType'>
-    
-
-
-  /**
-   * Reference to a field of type 'ConnectionType[]'
-   */
-  export type ListEnumConnectionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ConnectionType[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'ConnectionStatus'
-   */
-  export type EnumConnectionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ConnectionStatus'>
-    
-
-
-  /**
-   * Reference to a field of type 'ConnectionStatus[]'
-   */
-  export type ListEnumConnectionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ConnectionStatus[]'>
-    
-
-
-  /**
    * Reference to a field of type 'TransactionType'
    */
   export type EnumTransactionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TransactionType'>
@@ -14880,7 +13506,6 @@ export namespace Prisma {
     relationshipManager?: XOR<UserScalarRelationFilter, UserWhereInput>
     ClientAccount?: ClientAccountListRelationFilter
     Statement?: StatementListRelationFilter
-    BankConnection?: BankConnectionListRelationFilter
     ProcessingTask?: ProcessingTaskListRelationFilter
     Recommendation?: RecommendationListRelationFilter
     Transaction?: TransactionListRelationFilter
@@ -14901,7 +13526,6 @@ export namespace Prisma {
     relationshipManager?: UserOrderByWithRelationInput
     ClientAccount?: ClientAccountOrderByRelationAggregateInput
     Statement?: StatementOrderByRelationAggregateInput
-    BankConnection?: BankConnectionOrderByRelationAggregateInput
     ProcessingTask?: ProcessingTaskOrderByRelationAggregateInput
     Recommendation?: RecommendationOrderByRelationAggregateInput
     Transaction?: TransactionOrderByRelationAggregateInput
@@ -14925,7 +13549,6 @@ export namespace Prisma {
     relationshipManager?: XOR<UserScalarRelationFilter, UserWhereInput>
     ClientAccount?: ClientAccountListRelationFilter
     Statement?: StatementListRelationFilter
-    BankConnection?: BankConnectionListRelationFilter
     ProcessingTask?: ProcessingTaskListRelationFilter
     Recommendation?: RecommendationListRelationFilter
     Transaction?: TransactionListRelationFilter
@@ -14986,7 +13609,6 @@ export namespace Prisma {
     client?: XOR<ClientScalarRelationFilter, ClientWhereInput>
     Statement?: StatementListRelationFilter
     Transaction?: TransactionListRelationFilter
-    BankConnection?: BankConnectionListRelationFilter
   }
 
   export type ClientAccountOrderByWithRelationInput = {
@@ -15005,7 +13627,6 @@ export namespace Prisma {
     client?: ClientOrderByWithRelationInput
     Statement?: StatementOrderByRelationAggregateInput
     Transaction?: TransactionOrderByRelationAggregateInput
-    BankConnection?: BankConnectionOrderByRelationAggregateInput
   }
 
   export type ClientAccountWhereUniqueInput = Prisma.AtLeast<{
@@ -15027,7 +13648,6 @@ export namespace Prisma {
     client?: XOR<ClientScalarRelationFilter, ClientWhereInput>
     Statement?: StatementListRelationFilter
     Transaction?: TransactionListRelationFilter
-    BankConnection?: BankConnectionListRelationFilter
   }, "id" | "accountNumber">
 
   export type ClientAccountOrderByWithAggregationInput = {
@@ -15172,94 +13792,6 @@ export namespace Prisma {
     errorMessage?: StringNullableWithAggregatesFilter<"Statement"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Statement"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Statement"> | Date | string
-  }
-
-  export type BankConnectionWhereInput = {
-    AND?: BankConnectionWhereInput | BankConnectionWhereInput[]
-    OR?: BankConnectionWhereInput[]
-    NOT?: BankConnectionWhereInput | BankConnectionWhereInput[]
-    id?: StringFilter<"BankConnection"> | string
-    clientId?: StringFilter<"BankConnection"> | string
-    accountId?: StringFilter<"BankConnection"> | string
-    bankName?: StringFilter<"BankConnection"> | string
-    connectionType?: EnumConnectionTypeFilter<"BankConnection"> | $Enums.ConnectionType
-    lastSync?: DateTimeNullableFilter<"BankConnection"> | Date | string | null
-    status?: EnumConnectionStatusFilter<"BankConnection"> | $Enums.ConnectionStatus
-    credentials?: JsonNullableFilter<"BankConnection">
-    settings?: JsonNullableFilter<"BankConnection">
-    createdAt?: DateTimeFilter<"BankConnection"> | Date | string
-    updatedAt?: DateTimeFilter<"BankConnection"> | Date | string
-    client?: XOR<ClientScalarRelationFilter, ClientWhereInput>
-    account?: XOR<ClientAccountScalarRelationFilter, ClientAccountWhereInput>
-  }
-
-  export type BankConnectionOrderByWithRelationInput = {
-    id?: SortOrder
-    clientId?: SortOrder
-    accountId?: SortOrder
-    bankName?: SortOrder
-    connectionType?: SortOrder
-    lastSync?: SortOrderInput | SortOrder
-    status?: SortOrder
-    credentials?: SortOrderInput | SortOrder
-    settings?: SortOrderInput | SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    client?: ClientOrderByWithRelationInput
-    account?: ClientAccountOrderByWithRelationInput
-  }
-
-  export type BankConnectionWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    AND?: BankConnectionWhereInput | BankConnectionWhereInput[]
-    OR?: BankConnectionWhereInput[]
-    NOT?: BankConnectionWhereInput | BankConnectionWhereInput[]
-    clientId?: StringFilter<"BankConnection"> | string
-    accountId?: StringFilter<"BankConnection"> | string
-    bankName?: StringFilter<"BankConnection"> | string
-    connectionType?: EnumConnectionTypeFilter<"BankConnection"> | $Enums.ConnectionType
-    lastSync?: DateTimeNullableFilter<"BankConnection"> | Date | string | null
-    status?: EnumConnectionStatusFilter<"BankConnection"> | $Enums.ConnectionStatus
-    credentials?: JsonNullableFilter<"BankConnection">
-    settings?: JsonNullableFilter<"BankConnection">
-    createdAt?: DateTimeFilter<"BankConnection"> | Date | string
-    updatedAt?: DateTimeFilter<"BankConnection"> | Date | string
-    client?: XOR<ClientScalarRelationFilter, ClientWhereInput>
-    account?: XOR<ClientAccountScalarRelationFilter, ClientAccountWhereInput>
-  }, "id">
-
-  export type BankConnectionOrderByWithAggregationInput = {
-    id?: SortOrder
-    clientId?: SortOrder
-    accountId?: SortOrder
-    bankName?: SortOrder
-    connectionType?: SortOrder
-    lastSync?: SortOrderInput | SortOrder
-    status?: SortOrder
-    credentials?: SortOrderInput | SortOrder
-    settings?: SortOrderInput | SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    _count?: BankConnectionCountOrderByAggregateInput
-    _max?: BankConnectionMaxOrderByAggregateInput
-    _min?: BankConnectionMinOrderByAggregateInput
-  }
-
-  export type BankConnectionScalarWhereWithAggregatesInput = {
-    AND?: BankConnectionScalarWhereWithAggregatesInput | BankConnectionScalarWhereWithAggregatesInput[]
-    OR?: BankConnectionScalarWhereWithAggregatesInput[]
-    NOT?: BankConnectionScalarWhereWithAggregatesInput | BankConnectionScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"BankConnection"> | string
-    clientId?: StringWithAggregatesFilter<"BankConnection"> | string
-    accountId?: StringWithAggregatesFilter<"BankConnection"> | string
-    bankName?: StringWithAggregatesFilter<"BankConnection"> | string
-    connectionType?: EnumConnectionTypeWithAggregatesFilter<"BankConnection"> | $Enums.ConnectionType
-    lastSync?: DateTimeNullableWithAggregatesFilter<"BankConnection"> | Date | string | null
-    status?: EnumConnectionStatusWithAggregatesFilter<"BankConnection"> | $Enums.ConnectionStatus
-    credentials?: JsonNullableWithAggregatesFilter<"BankConnection">
-    settings?: JsonNullableWithAggregatesFilter<"BankConnection">
-    createdAt?: DateTimeWithAggregatesFilter<"BankConnection"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"BankConnection"> | Date | string
   }
 
   export type TransactionWhereInput = {
@@ -15857,7 +14389,6 @@ export namespace Prisma {
     relationshipManager: UserCreateNestedOneWithoutClientInput
     ClientAccount?: ClientAccountCreateNestedManyWithoutClientInput
     Statement?: StatementCreateNestedManyWithoutClientInput
-    BankConnection?: BankConnectionCreateNestedManyWithoutClientInput
     ProcessingTask?: ProcessingTaskCreateNestedManyWithoutClientInput
     Recommendation?: RecommendationCreateNestedManyWithoutClientInput
     Transaction?: TransactionCreateNestedManyWithoutClientInput
@@ -15877,7 +14408,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     ClientAccount?: ClientAccountUncheckedCreateNestedManyWithoutClientInput
     Statement?: StatementUncheckedCreateNestedManyWithoutClientInput
-    BankConnection?: BankConnectionUncheckedCreateNestedManyWithoutClientInput
     ProcessingTask?: ProcessingTaskUncheckedCreateNestedManyWithoutClientInput
     Recommendation?: RecommendationUncheckedCreateNestedManyWithoutClientInput
     Transaction?: TransactionUncheckedCreateNestedManyWithoutClientInput
@@ -15897,7 +14427,6 @@ export namespace Prisma {
     relationshipManager?: UserUpdateOneRequiredWithoutClientNestedInput
     ClientAccount?: ClientAccountUpdateManyWithoutClientNestedInput
     Statement?: StatementUpdateManyWithoutClientNestedInput
-    BankConnection?: BankConnectionUpdateManyWithoutClientNestedInput
     ProcessingTask?: ProcessingTaskUpdateManyWithoutClientNestedInput
     Recommendation?: RecommendationUpdateManyWithoutClientNestedInput
     Transaction?: TransactionUpdateManyWithoutClientNestedInput
@@ -15917,7 +14446,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     ClientAccount?: ClientAccountUncheckedUpdateManyWithoutClientNestedInput
     Statement?: StatementUncheckedUpdateManyWithoutClientNestedInput
-    BankConnection?: BankConnectionUncheckedUpdateManyWithoutClientNestedInput
     ProcessingTask?: ProcessingTaskUncheckedUpdateManyWithoutClientNestedInput
     Recommendation?: RecommendationUncheckedUpdateManyWithoutClientNestedInput
     Transaction?: TransactionUncheckedUpdateManyWithoutClientNestedInput
@@ -15979,7 +14507,6 @@ export namespace Prisma {
     client: ClientCreateNestedOneWithoutClientAccountInput
     Statement?: StatementCreateNestedManyWithoutAccountInput
     Transaction?: TransactionCreateNestedManyWithoutAccountInput
-    BankConnection?: BankConnectionCreateNestedManyWithoutAccountInput
   }
 
   export type ClientAccountUncheckedCreateInput = {
@@ -15997,7 +14524,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     Statement?: StatementUncheckedCreateNestedManyWithoutAccountInput
     Transaction?: TransactionUncheckedCreateNestedManyWithoutAccountInput
-    BankConnection?: BankConnectionUncheckedCreateNestedManyWithoutAccountInput
   }
 
   export type ClientAccountUpdateInput = {
@@ -16015,7 +14541,6 @@ export namespace Prisma {
     client?: ClientUpdateOneRequiredWithoutClientAccountNestedInput
     Statement?: StatementUpdateManyWithoutAccountNestedInput
     Transaction?: TransactionUpdateManyWithoutAccountNestedInput
-    BankConnection?: BankConnectionUpdateManyWithoutAccountNestedInput
   }
 
   export type ClientAccountUncheckedUpdateInput = {
@@ -16033,7 +14558,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Statement?: StatementUncheckedUpdateManyWithoutAccountNestedInput
     Transaction?: TransactionUncheckedUpdateManyWithoutAccountNestedInput
-    BankConnection?: BankConnectionUncheckedUpdateManyWithoutAccountNestedInput
   }
 
   export type ClientAccountCreateManyInput = {
@@ -16194,102 +14718,6 @@ export namespace Prisma {
     accountId?: NullableStringFieldUpdateOperationsInput | string | null
     period?: NullableJsonNullValueInput | InputJsonValue
     errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type BankConnectionCreateInput = {
-    id?: string
-    bankName: string
-    connectionType: $Enums.ConnectionType
-    lastSync?: Date | string | null
-    status?: $Enums.ConnectionStatus
-    credentials?: NullableJsonNullValueInput | InputJsonValue
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    client: ClientCreateNestedOneWithoutBankConnectionInput
-    account: ClientAccountCreateNestedOneWithoutBankConnectionInput
-  }
-
-  export type BankConnectionUncheckedCreateInput = {
-    id?: string
-    clientId: string
-    accountId: string
-    bankName: string
-    connectionType: $Enums.ConnectionType
-    lastSync?: Date | string | null
-    status?: $Enums.ConnectionStatus
-    credentials?: NullableJsonNullValueInput | InputJsonValue
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type BankConnectionUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    bankName?: StringFieldUpdateOperationsInput | string
-    connectionType?: EnumConnectionTypeFieldUpdateOperationsInput | $Enums.ConnectionType
-    lastSync?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    status?: EnumConnectionStatusFieldUpdateOperationsInput | $Enums.ConnectionStatus
-    credentials?: NullableJsonNullValueInput | InputJsonValue
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    client?: ClientUpdateOneRequiredWithoutBankConnectionNestedInput
-    account?: ClientAccountUpdateOneRequiredWithoutBankConnectionNestedInput
-  }
-
-  export type BankConnectionUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    clientId?: StringFieldUpdateOperationsInput | string
-    accountId?: StringFieldUpdateOperationsInput | string
-    bankName?: StringFieldUpdateOperationsInput | string
-    connectionType?: EnumConnectionTypeFieldUpdateOperationsInput | $Enums.ConnectionType
-    lastSync?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    status?: EnumConnectionStatusFieldUpdateOperationsInput | $Enums.ConnectionStatus
-    credentials?: NullableJsonNullValueInput | InputJsonValue
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type BankConnectionCreateManyInput = {
-    id?: string
-    clientId: string
-    accountId: string
-    bankName: string
-    connectionType: $Enums.ConnectionType
-    lastSync?: Date | string | null
-    status?: $Enums.ConnectionStatus
-    credentials?: NullableJsonNullValueInput | InputJsonValue
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type BankConnectionUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    bankName?: StringFieldUpdateOperationsInput | string
-    connectionType?: EnumConnectionTypeFieldUpdateOperationsInput | $Enums.ConnectionType
-    lastSync?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    status?: EnumConnectionStatusFieldUpdateOperationsInput | $Enums.ConnectionStatus
-    credentials?: NullableJsonNullValueInput | InputJsonValue
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type BankConnectionUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    clientId?: StringFieldUpdateOperationsInput | string
-    accountId?: StringFieldUpdateOperationsInput | string
-    bankName?: StringFieldUpdateOperationsInput | string
-    connectionType?: EnumConnectionTypeFieldUpdateOperationsInput | $Enums.ConnectionType
-    lastSync?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    status?: EnumConnectionStatusFieldUpdateOperationsInput | $Enums.ConnectionStatus
-    credentials?: NullableJsonNullValueInput | InputJsonValue
-    settings?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -17096,12 +15524,6 @@ export namespace Prisma {
     none?: StatementWhereInput
   }
 
-  export type BankConnectionListRelationFilter = {
-    every?: BankConnectionWhereInput
-    some?: BankConnectionWhereInput
-    none?: BankConnectionWhereInput
-  }
-
   export type ProcessingTaskListRelationFilter = {
     every?: ProcessingTaskWhereInput
     some?: ProcessingTaskWhereInput
@@ -17125,10 +15547,6 @@ export namespace Prisma {
   }
 
   export type StatementOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type BankConnectionOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -17426,108 +15844,6 @@ export namespace Prisma {
     _max?: NestedJsonNullableFilter<$PrismaModel>
   }
 
-  export type EnumConnectionTypeFilter<$PrismaModel = never> = {
-    equals?: $Enums.ConnectionType | EnumConnectionTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.ConnectionType[] | ListEnumConnectionTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.ConnectionType[] | ListEnumConnectionTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumConnectionTypeFilter<$PrismaModel> | $Enums.ConnectionType
-  }
-
-  export type DateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
-  export type EnumConnectionStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.ConnectionStatus | EnumConnectionStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.ConnectionStatus[] | ListEnumConnectionStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.ConnectionStatus[] | ListEnumConnectionStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumConnectionStatusFilter<$PrismaModel> | $Enums.ConnectionStatus
-  }
-
-  export type ClientAccountScalarRelationFilter = {
-    is?: ClientAccountWhereInput
-    isNot?: ClientAccountWhereInput
-  }
-
-  export type BankConnectionCountOrderByAggregateInput = {
-    id?: SortOrder
-    clientId?: SortOrder
-    accountId?: SortOrder
-    bankName?: SortOrder
-    connectionType?: SortOrder
-    lastSync?: SortOrder
-    status?: SortOrder
-    credentials?: SortOrder
-    settings?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type BankConnectionMaxOrderByAggregateInput = {
-    id?: SortOrder
-    clientId?: SortOrder
-    accountId?: SortOrder
-    bankName?: SortOrder
-    connectionType?: SortOrder
-    lastSync?: SortOrder
-    status?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type BankConnectionMinOrderByAggregateInput = {
-    id?: SortOrder
-    clientId?: SortOrder
-    accountId?: SortOrder
-    bankName?: SortOrder
-    connectionType?: SortOrder
-    lastSync?: SortOrder
-    status?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type EnumConnectionTypeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.ConnectionType | EnumConnectionTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.ConnectionType[] | ListEnumConnectionTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.ConnectionType[] | ListEnumConnectionTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumConnectionTypeWithAggregatesFilter<$PrismaModel> | $Enums.ConnectionType
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumConnectionTypeFilter<$PrismaModel>
-    _max?: NestedEnumConnectionTypeFilter<$PrismaModel>
-  }
-
-  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
-  }
-
-  export type EnumConnectionStatusWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.ConnectionStatus | EnumConnectionStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.ConnectionStatus[] | ListEnumConnectionStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.ConnectionStatus[] | ListEnumConnectionStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumConnectionStatusWithAggregatesFilter<$PrismaModel> | $Enums.ConnectionStatus
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumConnectionStatusFilter<$PrismaModel>
-    _max?: NestedEnumConnectionStatusFilter<$PrismaModel>
-  }
-
   export type FloatFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel>
     in?: number[] | ListFloatFieldRefInput<$PrismaModel>
@@ -17544,6 +15860,11 @@ export namespace Prisma {
     in?: $Enums.TransactionType[] | ListEnumTransactionTypeFieldRefInput<$PrismaModel>
     notIn?: $Enums.TransactionType[] | ListEnumTransactionTypeFieldRefInput<$PrismaModel>
     not?: NestedEnumTransactionTypeFilter<$PrismaModel> | $Enums.TransactionType
+  }
+
+  export type ClientAccountScalarRelationFilter = {
+    is?: ClientAccountWhereInput
+    isNot?: ClientAccountWhereInput
   }
 
   export type StatementNullableScalarRelationFilter = {
@@ -17650,6 +15971,17 @@ export namespace Prisma {
     not?: NestedEnumTaskStatusFilter<$PrismaModel> | $Enums.TaskStatus
   }
 
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
   export type IntNullableFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
     in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
@@ -17740,6 +16072,20 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumTaskStatusFilter<$PrismaModel>
     _max?: NestedEnumTaskStatusFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -18062,13 +16408,6 @@ export namespace Prisma {
     connect?: StatementWhereUniqueInput | StatementWhereUniqueInput[]
   }
 
-  export type BankConnectionCreateNestedManyWithoutClientInput = {
-    create?: XOR<BankConnectionCreateWithoutClientInput, BankConnectionUncheckedCreateWithoutClientInput> | BankConnectionCreateWithoutClientInput[] | BankConnectionUncheckedCreateWithoutClientInput[]
-    connectOrCreate?: BankConnectionCreateOrConnectWithoutClientInput | BankConnectionCreateOrConnectWithoutClientInput[]
-    createMany?: BankConnectionCreateManyClientInputEnvelope
-    connect?: BankConnectionWhereUniqueInput | BankConnectionWhereUniqueInput[]
-  }
-
   export type ProcessingTaskCreateNestedManyWithoutClientInput = {
     create?: XOR<ProcessingTaskCreateWithoutClientInput, ProcessingTaskUncheckedCreateWithoutClientInput> | ProcessingTaskCreateWithoutClientInput[] | ProcessingTaskUncheckedCreateWithoutClientInput[]
     connectOrCreate?: ProcessingTaskCreateOrConnectWithoutClientInput | ProcessingTaskCreateOrConnectWithoutClientInput[]
@@ -18102,13 +16441,6 @@ export namespace Prisma {
     connectOrCreate?: StatementCreateOrConnectWithoutClientInput | StatementCreateOrConnectWithoutClientInput[]
     createMany?: StatementCreateManyClientInputEnvelope
     connect?: StatementWhereUniqueInput | StatementWhereUniqueInput[]
-  }
-
-  export type BankConnectionUncheckedCreateNestedManyWithoutClientInput = {
-    create?: XOR<BankConnectionCreateWithoutClientInput, BankConnectionUncheckedCreateWithoutClientInput> | BankConnectionCreateWithoutClientInput[] | BankConnectionUncheckedCreateWithoutClientInput[]
-    connectOrCreate?: BankConnectionCreateOrConnectWithoutClientInput | BankConnectionCreateOrConnectWithoutClientInput[]
-    createMany?: BankConnectionCreateManyClientInputEnvelope
-    connect?: BankConnectionWhereUniqueInput | BankConnectionWhereUniqueInput[]
   }
 
   export type ProcessingTaskUncheckedCreateNestedManyWithoutClientInput = {
@@ -18166,20 +16498,6 @@ export namespace Prisma {
     update?: StatementUpdateWithWhereUniqueWithoutClientInput | StatementUpdateWithWhereUniqueWithoutClientInput[]
     updateMany?: StatementUpdateManyWithWhereWithoutClientInput | StatementUpdateManyWithWhereWithoutClientInput[]
     deleteMany?: StatementScalarWhereInput | StatementScalarWhereInput[]
-  }
-
-  export type BankConnectionUpdateManyWithoutClientNestedInput = {
-    create?: XOR<BankConnectionCreateWithoutClientInput, BankConnectionUncheckedCreateWithoutClientInput> | BankConnectionCreateWithoutClientInput[] | BankConnectionUncheckedCreateWithoutClientInput[]
-    connectOrCreate?: BankConnectionCreateOrConnectWithoutClientInput | BankConnectionCreateOrConnectWithoutClientInput[]
-    upsert?: BankConnectionUpsertWithWhereUniqueWithoutClientInput | BankConnectionUpsertWithWhereUniqueWithoutClientInput[]
-    createMany?: BankConnectionCreateManyClientInputEnvelope
-    set?: BankConnectionWhereUniqueInput | BankConnectionWhereUniqueInput[]
-    disconnect?: BankConnectionWhereUniqueInput | BankConnectionWhereUniqueInput[]
-    delete?: BankConnectionWhereUniqueInput | BankConnectionWhereUniqueInput[]
-    connect?: BankConnectionWhereUniqueInput | BankConnectionWhereUniqueInput[]
-    update?: BankConnectionUpdateWithWhereUniqueWithoutClientInput | BankConnectionUpdateWithWhereUniqueWithoutClientInput[]
-    updateMany?: BankConnectionUpdateManyWithWhereWithoutClientInput | BankConnectionUpdateManyWithWhereWithoutClientInput[]
-    deleteMany?: BankConnectionScalarWhereInput | BankConnectionScalarWhereInput[]
   }
 
   export type ProcessingTaskUpdateManyWithoutClientNestedInput = {
@@ -18252,20 +16570,6 @@ export namespace Prisma {
     deleteMany?: StatementScalarWhereInput | StatementScalarWhereInput[]
   }
 
-  export type BankConnectionUncheckedUpdateManyWithoutClientNestedInput = {
-    create?: XOR<BankConnectionCreateWithoutClientInput, BankConnectionUncheckedCreateWithoutClientInput> | BankConnectionCreateWithoutClientInput[] | BankConnectionUncheckedCreateWithoutClientInput[]
-    connectOrCreate?: BankConnectionCreateOrConnectWithoutClientInput | BankConnectionCreateOrConnectWithoutClientInput[]
-    upsert?: BankConnectionUpsertWithWhereUniqueWithoutClientInput | BankConnectionUpsertWithWhereUniqueWithoutClientInput[]
-    createMany?: BankConnectionCreateManyClientInputEnvelope
-    set?: BankConnectionWhereUniqueInput | BankConnectionWhereUniqueInput[]
-    disconnect?: BankConnectionWhereUniqueInput | BankConnectionWhereUniqueInput[]
-    delete?: BankConnectionWhereUniqueInput | BankConnectionWhereUniqueInput[]
-    connect?: BankConnectionWhereUniqueInput | BankConnectionWhereUniqueInput[]
-    update?: BankConnectionUpdateWithWhereUniqueWithoutClientInput | BankConnectionUpdateWithWhereUniqueWithoutClientInput[]
-    updateMany?: BankConnectionUpdateManyWithWhereWithoutClientInput | BankConnectionUpdateManyWithWhereWithoutClientInput[]
-    deleteMany?: BankConnectionScalarWhereInput | BankConnectionScalarWhereInput[]
-  }
-
   export type ProcessingTaskUncheckedUpdateManyWithoutClientNestedInput = {
     create?: XOR<ProcessingTaskCreateWithoutClientInput, ProcessingTaskUncheckedCreateWithoutClientInput> | ProcessingTaskCreateWithoutClientInput[] | ProcessingTaskUncheckedCreateWithoutClientInput[]
     connectOrCreate?: ProcessingTaskCreateOrConnectWithoutClientInput | ProcessingTaskCreateOrConnectWithoutClientInput[]
@@ -18328,13 +16632,6 @@ export namespace Prisma {
     connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
   }
 
-  export type BankConnectionCreateNestedManyWithoutAccountInput = {
-    create?: XOR<BankConnectionCreateWithoutAccountInput, BankConnectionUncheckedCreateWithoutAccountInput> | BankConnectionCreateWithoutAccountInput[] | BankConnectionUncheckedCreateWithoutAccountInput[]
-    connectOrCreate?: BankConnectionCreateOrConnectWithoutAccountInput | BankConnectionCreateOrConnectWithoutAccountInput[]
-    createMany?: BankConnectionCreateManyAccountInputEnvelope
-    connect?: BankConnectionWhereUniqueInput | BankConnectionWhereUniqueInput[]
-  }
-
   export type StatementUncheckedCreateNestedManyWithoutAccountInput = {
     create?: XOR<StatementCreateWithoutAccountInput, StatementUncheckedCreateWithoutAccountInput> | StatementCreateWithoutAccountInput[] | StatementUncheckedCreateWithoutAccountInput[]
     connectOrCreate?: StatementCreateOrConnectWithoutAccountInput | StatementCreateOrConnectWithoutAccountInput[]
@@ -18347,13 +16644,6 @@ export namespace Prisma {
     connectOrCreate?: TransactionCreateOrConnectWithoutAccountInput | TransactionCreateOrConnectWithoutAccountInput[]
     createMany?: TransactionCreateManyAccountInputEnvelope
     connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
-  }
-
-  export type BankConnectionUncheckedCreateNestedManyWithoutAccountInput = {
-    create?: XOR<BankConnectionCreateWithoutAccountInput, BankConnectionUncheckedCreateWithoutAccountInput> | BankConnectionCreateWithoutAccountInput[] | BankConnectionUncheckedCreateWithoutAccountInput[]
-    connectOrCreate?: BankConnectionCreateOrConnectWithoutAccountInput | BankConnectionCreateOrConnectWithoutAccountInput[]
-    createMany?: BankConnectionCreateManyAccountInputEnvelope
-    connect?: BankConnectionWhereUniqueInput | BankConnectionWhereUniqueInput[]
   }
 
   export type NullableFloatFieldUpdateOperationsInput = {
@@ -18400,20 +16690,6 @@ export namespace Prisma {
     deleteMany?: TransactionScalarWhereInput | TransactionScalarWhereInput[]
   }
 
-  export type BankConnectionUpdateManyWithoutAccountNestedInput = {
-    create?: XOR<BankConnectionCreateWithoutAccountInput, BankConnectionUncheckedCreateWithoutAccountInput> | BankConnectionCreateWithoutAccountInput[] | BankConnectionUncheckedCreateWithoutAccountInput[]
-    connectOrCreate?: BankConnectionCreateOrConnectWithoutAccountInput | BankConnectionCreateOrConnectWithoutAccountInput[]
-    upsert?: BankConnectionUpsertWithWhereUniqueWithoutAccountInput | BankConnectionUpsertWithWhereUniqueWithoutAccountInput[]
-    createMany?: BankConnectionCreateManyAccountInputEnvelope
-    set?: BankConnectionWhereUniqueInput | BankConnectionWhereUniqueInput[]
-    disconnect?: BankConnectionWhereUniqueInput | BankConnectionWhereUniqueInput[]
-    delete?: BankConnectionWhereUniqueInput | BankConnectionWhereUniqueInput[]
-    connect?: BankConnectionWhereUniqueInput | BankConnectionWhereUniqueInput[]
-    update?: BankConnectionUpdateWithWhereUniqueWithoutAccountInput | BankConnectionUpdateWithWhereUniqueWithoutAccountInput[]
-    updateMany?: BankConnectionUpdateManyWithWhereWithoutAccountInput | BankConnectionUpdateManyWithWhereWithoutAccountInput[]
-    deleteMany?: BankConnectionScalarWhereInput | BankConnectionScalarWhereInput[]
-  }
-
   export type StatementUncheckedUpdateManyWithoutAccountNestedInput = {
     create?: XOR<StatementCreateWithoutAccountInput, StatementUncheckedCreateWithoutAccountInput> | StatementCreateWithoutAccountInput[] | StatementUncheckedCreateWithoutAccountInput[]
     connectOrCreate?: StatementCreateOrConnectWithoutAccountInput | StatementCreateOrConnectWithoutAccountInput[]
@@ -18440,20 +16716,6 @@ export namespace Prisma {
     update?: TransactionUpdateWithWhereUniqueWithoutAccountInput | TransactionUpdateWithWhereUniqueWithoutAccountInput[]
     updateMany?: TransactionUpdateManyWithWhereWithoutAccountInput | TransactionUpdateManyWithWhereWithoutAccountInput[]
     deleteMany?: TransactionScalarWhereInput | TransactionScalarWhereInput[]
-  }
-
-  export type BankConnectionUncheckedUpdateManyWithoutAccountNestedInput = {
-    create?: XOR<BankConnectionCreateWithoutAccountInput, BankConnectionUncheckedCreateWithoutAccountInput> | BankConnectionCreateWithoutAccountInput[] | BankConnectionUncheckedCreateWithoutAccountInput[]
-    connectOrCreate?: BankConnectionCreateOrConnectWithoutAccountInput | BankConnectionCreateOrConnectWithoutAccountInput[]
-    upsert?: BankConnectionUpsertWithWhereUniqueWithoutAccountInput | BankConnectionUpsertWithWhereUniqueWithoutAccountInput[]
-    createMany?: BankConnectionCreateManyAccountInputEnvelope
-    set?: BankConnectionWhereUniqueInput | BankConnectionWhereUniqueInput[]
-    disconnect?: BankConnectionWhereUniqueInput | BankConnectionWhereUniqueInput[]
-    delete?: BankConnectionWhereUniqueInput | BankConnectionWhereUniqueInput[]
-    connect?: BankConnectionWhereUniqueInput | BankConnectionWhereUniqueInput[]
-    update?: BankConnectionUpdateWithWhereUniqueWithoutAccountInput | BankConnectionUpdateWithWhereUniqueWithoutAccountInput[]
-    updateMany?: BankConnectionUpdateManyWithWhereWithoutAccountInput | BankConnectionUpdateManyWithWhereWithoutAccountInput[]
-    deleteMany?: BankConnectionScalarWhereInput | BankConnectionScalarWhereInput[]
   }
 
   export type ClientCreateNestedOneWithoutStatementInput = {
@@ -18574,46 +16836,6 @@ export namespace Prisma {
     deleteMany?: ProcessingTaskScalarWhereInput | ProcessingTaskScalarWhereInput[]
   }
 
-  export type ClientCreateNestedOneWithoutBankConnectionInput = {
-    create?: XOR<ClientCreateWithoutBankConnectionInput, ClientUncheckedCreateWithoutBankConnectionInput>
-    connectOrCreate?: ClientCreateOrConnectWithoutBankConnectionInput
-    connect?: ClientWhereUniqueInput
-  }
-
-  export type ClientAccountCreateNestedOneWithoutBankConnectionInput = {
-    create?: XOR<ClientAccountCreateWithoutBankConnectionInput, ClientAccountUncheckedCreateWithoutBankConnectionInput>
-    connectOrCreate?: ClientAccountCreateOrConnectWithoutBankConnectionInput
-    connect?: ClientAccountWhereUniqueInput
-  }
-
-  export type EnumConnectionTypeFieldUpdateOperationsInput = {
-    set?: $Enums.ConnectionType
-  }
-
-  export type NullableDateTimeFieldUpdateOperationsInput = {
-    set?: Date | string | null
-  }
-
-  export type EnumConnectionStatusFieldUpdateOperationsInput = {
-    set?: $Enums.ConnectionStatus
-  }
-
-  export type ClientUpdateOneRequiredWithoutBankConnectionNestedInput = {
-    create?: XOR<ClientCreateWithoutBankConnectionInput, ClientUncheckedCreateWithoutBankConnectionInput>
-    connectOrCreate?: ClientCreateOrConnectWithoutBankConnectionInput
-    upsert?: ClientUpsertWithoutBankConnectionInput
-    connect?: ClientWhereUniqueInput
-    update?: XOR<XOR<ClientUpdateToOneWithWhereWithoutBankConnectionInput, ClientUpdateWithoutBankConnectionInput>, ClientUncheckedUpdateWithoutBankConnectionInput>
-  }
-
-  export type ClientAccountUpdateOneRequiredWithoutBankConnectionNestedInput = {
-    create?: XOR<ClientAccountCreateWithoutBankConnectionInput, ClientAccountUncheckedCreateWithoutBankConnectionInput>
-    connectOrCreate?: ClientAccountCreateOrConnectWithoutBankConnectionInput
-    upsert?: ClientAccountUpsertWithoutBankConnectionInput
-    connect?: ClientAccountWhereUniqueInput
-    update?: XOR<XOR<ClientAccountUpdateToOneWithWhereWithoutBankConnectionInput, ClientAccountUpdateWithoutBankConnectionInput>, ClientAccountUncheckedUpdateWithoutBankConnectionInput>
-  }
-
   export type ClientAccountCreateNestedOneWithoutTransactionInput = {
     create?: XOR<ClientAccountCreateWithoutTransactionInput, ClientAccountUncheckedCreateWithoutTransactionInput>
     connectOrCreate?: ClientAccountCreateOrConnectWithoutTransactionInput
@@ -18688,6 +16910,10 @@ export namespace Prisma {
 
   export type EnumTaskStatusFieldUpdateOperationsInput = {
     set?: $Enums.TaskStatus
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
   }
 
   export type NullableIntFieldUpdateOperationsInput = {
@@ -19103,65 +17329,6 @@ export namespace Prisma {
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
-  export type NestedEnumConnectionTypeFilter<$PrismaModel = never> = {
-    equals?: $Enums.ConnectionType | EnumConnectionTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.ConnectionType[] | ListEnumConnectionTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.ConnectionType[] | ListEnumConnectionTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumConnectionTypeFilter<$PrismaModel> | $Enums.ConnectionType
-  }
-
-  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
-  export type NestedEnumConnectionStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.ConnectionStatus | EnumConnectionStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.ConnectionStatus[] | ListEnumConnectionStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.ConnectionStatus[] | ListEnumConnectionStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumConnectionStatusFilter<$PrismaModel> | $Enums.ConnectionStatus
-  }
-
-  export type NestedEnumConnectionTypeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.ConnectionType | EnumConnectionTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.ConnectionType[] | ListEnumConnectionTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.ConnectionType[] | ListEnumConnectionTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumConnectionTypeWithAggregatesFilter<$PrismaModel> | $Enums.ConnectionType
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumConnectionTypeFilter<$PrismaModel>
-    _max?: NestedEnumConnectionTypeFilter<$PrismaModel>
-  }
-
-  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
-  }
-
-  export type NestedEnumConnectionStatusWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.ConnectionStatus | EnumConnectionStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.ConnectionStatus[] | ListEnumConnectionStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.ConnectionStatus[] | ListEnumConnectionStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumConnectionStatusWithAggregatesFilter<$PrismaModel> | $Enums.ConnectionStatus
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumConnectionStatusFilter<$PrismaModel>
-    _max?: NestedEnumConnectionStatusFilter<$PrismaModel>
-  }
-
   export type NestedEnumTransactionTypeFilter<$PrismaModel = never> = {
     equals?: $Enums.TransactionType | EnumTransactionTypeFieldRefInput<$PrismaModel>
     in?: $Enums.TransactionType[] | ListEnumTransactionTypeFieldRefInput<$PrismaModel>
@@ -19209,6 +17376,17 @@ export namespace Prisma {
     not?: NestedEnumTaskStatusFilter<$PrismaModel> | $Enums.TaskStatus
   }
 
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
   export type NestedEnumTaskTypeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.TaskType | EnumTaskTypeFieldRefInput<$PrismaModel>
     in?: $Enums.TaskType[] | ListEnumTaskTypeFieldRefInput<$PrismaModel>
@@ -19227,6 +17405,20 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumTaskStatusFilter<$PrismaModel>
     _max?: NestedEnumTaskStatusFilter<$PrismaModel>
+  }
+
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -19319,7 +17511,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     ClientAccount?: ClientAccountCreateNestedManyWithoutClientInput
     Statement?: StatementCreateNestedManyWithoutClientInput
-    BankConnection?: BankConnectionCreateNestedManyWithoutClientInput
     ProcessingTask?: ProcessingTaskCreateNestedManyWithoutClientInput
     Recommendation?: RecommendationCreateNestedManyWithoutClientInput
     Transaction?: TransactionCreateNestedManyWithoutClientInput
@@ -19338,7 +17529,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     ClientAccount?: ClientAccountUncheckedCreateNestedManyWithoutClientInput
     Statement?: StatementUncheckedCreateNestedManyWithoutClientInput
-    BankConnection?: BankConnectionUncheckedCreateNestedManyWithoutClientInput
     ProcessingTask?: ProcessingTaskUncheckedCreateNestedManyWithoutClientInput
     Recommendation?: RecommendationUncheckedCreateNestedManyWithoutClientInput
     Transaction?: TransactionUncheckedCreateNestedManyWithoutClientInput
@@ -19520,7 +17710,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     Statement?: StatementCreateNestedManyWithoutAccountInput
     Transaction?: TransactionCreateNestedManyWithoutAccountInput
-    BankConnection?: BankConnectionCreateNestedManyWithoutAccountInput
   }
 
   export type ClientAccountUncheckedCreateWithoutClientInput = {
@@ -19537,7 +17726,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     Statement?: StatementUncheckedCreateNestedManyWithoutAccountInput
     Transaction?: TransactionUncheckedCreateNestedManyWithoutAccountInput
-    BankConnection?: BankConnectionUncheckedCreateNestedManyWithoutAccountInput
   }
 
   export type ClientAccountCreateOrConnectWithoutClientInput = {
@@ -19591,42 +17779,6 @@ export namespace Prisma {
 
   export type StatementCreateManyClientInputEnvelope = {
     data: StatementCreateManyClientInput | StatementCreateManyClientInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type BankConnectionCreateWithoutClientInput = {
-    id?: string
-    bankName: string
-    connectionType: $Enums.ConnectionType
-    lastSync?: Date | string | null
-    status?: $Enums.ConnectionStatus
-    credentials?: NullableJsonNullValueInput | InputJsonValue
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    account: ClientAccountCreateNestedOneWithoutBankConnectionInput
-  }
-
-  export type BankConnectionUncheckedCreateWithoutClientInput = {
-    id?: string
-    accountId: string
-    bankName: string
-    connectionType: $Enums.ConnectionType
-    lastSync?: Date | string | null
-    status?: $Enums.ConnectionStatus
-    credentials?: NullableJsonNullValueInput | InputJsonValue
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type BankConnectionCreateOrConnectWithoutClientInput = {
-    where: BankConnectionWhereUniqueInput
-    create: XOR<BankConnectionCreateWithoutClientInput, BankConnectionUncheckedCreateWithoutClientInput>
-  }
-
-  export type BankConnectionCreateManyClientInputEnvelope = {
-    data: BankConnectionCreateManyClientInput | BankConnectionCreateManyClientInput[]
     skipDuplicates?: boolean
   }
 
@@ -19868,39 +18020,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Statement"> | Date | string
   }
 
-  export type BankConnectionUpsertWithWhereUniqueWithoutClientInput = {
-    where: BankConnectionWhereUniqueInput
-    update: XOR<BankConnectionUpdateWithoutClientInput, BankConnectionUncheckedUpdateWithoutClientInput>
-    create: XOR<BankConnectionCreateWithoutClientInput, BankConnectionUncheckedCreateWithoutClientInput>
-  }
-
-  export type BankConnectionUpdateWithWhereUniqueWithoutClientInput = {
-    where: BankConnectionWhereUniqueInput
-    data: XOR<BankConnectionUpdateWithoutClientInput, BankConnectionUncheckedUpdateWithoutClientInput>
-  }
-
-  export type BankConnectionUpdateManyWithWhereWithoutClientInput = {
-    where: BankConnectionScalarWhereInput
-    data: XOR<BankConnectionUpdateManyMutationInput, BankConnectionUncheckedUpdateManyWithoutClientInput>
-  }
-
-  export type BankConnectionScalarWhereInput = {
-    AND?: BankConnectionScalarWhereInput | BankConnectionScalarWhereInput[]
-    OR?: BankConnectionScalarWhereInput[]
-    NOT?: BankConnectionScalarWhereInput | BankConnectionScalarWhereInput[]
-    id?: StringFilter<"BankConnection"> | string
-    clientId?: StringFilter<"BankConnection"> | string
-    accountId?: StringFilter<"BankConnection"> | string
-    bankName?: StringFilter<"BankConnection"> | string
-    connectionType?: EnumConnectionTypeFilter<"BankConnection"> | $Enums.ConnectionType
-    lastSync?: DateTimeNullableFilter<"BankConnection"> | Date | string | null
-    status?: EnumConnectionStatusFilter<"BankConnection"> | $Enums.ConnectionStatus
-    credentials?: JsonNullableFilter<"BankConnection">
-    settings?: JsonNullableFilter<"BankConnection">
-    createdAt?: DateTimeFilter<"BankConnection"> | Date | string
-    updatedAt?: DateTimeFilter<"BankConnection"> | Date | string
-  }
-
   export type ProcessingTaskUpsertWithWhereUniqueWithoutClientInput = {
     where: ProcessingTaskWhereUniqueInput
     update: XOR<ProcessingTaskUpdateWithoutClientInput, ProcessingTaskUncheckedUpdateWithoutClientInput>
@@ -20027,7 +18146,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     relationshipManager: UserCreateNestedOneWithoutClientInput
     Statement?: StatementCreateNestedManyWithoutClientInput
-    BankConnection?: BankConnectionCreateNestedManyWithoutClientInput
     ProcessingTask?: ProcessingTaskCreateNestedManyWithoutClientInput
     Recommendation?: RecommendationCreateNestedManyWithoutClientInput
     Transaction?: TransactionCreateNestedManyWithoutClientInput
@@ -20046,7 +18164,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     Statement?: StatementUncheckedCreateNestedManyWithoutClientInput
-    BankConnection?: BankConnectionUncheckedCreateNestedManyWithoutClientInput
     ProcessingTask?: ProcessingTaskUncheckedCreateNestedManyWithoutClientInput
     Recommendation?: RecommendationUncheckedCreateNestedManyWithoutClientInput
     Transaction?: TransactionUncheckedCreateNestedManyWithoutClientInput
@@ -20143,42 +18260,6 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type BankConnectionCreateWithoutAccountInput = {
-    id?: string
-    bankName: string
-    connectionType: $Enums.ConnectionType
-    lastSync?: Date | string | null
-    status?: $Enums.ConnectionStatus
-    credentials?: NullableJsonNullValueInput | InputJsonValue
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    client: ClientCreateNestedOneWithoutBankConnectionInput
-  }
-
-  export type BankConnectionUncheckedCreateWithoutAccountInput = {
-    id?: string
-    clientId: string
-    bankName: string
-    connectionType: $Enums.ConnectionType
-    lastSync?: Date | string | null
-    status?: $Enums.ConnectionStatus
-    credentials?: NullableJsonNullValueInput | InputJsonValue
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type BankConnectionCreateOrConnectWithoutAccountInput = {
-    where: BankConnectionWhereUniqueInput
-    create: XOR<BankConnectionCreateWithoutAccountInput, BankConnectionUncheckedCreateWithoutAccountInput>
-  }
-
-  export type BankConnectionCreateManyAccountInputEnvelope = {
-    data: BankConnectionCreateManyAccountInput | BankConnectionCreateManyAccountInput[]
-    skipDuplicates?: boolean
-  }
-
   export type ClientUpsertWithoutClientAccountInput = {
     update: XOR<ClientUpdateWithoutClientAccountInput, ClientUncheckedUpdateWithoutClientAccountInput>
     create: XOR<ClientCreateWithoutClientAccountInput, ClientUncheckedCreateWithoutClientAccountInput>
@@ -20203,7 +18284,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     relationshipManager?: UserUpdateOneRequiredWithoutClientNestedInput
     Statement?: StatementUpdateManyWithoutClientNestedInput
-    BankConnection?: BankConnectionUpdateManyWithoutClientNestedInput
     ProcessingTask?: ProcessingTaskUpdateManyWithoutClientNestedInput
     Recommendation?: RecommendationUpdateManyWithoutClientNestedInput
     Transaction?: TransactionUpdateManyWithoutClientNestedInput
@@ -20222,7 +18302,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Statement?: StatementUncheckedUpdateManyWithoutClientNestedInput
-    BankConnection?: BankConnectionUncheckedUpdateManyWithoutClientNestedInput
     ProcessingTask?: ProcessingTaskUncheckedUpdateManyWithoutClientNestedInput
     Recommendation?: RecommendationUncheckedUpdateManyWithoutClientNestedInput
     Transaction?: TransactionUncheckedUpdateManyWithoutClientNestedInput
@@ -20260,22 +18339,6 @@ export namespace Prisma {
     data: XOR<TransactionUpdateManyMutationInput, TransactionUncheckedUpdateManyWithoutAccountInput>
   }
 
-  export type BankConnectionUpsertWithWhereUniqueWithoutAccountInput = {
-    where: BankConnectionWhereUniqueInput
-    update: XOR<BankConnectionUpdateWithoutAccountInput, BankConnectionUncheckedUpdateWithoutAccountInput>
-    create: XOR<BankConnectionCreateWithoutAccountInput, BankConnectionUncheckedCreateWithoutAccountInput>
-  }
-
-  export type BankConnectionUpdateWithWhereUniqueWithoutAccountInput = {
-    where: BankConnectionWhereUniqueInput
-    data: XOR<BankConnectionUpdateWithoutAccountInput, BankConnectionUncheckedUpdateWithoutAccountInput>
-  }
-
-  export type BankConnectionUpdateManyWithWhereWithoutAccountInput = {
-    where: BankConnectionScalarWhereInput
-    data: XOR<BankConnectionUpdateManyMutationInput, BankConnectionUncheckedUpdateManyWithoutAccountInput>
-  }
-
   export type ClientCreateWithoutStatementInput = {
     id?: string
     name: string
@@ -20289,7 +18352,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     relationshipManager: UserCreateNestedOneWithoutClientInput
     ClientAccount?: ClientAccountCreateNestedManyWithoutClientInput
-    BankConnection?: BankConnectionCreateNestedManyWithoutClientInput
     ProcessingTask?: ProcessingTaskCreateNestedManyWithoutClientInput
     Recommendation?: RecommendationCreateNestedManyWithoutClientInput
     Transaction?: TransactionCreateNestedManyWithoutClientInput
@@ -20308,7 +18370,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     ClientAccount?: ClientAccountUncheckedCreateNestedManyWithoutClientInput
-    BankConnection?: BankConnectionUncheckedCreateNestedManyWithoutClientInput
     ProcessingTask?: ProcessingTaskUncheckedCreateNestedManyWithoutClientInput
     Recommendation?: RecommendationUncheckedCreateNestedManyWithoutClientInput
     Transaction?: TransactionUncheckedCreateNestedManyWithoutClientInput
@@ -20333,7 +18394,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     client: ClientCreateNestedOneWithoutClientAccountInput
     Transaction?: TransactionCreateNestedManyWithoutAccountInput
-    BankConnection?: BankConnectionCreateNestedManyWithoutAccountInput
   }
 
   export type ClientAccountUncheckedCreateWithoutStatementInput = {
@@ -20350,7 +18410,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     Transaction?: TransactionUncheckedCreateNestedManyWithoutAccountInput
-    BankConnection?: BankConnectionUncheckedCreateNestedManyWithoutAccountInput
   }
 
   export type ClientAccountCreateOrConnectWithoutStatementInput = {
@@ -20469,7 +18528,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     relationshipManager?: UserUpdateOneRequiredWithoutClientNestedInput
     ClientAccount?: ClientAccountUpdateManyWithoutClientNestedInput
-    BankConnection?: BankConnectionUpdateManyWithoutClientNestedInput
     ProcessingTask?: ProcessingTaskUpdateManyWithoutClientNestedInput
     Recommendation?: RecommendationUpdateManyWithoutClientNestedInput
     Transaction?: TransactionUpdateManyWithoutClientNestedInput
@@ -20488,7 +18546,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     ClientAccount?: ClientAccountUncheckedUpdateManyWithoutClientNestedInput
-    BankConnection?: BankConnectionUncheckedUpdateManyWithoutClientNestedInput
     ProcessingTask?: ProcessingTaskUncheckedUpdateManyWithoutClientNestedInput
     Recommendation?: RecommendationUncheckedUpdateManyWithoutClientNestedInput
     Transaction?: TransactionUncheckedUpdateManyWithoutClientNestedInput
@@ -20519,7 +18576,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     client?: ClientUpdateOneRequiredWithoutClientAccountNestedInput
     Transaction?: TransactionUpdateManyWithoutAccountNestedInput
-    BankConnection?: BankConnectionUpdateManyWithoutAccountNestedInput
   }
 
   export type ClientAccountUncheckedUpdateWithoutStatementInput = {
@@ -20536,7 +18592,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Transaction?: TransactionUncheckedUpdateManyWithoutAccountNestedInput
-    BankConnection?: BankConnectionUncheckedUpdateManyWithoutAccountNestedInput
   }
 
   export type TransactionUpsertWithWhereUniqueWithoutStatementInput = {
@@ -20571,182 +18626,6 @@ export namespace Prisma {
     data: XOR<ProcessingTaskUpdateManyMutationInput, ProcessingTaskUncheckedUpdateManyWithoutStatementInput>
   }
 
-  export type ClientCreateWithoutBankConnectionInput = {
-    id?: string
-    name: string
-    businessType: string
-    industry: string
-    businessSegment: string
-    riskProfile?: string
-    contact: JsonNullValueInput | InputJsonValue
-    preferences?: JsonNullValueInput | InputJsonValue
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    relationshipManager: UserCreateNestedOneWithoutClientInput
-    ClientAccount?: ClientAccountCreateNestedManyWithoutClientInput
-    Statement?: StatementCreateNestedManyWithoutClientInput
-    ProcessingTask?: ProcessingTaskCreateNestedManyWithoutClientInput
-    Recommendation?: RecommendationCreateNestedManyWithoutClientInput
-    Transaction?: TransactionCreateNestedManyWithoutClientInput
-  }
-
-  export type ClientUncheckedCreateWithoutBankConnectionInput = {
-    id?: string
-    name: string
-    businessType: string
-    industry: string
-    businessSegment: string
-    riskProfile?: string
-    relationshipManagerId: number
-    contact: JsonNullValueInput | InputJsonValue
-    preferences?: JsonNullValueInput | InputJsonValue
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    ClientAccount?: ClientAccountUncheckedCreateNestedManyWithoutClientInput
-    Statement?: StatementUncheckedCreateNestedManyWithoutClientInput
-    ProcessingTask?: ProcessingTaskUncheckedCreateNestedManyWithoutClientInput
-    Recommendation?: RecommendationUncheckedCreateNestedManyWithoutClientInput
-    Transaction?: TransactionUncheckedCreateNestedManyWithoutClientInput
-  }
-
-  export type ClientCreateOrConnectWithoutBankConnectionInput = {
-    where: ClientWhereUniqueInput
-    create: XOR<ClientCreateWithoutBankConnectionInput, ClientUncheckedCreateWithoutBankConnectionInput>
-  }
-
-  export type ClientAccountCreateWithoutBankConnectionInput = {
-    id?: string
-    accountNumber: string
-    accountType: string
-    bankName: string
-    routingNumber?: string | null
-    isActive?: boolean
-    openDate: Date | string
-    balance?: number | null
-    currency?: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    client: ClientCreateNestedOneWithoutClientAccountInput
-    Statement?: StatementCreateNestedManyWithoutAccountInput
-    Transaction?: TransactionCreateNestedManyWithoutAccountInput
-  }
-
-  export type ClientAccountUncheckedCreateWithoutBankConnectionInput = {
-    id?: string
-    accountNumber: string
-    accountType: string
-    bankName: string
-    routingNumber?: string | null
-    isActive?: boolean
-    openDate: Date | string
-    balance?: number | null
-    currency?: string
-    clientId: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    Statement?: StatementUncheckedCreateNestedManyWithoutAccountInput
-    Transaction?: TransactionUncheckedCreateNestedManyWithoutAccountInput
-  }
-
-  export type ClientAccountCreateOrConnectWithoutBankConnectionInput = {
-    where: ClientAccountWhereUniqueInput
-    create: XOR<ClientAccountCreateWithoutBankConnectionInput, ClientAccountUncheckedCreateWithoutBankConnectionInput>
-  }
-
-  export type ClientUpsertWithoutBankConnectionInput = {
-    update: XOR<ClientUpdateWithoutBankConnectionInput, ClientUncheckedUpdateWithoutBankConnectionInput>
-    create: XOR<ClientCreateWithoutBankConnectionInput, ClientUncheckedCreateWithoutBankConnectionInput>
-    where?: ClientWhereInput
-  }
-
-  export type ClientUpdateToOneWithWhereWithoutBankConnectionInput = {
-    where?: ClientWhereInput
-    data: XOR<ClientUpdateWithoutBankConnectionInput, ClientUncheckedUpdateWithoutBankConnectionInput>
-  }
-
-  export type ClientUpdateWithoutBankConnectionInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    businessType?: StringFieldUpdateOperationsInput | string
-    industry?: StringFieldUpdateOperationsInput | string
-    businessSegment?: StringFieldUpdateOperationsInput | string
-    riskProfile?: StringFieldUpdateOperationsInput | string
-    contact?: JsonNullValueInput | InputJsonValue
-    preferences?: JsonNullValueInput | InputJsonValue
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    relationshipManager?: UserUpdateOneRequiredWithoutClientNestedInput
-    ClientAccount?: ClientAccountUpdateManyWithoutClientNestedInput
-    Statement?: StatementUpdateManyWithoutClientNestedInput
-    ProcessingTask?: ProcessingTaskUpdateManyWithoutClientNestedInput
-    Recommendation?: RecommendationUpdateManyWithoutClientNestedInput
-    Transaction?: TransactionUpdateManyWithoutClientNestedInput
-  }
-
-  export type ClientUncheckedUpdateWithoutBankConnectionInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    businessType?: StringFieldUpdateOperationsInput | string
-    industry?: StringFieldUpdateOperationsInput | string
-    businessSegment?: StringFieldUpdateOperationsInput | string
-    riskProfile?: StringFieldUpdateOperationsInput | string
-    relationshipManagerId?: IntFieldUpdateOperationsInput | number
-    contact?: JsonNullValueInput | InputJsonValue
-    preferences?: JsonNullValueInput | InputJsonValue
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    ClientAccount?: ClientAccountUncheckedUpdateManyWithoutClientNestedInput
-    Statement?: StatementUncheckedUpdateManyWithoutClientNestedInput
-    ProcessingTask?: ProcessingTaskUncheckedUpdateManyWithoutClientNestedInput
-    Recommendation?: RecommendationUncheckedUpdateManyWithoutClientNestedInput
-    Transaction?: TransactionUncheckedUpdateManyWithoutClientNestedInput
-  }
-
-  export type ClientAccountUpsertWithoutBankConnectionInput = {
-    update: XOR<ClientAccountUpdateWithoutBankConnectionInput, ClientAccountUncheckedUpdateWithoutBankConnectionInput>
-    create: XOR<ClientAccountCreateWithoutBankConnectionInput, ClientAccountUncheckedCreateWithoutBankConnectionInput>
-    where?: ClientAccountWhereInput
-  }
-
-  export type ClientAccountUpdateToOneWithWhereWithoutBankConnectionInput = {
-    where?: ClientAccountWhereInput
-    data: XOR<ClientAccountUpdateWithoutBankConnectionInput, ClientAccountUncheckedUpdateWithoutBankConnectionInput>
-  }
-
-  export type ClientAccountUpdateWithoutBankConnectionInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    accountNumber?: StringFieldUpdateOperationsInput | string
-    accountType?: StringFieldUpdateOperationsInput | string
-    bankName?: StringFieldUpdateOperationsInput | string
-    routingNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    openDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    balance?: NullableFloatFieldUpdateOperationsInput | number | null
-    currency?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    client?: ClientUpdateOneRequiredWithoutClientAccountNestedInput
-    Statement?: StatementUpdateManyWithoutAccountNestedInput
-    Transaction?: TransactionUpdateManyWithoutAccountNestedInput
-  }
-
-  export type ClientAccountUncheckedUpdateWithoutBankConnectionInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    accountNumber?: StringFieldUpdateOperationsInput | string
-    accountType?: StringFieldUpdateOperationsInput | string
-    bankName?: StringFieldUpdateOperationsInput | string
-    routingNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    openDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    balance?: NullableFloatFieldUpdateOperationsInput | number | null
-    currency?: StringFieldUpdateOperationsInput | string
-    clientId?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    Statement?: StatementUncheckedUpdateManyWithoutAccountNestedInput
-    Transaction?: TransactionUncheckedUpdateManyWithoutAccountNestedInput
-  }
-
   export type ClientAccountCreateWithoutTransactionInput = {
     id?: string
     accountNumber: string
@@ -20761,7 +18640,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     client: ClientCreateNestedOneWithoutClientAccountInput
     Statement?: StatementCreateNestedManyWithoutAccountInput
-    BankConnection?: BankConnectionCreateNestedManyWithoutAccountInput
   }
 
   export type ClientAccountUncheckedCreateWithoutTransactionInput = {
@@ -20778,7 +18656,6 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     Statement?: StatementUncheckedCreateNestedManyWithoutAccountInput
-    BankConnection?: BankConnectionUncheckedCreateNestedManyWithoutAccountInput
   }
 
   export type ClientAccountCreateOrConnectWithoutTransactionInput = {
@@ -20800,7 +18677,6 @@ export namespace Prisma {
     relationshipManager: UserCreateNestedOneWithoutClientInput
     ClientAccount?: ClientAccountCreateNestedManyWithoutClientInput
     Statement?: StatementCreateNestedManyWithoutClientInput
-    BankConnection?: BankConnectionCreateNestedManyWithoutClientInput
     ProcessingTask?: ProcessingTaskCreateNestedManyWithoutClientInput
     Recommendation?: RecommendationCreateNestedManyWithoutClientInput
   }
@@ -20819,7 +18695,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     ClientAccount?: ClientAccountUncheckedCreateNestedManyWithoutClientInput
     Statement?: StatementUncheckedCreateNestedManyWithoutClientInput
-    BankConnection?: BankConnectionUncheckedCreateNestedManyWithoutClientInput
     ProcessingTask?: ProcessingTaskUncheckedCreateNestedManyWithoutClientInput
     Recommendation?: RecommendationUncheckedCreateNestedManyWithoutClientInput
   }
@@ -20893,7 +18768,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     client?: ClientUpdateOneRequiredWithoutClientAccountNestedInput
     Statement?: StatementUpdateManyWithoutAccountNestedInput
-    BankConnection?: BankConnectionUpdateManyWithoutAccountNestedInput
   }
 
   export type ClientAccountUncheckedUpdateWithoutTransactionInput = {
@@ -20910,7 +18784,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Statement?: StatementUncheckedUpdateManyWithoutAccountNestedInput
-    BankConnection?: BankConnectionUncheckedUpdateManyWithoutAccountNestedInput
   }
 
   export type ClientUpsertWithoutTransactionInput = {
@@ -20938,7 +18811,6 @@ export namespace Prisma {
     relationshipManager?: UserUpdateOneRequiredWithoutClientNestedInput
     ClientAccount?: ClientAccountUpdateManyWithoutClientNestedInput
     Statement?: StatementUpdateManyWithoutClientNestedInput
-    BankConnection?: BankConnectionUpdateManyWithoutClientNestedInput
     ProcessingTask?: ProcessingTaskUpdateManyWithoutClientNestedInput
     Recommendation?: RecommendationUpdateManyWithoutClientNestedInput
   }
@@ -20957,7 +18829,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     ClientAccount?: ClientAccountUncheckedUpdateManyWithoutClientNestedInput
     Statement?: StatementUncheckedUpdateManyWithoutClientNestedInput
-    BankConnection?: BankConnectionUncheckedUpdateManyWithoutClientNestedInput
     ProcessingTask?: ProcessingTaskUncheckedUpdateManyWithoutClientNestedInput
     Recommendation?: RecommendationUncheckedUpdateManyWithoutClientNestedInput
   }
@@ -21021,7 +18892,6 @@ export namespace Prisma {
     relationshipManager: UserCreateNestedOneWithoutClientInput
     ClientAccount?: ClientAccountCreateNestedManyWithoutClientInput
     Statement?: StatementCreateNestedManyWithoutClientInput
-    BankConnection?: BankConnectionCreateNestedManyWithoutClientInput
     Recommendation?: RecommendationCreateNestedManyWithoutClientInput
     Transaction?: TransactionCreateNestedManyWithoutClientInput
   }
@@ -21040,7 +18910,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     ClientAccount?: ClientAccountUncheckedCreateNestedManyWithoutClientInput
     Statement?: StatementUncheckedCreateNestedManyWithoutClientInput
-    BankConnection?: BankConnectionUncheckedCreateNestedManyWithoutClientInput
     Recommendation?: RecommendationUncheckedCreateNestedManyWithoutClientInput
     Transaction?: TransactionUncheckedCreateNestedManyWithoutClientInput
   }
@@ -21114,7 +18983,6 @@ export namespace Prisma {
     relationshipManager?: UserUpdateOneRequiredWithoutClientNestedInput
     ClientAccount?: ClientAccountUpdateManyWithoutClientNestedInput
     Statement?: StatementUpdateManyWithoutClientNestedInput
-    BankConnection?: BankConnectionUpdateManyWithoutClientNestedInput
     Recommendation?: RecommendationUpdateManyWithoutClientNestedInput
     Transaction?: TransactionUpdateManyWithoutClientNestedInput
   }
@@ -21133,7 +19001,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     ClientAccount?: ClientAccountUncheckedUpdateManyWithoutClientNestedInput
     Statement?: StatementUncheckedUpdateManyWithoutClientNestedInput
-    BankConnection?: BankConnectionUncheckedUpdateManyWithoutClientNestedInput
     Recommendation?: RecommendationUncheckedUpdateManyWithoutClientNestedInput
     Transaction?: TransactionUncheckedUpdateManyWithoutClientNestedInput
   }
@@ -21261,7 +19128,6 @@ export namespace Prisma {
     relationshipManager: UserCreateNestedOneWithoutClientInput
     ClientAccount?: ClientAccountCreateNestedManyWithoutClientInput
     Statement?: StatementCreateNestedManyWithoutClientInput
-    BankConnection?: BankConnectionCreateNestedManyWithoutClientInput
     ProcessingTask?: ProcessingTaskCreateNestedManyWithoutClientInput
     Transaction?: TransactionCreateNestedManyWithoutClientInput
   }
@@ -21280,7 +19146,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     ClientAccount?: ClientAccountUncheckedCreateNestedManyWithoutClientInput
     Statement?: StatementUncheckedCreateNestedManyWithoutClientInput
-    BankConnection?: BankConnectionUncheckedCreateNestedManyWithoutClientInput
     ProcessingTask?: ProcessingTaskUncheckedCreateNestedManyWithoutClientInput
     Transaction?: TransactionUncheckedCreateNestedManyWithoutClientInput
   }
@@ -21350,7 +19215,6 @@ export namespace Prisma {
     relationshipManager?: UserUpdateOneRequiredWithoutClientNestedInput
     ClientAccount?: ClientAccountUpdateManyWithoutClientNestedInput
     Statement?: StatementUpdateManyWithoutClientNestedInput
-    BankConnection?: BankConnectionUpdateManyWithoutClientNestedInput
     ProcessingTask?: ProcessingTaskUpdateManyWithoutClientNestedInput
     Transaction?: TransactionUpdateManyWithoutClientNestedInput
   }
@@ -21369,7 +19233,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     ClientAccount?: ClientAccountUncheckedUpdateManyWithoutClientNestedInput
     Statement?: StatementUncheckedUpdateManyWithoutClientNestedInput
-    BankConnection?: BankConnectionUncheckedUpdateManyWithoutClientNestedInput
     ProcessingTask?: ProcessingTaskUncheckedUpdateManyWithoutClientNestedInput
     Transaction?: TransactionUncheckedUpdateManyWithoutClientNestedInput
   }
@@ -21476,7 +19339,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     ClientAccount?: ClientAccountUpdateManyWithoutClientNestedInput
     Statement?: StatementUpdateManyWithoutClientNestedInput
-    BankConnection?: BankConnectionUpdateManyWithoutClientNestedInput
     ProcessingTask?: ProcessingTaskUpdateManyWithoutClientNestedInput
     Recommendation?: RecommendationUpdateManyWithoutClientNestedInput
     Transaction?: TransactionUpdateManyWithoutClientNestedInput
@@ -21495,7 +19357,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     ClientAccount?: ClientAccountUncheckedUpdateManyWithoutClientNestedInput
     Statement?: StatementUncheckedUpdateManyWithoutClientNestedInput
-    BankConnection?: BankConnectionUncheckedUpdateManyWithoutClientNestedInput
     ProcessingTask?: ProcessingTaskUncheckedUpdateManyWithoutClientNestedInput
     Recommendation?: RecommendationUncheckedUpdateManyWithoutClientNestedInput
     Transaction?: TransactionUncheckedUpdateManyWithoutClientNestedInput
@@ -21539,19 +19400,6 @@ export namespace Prisma {
     accountId?: string | null
     period?: NullableJsonNullValueInput | InputJsonValue
     errorMessage?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type BankConnectionCreateManyClientInput = {
-    id?: string
-    accountId: string
-    bankName: string
-    connectionType: $Enums.ConnectionType
-    lastSync?: Date | string | null
-    status?: $Enums.ConnectionStatus
-    credentials?: NullableJsonNullValueInput | InputJsonValue
-    settings?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -21623,7 +19471,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Statement?: StatementUpdateManyWithoutAccountNestedInput
     Transaction?: TransactionUpdateManyWithoutAccountNestedInput
-    BankConnection?: BankConnectionUpdateManyWithoutAccountNestedInput
   }
 
   export type ClientAccountUncheckedUpdateWithoutClientInput = {
@@ -21640,7 +19487,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Statement?: StatementUncheckedUpdateManyWithoutAccountNestedInput
     Transaction?: TransactionUncheckedUpdateManyWithoutAccountNestedInput
-    BankConnection?: BankConnectionUncheckedUpdateManyWithoutAccountNestedInput
   }
 
   export type ClientAccountUncheckedUpdateManyWithoutClientInput = {
@@ -21702,45 +19548,6 @@ export namespace Prisma {
     accountId?: NullableStringFieldUpdateOperationsInput | string | null
     period?: NullableJsonNullValueInput | InputJsonValue
     errorMessage?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type BankConnectionUpdateWithoutClientInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    bankName?: StringFieldUpdateOperationsInput | string
-    connectionType?: EnumConnectionTypeFieldUpdateOperationsInput | $Enums.ConnectionType
-    lastSync?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    status?: EnumConnectionStatusFieldUpdateOperationsInput | $Enums.ConnectionStatus
-    credentials?: NullableJsonNullValueInput | InputJsonValue
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    account?: ClientAccountUpdateOneRequiredWithoutBankConnectionNestedInput
-  }
-
-  export type BankConnectionUncheckedUpdateWithoutClientInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    accountId?: StringFieldUpdateOperationsInput | string
-    bankName?: StringFieldUpdateOperationsInput | string
-    connectionType?: EnumConnectionTypeFieldUpdateOperationsInput | $Enums.ConnectionType
-    lastSync?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    status?: EnumConnectionStatusFieldUpdateOperationsInput | $Enums.ConnectionStatus
-    credentials?: NullableJsonNullValueInput | InputJsonValue
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type BankConnectionUncheckedUpdateManyWithoutClientInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    accountId?: StringFieldUpdateOperationsInput | string
-    bankName?: StringFieldUpdateOperationsInput | string
-    connectionType?: EnumConnectionTypeFieldUpdateOperationsInput | $Enums.ConnectionType
-    lastSync?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    status?: EnumConnectionStatusFieldUpdateOperationsInput | $Enums.ConnectionStatus
-    credentials?: NullableJsonNullValueInput | InputJsonValue
-    settings?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -21934,19 +19741,6 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
-  export type BankConnectionCreateManyAccountInput = {
-    id?: string
-    clientId: string
-    bankName: string
-    connectionType: $Enums.ConnectionType
-    lastSync?: Date | string | null
-    status?: $Enums.ConnectionStatus
-    credentials?: NullableJsonNullValueInput | InputJsonValue
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
   export type StatementUpdateWithoutAccountInput = {
     id?: StringFieldUpdateOperationsInput | string
     fileName?: StringFieldUpdateOperationsInput | string
@@ -22040,45 +19834,6 @@ export namespace Prisma {
     counterparty?: NullableStringFieldUpdateOperationsInput | string | null
     balanceAfter?: NullableFloatFieldUpdateOperationsInput | number | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type BankConnectionUpdateWithoutAccountInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    bankName?: StringFieldUpdateOperationsInput | string
-    connectionType?: EnumConnectionTypeFieldUpdateOperationsInput | $Enums.ConnectionType
-    lastSync?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    status?: EnumConnectionStatusFieldUpdateOperationsInput | $Enums.ConnectionStatus
-    credentials?: NullableJsonNullValueInput | InputJsonValue
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    client?: ClientUpdateOneRequiredWithoutBankConnectionNestedInput
-  }
-
-  export type BankConnectionUncheckedUpdateWithoutAccountInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    clientId?: StringFieldUpdateOperationsInput | string
-    bankName?: StringFieldUpdateOperationsInput | string
-    connectionType?: EnumConnectionTypeFieldUpdateOperationsInput | $Enums.ConnectionType
-    lastSync?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    status?: EnumConnectionStatusFieldUpdateOperationsInput | $Enums.ConnectionStatus
-    credentials?: NullableJsonNullValueInput | InputJsonValue
-    settings?: NullableJsonNullValueInput | InputJsonValue
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type BankConnectionUncheckedUpdateManyWithoutAccountInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    clientId?: StringFieldUpdateOperationsInput | string
-    bankName?: StringFieldUpdateOperationsInput | string
-    connectionType?: EnumConnectionTypeFieldUpdateOperationsInput | $Enums.ConnectionType
-    lastSync?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    status?: EnumConnectionStatusFieldUpdateOperationsInput | $Enums.ConnectionStatus
-    credentials?: NullableJsonNullValueInput | InputJsonValue
-    settings?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

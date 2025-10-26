@@ -1,7 +1,6 @@
 import config from "../../config/config.js";
 import analyticsRoute from "./analytics.route.js";
 import authRoute from "./auth.route.js";
-import bankConnectionRoute from "./bank-connection.route.js";
 import clientStatementsRoute from "./client-statements.route.js";
 import clientRoute from "./client.route.js";
 import docsRoute from "./docs.route.js";
@@ -35,10 +34,6 @@ const defaultRoutes = [
     {
         path: '/statements',
         route: statementRoute
-    },
-    {
-        path: '/bank-connections',
-        route: bankConnectionRoute
     },
     {
         path: '/transactions',

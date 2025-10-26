@@ -4,7 +4,6 @@ export { default as tokenService } from './token.service.ts';
 export { default as emailService } from './email.service.ts';
 export { default as clientService } from './client.service.ts';
 export { default as statementService } from './statement.service.ts';
-export { default as bankConnectionService } from './bankConnection.service.ts';
 export { default as transactionService } from './transaction.service.ts';
 export { default as processingService } from './processing.service.ts';
 export { default as analyticsService } from './analytics.service.ts';

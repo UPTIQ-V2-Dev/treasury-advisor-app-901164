@@ -1,4 +1,4 @@
-import { bankConnectionService, statementService } from '../services/index.ts';
+import { statementService } from '../services/index.ts';
 import ApiError from '../utils/ApiError.ts';
 import catchAsyncWithAuth from '../utils/catchAsyncWithAuth.ts';
 import pick from '../utils/pick.ts';
@@ -121,37 +121,6 @@ const getClientStatements = catchAsyncWithAuth(async (req, res) => {
     res.send(result);
 });
 
-const connectBank = catchAsyncWithAuth(async (req, res) => {
-    const connectionData = pick(req.body, [
-        'clientId',
-        'bankName',
-        'accountId',
-        'connectionType',
-        'credentials',
-        'settings'
-    ]) as any;
-    const connection = await bankConnectionService.createBankConnection(connectionData);
-    res.status(httpStatus.CREATED).send(connection);
-});
-
-const getClientBankConnections = catchAsyncWithAuth(async (req, res) => {
-    const { clientId } = req.params;
-    const filter: any = pick(req.validatedQuery, ['status', 'bankName', 'connectionType']);
-    const options = pick(req.validatedQuery, ['sortBy', 'sortType', 'limit', 'page']);
-
-    // Add clientId to filter
-    filter.clientId = clientId;
-
-    const result = await bankConnectionService.queryBankConnections(filter, options);
-    res.send(result);
-});
-
-const syncBankConnection = catchAsyncWithAuth(async (req, res) => {
-    const { connectionId } = req.params;
-    const task = await bankConnectionService.syncBankConnection(connectionId);
-    res.status(httpStatus.ACCEPTED).send({ taskId: task.taskId });
-});
-
 const getUploadProgress = catchAsyncWithAuth(async (req, res) => {
     const { clientId } = req.params;
     const progress = await statementService.getUploadProgress(clientId);
@@ -219,64 +188,18 @@ const updateStatement = catchAsyncWithAuth(async (req, res) => {
     res.send(statement);
 });
 
-const getAllBankConnections = catchAsyncWithAuth(async (req, res) => {
-    const filter = pick(req.validatedQuery, ['clientId', 'status', 'bankName', 'connectionType']);
-    const options = pick(req.validatedQuery, ['sortBy', 'sortType', 'limit', 'page']);
-
-    const result = await bankConnectionService.queryBankConnections(filter, options);
-    res.send(result);
-});
-
-const getBankConnectionById = catchAsyncWithAuth(async (req, res) => {
-    const connection = await bankConnectionService.getBankConnectionById(req.params.connectionId);
-    if (!connection) {
-        throw new ApiError(httpStatus.NOT_FOUND, 'Bank connection not found');
-    }
-    res.send(connection);
-});
-
-const updateBankConnection = catchAsyncWithAuth(async (req, res) => {
-    const updateBody = pick(req.body, ['bankName', 'status', 'credentials', 'settings']);
-    const connection = await bankConnectionService.updateBankConnectionById(req.params.connectionId, updateBody);
-    res.send(connection);
-});
-
-const deleteBankConnection = catchAsyncWithAuth(async (req, res) => {
-    await bankConnectionService.deleteBankConnectionById(req.params.connectionId);
-    res.status(httpStatus.NO_CONTENT).send();
-});
-
-const testBankConnection = catchAsyncWithAuth(async (req, res) => {
-    const result = await bankConnectionService.testBankConnection(req.params.connectionId);
-    res.send(result);
-});
-
-const getConnectionStats = catchAsyncWithAuth(async (req, res) => {
-    const stats = await bankConnectionService.getConnectionStats(req.params.clientId);
-    res.send(stats);
-});
-
 const statementController = {
     uploadStatements,
     validateStatement,
     getStatementStatus,
     parseStatements,
     getClientStatements,
-    connectBank,
-    getClientBankConnections,
-    syncBankConnection,
     getUploadProgress,
     deleteStatement,
     downloadStatement,
     getAllStatements,
     getStatementById,
-    updateStatement,
-    getAllBankConnections,
-    getBankConnectionById,
-    updateBankConnection,
-    deleteBankConnection,
-    testBankConnection,
-    getConnectionStats
+    updateStatement
 };
 
 export { statementController };

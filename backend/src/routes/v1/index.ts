@@ -1,7 +1,6 @@
 import config from '../../config/config.ts';
 import analyticsRoute from './analytics.route.ts';
 import authRoute from './auth.route.ts';
-import bankConnectionRoute from './bank-connection.route.ts';
 import clientStatementsRoute from './client-statements.route.ts';
 import clientRoute from './client.route.ts';
 import docsRoute from './docs.route.ts';
@@ -37,10 +36,6 @@ const defaultRoutes = [
     {
         path: '/statements',
         route: statementRoute
-    },
-    {
-        path: '/bank-connections',
-        route: bankConnectionRoute
     },
     {
         path: '/transactions',

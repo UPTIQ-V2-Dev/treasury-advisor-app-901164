@@ -33,11 +33,6 @@ router
     .route('/parse')
     .post(auth('manageStatements'), validate(statementValidation.parseStatements), statementController.parseStatements);
 
-// Bank connection endpoints
-router
-    .route('/connect')
-    .post(auth('manageStatements'), validate(statementValidation.connectBank), statementController.connectBank);
-
 // Statement file operations
 router
     .route('/:fileId')
@@ -261,71 +256,6 @@ export default router;
  *               type: object
  *               properties:
  *                 taskId:
- *                   type: string
- *       "400":
- *         $ref: '#/components/responses/BadRequest'
- *       "401":
- *         $ref: '#/components/responses/Unauthorized'
- */
-
-/**
- * @swagger
- * /statements/connect:
- *   post:
- *     summary: Connect to bank for automatic statement retrieval
- *     description: Create a connection to a bank for automatic statement retrieval
- *     tags: [Statements]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - clientId
- *               - bankName
- *               - accountId
- *               - connectionType
- *             properties:
- *               clientId:
- *                 type: string
- *                 format: uuid
- *               bankName:
- *                 type: string
- *               accountId:
- *                 type: string
- *                 format: uuid
- *               connectionType:
- *                 type: string
- *                 enum: [API, PLAID, YODLEE, MANUAL]
- *               credentials:
- *                 type: object
- *                 description: Bank connection credentials (encrypted)
- *               settings:
- *                 type: object
- *                 description: Connection settings and preferences
- *     responses:
- *       "201":
- *         description: Created
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 id:
- *                   type: string
- *                 bankName:
- *                   type: string
- *                 accountId:
- *                   type: string
- *                 connectionType:
- *                   type: string
- *                 lastSync:
- *                   type: string
- *                   format: date-time
- *                 status:
  *                   type: string
  *       "400":
  *         $ref: '#/components/responses/BadRequest'

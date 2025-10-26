@@ -65,29 +65,27 @@ model Client {
   updatedAt             DateTime         @updatedAt
   ClientAccount         ClientAccount[]
   Statement             Statement[]
-  BankConnection        BankConnection[]
   ProcessingTask        ProcessingTask[]
   Recommendation        Recommendation[]
   Transaction           Transaction[]
 }
 
 model ClientAccount {
-  id             String           @id @default(uuid())
-  accountNumber  String           @unique
-  accountType    String
-  bankName       String
-  routingNumber  String?
-  isActive       Boolean          @default(true)
-  openDate       DateTime
-  balance        Float?
-  currency       String           @default("USD")
-  clientId       String
-  client         Client           @relation(fields: [clientId], references: [id])
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  Statement      Statement[]
-  Transaction    Transaction[]
-  BankConnection BankConnection[]
+  id            String        @id @default(uuid())
+  accountNumber String        @unique
+  accountType   String
+  bankName      String
+  routingNumber String?
+  isActive      Boolean       @default(true)
+  openDate      DateTime
+  balance       Float?
+  currency      String        @default("USD")
+  clientId      String
+  client        Client        @relation(fields: [clientId], references: [id])
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  Statement     Statement[]
+  Transaction   Transaction[]
 }
 
 model Statement {
@@ -108,22 +106,6 @@ model Statement {
   updatedAt      DateTime         @updatedAt
   Transaction    Transaction[]
   ProcessingTask ProcessingTask[]
-}
-
-model BankConnection {
-  id             String           @id @default(uuid())
-  clientId       String
-  client         Client           @relation(fields: [clientId], references: [id])
-  accountId      String
-  account        ClientAccount    @relation(fields: [accountId], references: [id])
-  bankName       String
-  connectionType ConnectionType
-  lastSync       DateTime?
-  status         ConnectionStatus @default(CONNECTED)
-  credentials    Json?
-  settings       Json?
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
 }
 
 model Transaction {
@@ -211,20 +193,6 @@ enum StatementStatus {
   COMPLETED
   FAILED
   VALIDATED
-}
-
-enum ConnectionStatus {
-  CONNECTED
-  DISCONNECTED
-  ERROR
-  SYNCING
-}
-
-enum ConnectionType {
-  API
-  PLAID
-  YODLEE
-  MANUAL
 }
 
 enum TransactionType {

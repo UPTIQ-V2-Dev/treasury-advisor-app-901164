@@ -186,20 +186,6 @@ exports.Prisma.StatementScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.BankConnectionScalarFieldEnum = {
-  id: 'id',
-  clientId: 'clientId',
-  accountId: 'accountId',
-  bankName: 'bankName',
-  connectionType: 'connectionType',
-  lastSync: 'lastSync',
-  status: 'status',
-  credentials: 'credentials',
-  settings: 'settings',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
 exports.Prisma.TransactionScalarFieldEnum = {
   id: 'id',
   accountId: 'accountId',
@@ -320,20 +306,6 @@ exports.StatementStatus = exports.$Enums.StatementStatus = {
   VALIDATED: 'VALIDATED'
 };
 
-exports.ConnectionType = exports.$Enums.ConnectionType = {
-  API: 'API',
-  PLAID: 'PLAID',
-  YODLEE: 'YODLEE',
-  MANUAL: 'MANUAL'
-};
-
-exports.ConnectionStatus = exports.$Enums.ConnectionStatus = {
-  CONNECTED: 'CONNECTED',
-  DISCONNECTED: 'DISCONNECTED',
-  ERROR: 'ERROR',
-  SYNCING: 'SYNCING'
-};
-
 exports.TransactionType = exports.$Enums.TransactionType = {
   DEBIT: 'DEBIT',
   CREDIT: 'CREDIT',
@@ -380,7 +352,6 @@ exports.Prisma.ModelName = {
   Client: 'Client',
   ClientAccount: 'ClientAccount',
   Statement: 'Statement',
-  BankConnection: 'BankConnection',
   Transaction: 'Transaction',
   ProcessingTask: 'ProcessingTask',
   TreasuryProduct: 'TreasuryProduct',

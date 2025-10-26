@@ -1108,3 +1108,83 @@ OUT: 200:{markedCount:int}
 ERR: {"401":"Unauthorized", "500":"Internal server error"}
 EX_REQ: curl -X POST /notifications/read-all -H "Authorization: Bearer eyJ..."
 EX_RES_200: {"markedCount":5}
+
+## Agent Integration APIs
+
+EP: POST /agents/trigger
+DESC: Trigger AI agent for enhanced processing and recommendations.
+IN: body:{clientId:str!, agentType:str!, context:obj!, options:obj}
+OUT: 202:{agentTaskId:str, estimatedDuration:int}
+ERR: {"400":"Invalid agent configuration", "401":"Unauthorized", "500":"Internal server error"}
+EX_REQ: curl -X POST /agents/trigger -H "Content-Type: application/json" -H "Authorization: Bearer eyJ..." -d '{"clientId":"client-123","agentType":"recommendation","context":{"transactionData":true,"riskProfile":"medium"},"options":{"includeForecasting":true}}'
+EX_RES_202: {"agentTaskId":"agent-task-456","estimatedDuration":120}
+
+---
+
+EP: GET /agents/tasks/{agentTaskId}
+DESC: Get AI agent task status and results.
+IN: params:{agentTaskId:str!}
+OUT: 200:{id:str, status:str, progress:int, results:obj, startTime:str, endTime:str, logs:arr[str]}
+ERR: {"401":"Unauthorized", "404":"Agent task not found", "500":"Internal server error"}
+EX_REQ: curl -X GET /agents/tasks/agent-task-456 -H "Authorization: Bearer eyJ..."
+EX_RES_200: {"id":"agent-task-456","status":"completed","progress":100,"results":{"recommendations":[],"insights":[],"confidence":0.92},"startTime":"2024-01-15T10:00:00Z","endTime":"2024-01-15T10:02:00Z","logs":["Agent initialized","Processing client data","Generating recommendations"]}
+
+---
+
+EP: POST /agents/document-analysis
+DESC: Analyze documents using AI agents for enhanced insights.
+IN: body:{fileIds:arr[str]!, analysisType:str!, clientId:str!}
+OUT: 202:{analysisTaskId:str}
+ERR: {"400":"Invalid analysis parameters", "401":"Unauthorized", "500":"Internal server error"}
+EX_REQ: curl -X POST /agents/document-analysis -H "Content-Type: application/json" -H "Authorization: Bearer eyJ..." -d '{"fileIds":["stmt-456","stmt-789"],"analysisType":"financial_patterns","clientId":"client-123"}'
+EX_RES_202: {"analysisTaskId":"analysis-task-789"}
+
+---
+
+EP: GET /agents/analysis/{analysisTaskId}
+DESC: Get document analysis results from AI agents.
+IN: params:{analysisTaskId:str!}
+OUT: 200:{id:str, status:str, results:obj{insights:arr[obj], patterns:arr[obj], anomalies:arr[obj], recommendations:arr[str]}, confidence:float, processingTime:int}
+ERR: {"401":"Unauthorized", "404":"Analysis task not found", "500":"Internal server error"}
+EX_REQ: curl -X GET /agents/analysis/analysis-task-789 -H "Authorization: Bearer eyJ..."
+EX_RES_200: {"id":"analysis-task-789","status":"completed","results":{"insights":[{"type":"cash_flow","description":"Seasonal patterns detected","confidence":0.88}],"patterns":[{"pattern":"monthly_spike","category":"utilities","amount":2500}],"anomalies":[],"recommendations":["Consider automated bill pay for utilities"]},"confidence":0.89,"processingTime":180}
+
+## Enhanced Client Risk Management APIs
+
+EP: PATCH /clients/{clientId}/risk-profile
+DESC: Update client risk profile based on analysis.
+IN: params:{clientId:str!}, body:{riskProfile:str!, reasoning:str, factors:arr[obj], reviewedBy:str!}
+OUT: 200:{id:str, riskProfile:str, previousProfile:str, updatedAt:str, reviewedBy:str}
+ERR: {"400":"Invalid risk profile", "401":"Unauthorized", "404":"Client not found", "500":"Internal server error"}
+EX_REQ: curl -X PATCH /clients/client-123/risk-profile -H "Content-Type: application/json" -H "Authorization: Bearer eyJ..." -d '{"riskProfile":"high","reasoning":"Increased transaction volatility","factors":[{"factor":"transaction_volume","impact":"high"}],"reviewedBy":"user-456"}'
+EX_RES_200: {"id":"client-123","riskProfile":"high","previousProfile":"medium","updatedAt":"2024-01-15T10:30:00Z","reviewedBy":"user-456"}
+
+---
+
+EP: GET /clients/{clientId}/risk-assessment
+DESC: Get comprehensive risk assessment for client.
+IN: params:{clientId:str!}
+OUT: 200:{currentProfile:str, assessmentDate:str, factors:arr[obj{factor:str, value:float, impact:str, trend:str}], recommendations:arr[str], confidenceScore:float}
+ERR: {"401":"Unauthorized", "404":"Client not found", "500":"Internal server error"}
+EX_REQ: curl -X GET /clients/client-123/risk-assessment -H "Authorization: Bearer eyJ..."
+EX_RES_200: {"currentProfile":"medium","assessmentDate":"2024-01-15T10:00:00Z","factors":[{"factor":"transaction_volatility","value":0.15,"impact":"medium","trend":"stable"}],"recommendations":["Monitor large transaction patterns"],"confidenceScore":0.87}
+
+## Enhanced Export APIs
+
+EP: GET /analytics/export-enhanced/{clientId}
+DESC: Export analytics data in enhanced formats with templates.
+IN: params:{clientId:str!}, query:{format:str!, template:str, startDate:str, endDate:str, sections:arr[str]}
+OUT: 200:{blob}
+ERR: {"400":"Invalid format or template", "401":"Unauthorized", "404":"Client not found", "500":"Internal server error"}
+EX_REQ: curl -X GET "/analytics/export-enhanced/client-123?format=excel&template=executive_summary&startDate=2024-01-01&endDate=2024-01-31&sections=overview,trends,recommendations" -H "Authorization: Bearer eyJ..."
+EX_RES_200: {blob}
+
+---
+
+EP: GET /recommendations/export-enhanced/{clientId}
+DESC: Export recommendation report with enhanced formatting and templates.
+IN: params:{clientId:str!}, query:{format:str!, template:str, includeDetails:bool}
+OUT: 200:{blob}
+ERR: {"400":"Invalid format or template", "401":"Unauthorized", "404":"Client not found", "500":"Internal server error"}
+EX_REQ: curl -X GET "/recommendations/export-enhanced/client-123?format=pdf&template=board_presentation&includeDetails=true" -H "Authorization: Bearer eyJ..."
+EX_RES_200: {blob}

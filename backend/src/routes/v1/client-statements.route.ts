@@ -15,28 +15,10 @@ router
         statementController.getClientStatements
     );
 
-// Client bank connections
-router
-    .route('/:clientId/bank-connections')
-    .get(
-        auth('getStatements'),
-        validate(statementValidation.getClientBankConnections),
-        statementController.getClientBankConnections
-    );
-
 // Client upload progress
 router
     .route('/:clientId/upload-progress')
     .get(auth('getStatements'), validate(statementValidation.getUploadProgress), statementController.getUploadProgress);
-
-// Client connection statistics
-router
-    .route('/:clientId/connection-stats')
-    .get(
-        auth('getStatements'),
-        validate(statementValidation.getConnectionStats),
-        statementController.getConnectionStats
-    );
 
 export default router;
 
@@ -135,76 +117,6 @@ export default router;
  *                       clientId:
  *                         type: string
  *                       accountId:
- *                         type: string
- *                 total:
- *                   type: integer
- *                 pages:
- *                   type: integer
- *       "401":
- *         $ref: '#/components/responses/Unauthorized'
- *       "404":
- *         $ref: '#/components/responses/NotFound'
- */
-
-/**
- * @swagger
- * /clients/{clientId}/bank-connections:
- *   get:
- *     summary: Get all bank connections for a client
- *     description: Retrieve all bank connections configured for a client
- *     tags: [Statements]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: clientId
- *         required: true
- *         schema:
- *           type: string
- *           format: uuid
- *         description: Client ID
- *       - in: query
- *         name: status
- *         schema:
- *           type: string
- *           enum: [CONNECTED, DISCONNECTED, ERROR, SYNCING]
- *         description: Filter by connection status
- *       - in: query
- *         name: bankName
- *         schema:
- *           type: string
- *         description: Filter by bank name
- *       - in: query
- *         name: connectionType
- *         schema:
- *           type: string
- *           enum: [API, PLAID, YODLEE, MANUAL]
- *         description: Filter by connection type
- *     responses:
- *       "200":
- *         description: OK
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 connections:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       id:
- *                         type: string
- *                       bankName:
- *                         type: string
- *                       accountId:
- *                         type: string
- *                       connectionType:
- *                         type: string
- *                       lastSync:
- *                         type: string
- *                         format: date-time
- *                       status:
  *                         type: string
  *                 total:
  *                   type: integer

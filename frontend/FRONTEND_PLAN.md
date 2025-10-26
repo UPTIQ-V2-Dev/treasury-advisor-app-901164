@@ -48,12 +48,19 @@ A React 19 + Vite + ShadCN + Tailwind v4 application that analyzes business bank
 
 ---
 
-### 2. Statement Upload Page (`/upload`)
+### 2. Statement Upload Page (`/upload`) - Client-Specific
+
+**Key Changes for Client-Specific Implementation:**
+
+- Upload functionality tied to specific client (Relationship Manager uploads for clients)
+- Client selector component for Relationship Managers
+- Remove bank connection feature (client-logged-in view only)
+- Treasury agent integration for immediate analysis on upload
 
 #### Components:
 
 - `src/components/upload/FileUploadZone.tsx` - Drag & drop file upload
-- `src/components/upload/BankConnectionModal.tsx` - API connection modal
+- `src/components/upload/ClientSelector.tsx` - Client selection for Relationship Managers
 - `src/components/upload/UploadProgress.tsx` - Upload progress indicator
 - `src/components/upload/FilePreview.tsx` - Preview uploaded files
 
@@ -68,9 +75,14 @@ A React 19 + Vite + ShadCN + Tailwind v4 application that analyzes business bank
 
 #### API Endpoints:
 
-- `POST /statements/upload` - File upload
+- `POST /statements/upload/:clientId` - Client-specific file upload
 - `GET /statements/validate` - File validation
-- `POST /statements/connect` - Bank API connection
+
+#### Agent Integration:
+
+- Treasury Solution Advisor agent triggers on 'Bank-Statement-Uploaded' event
+- Immediate analysis and recommendations generation
+- Document attachment for uploaded statements
 
 ---
 
@@ -97,17 +109,24 @@ A React 19 + Vite + ShadCN + Tailwind v4 application that analyzes business bank
 
 ---
 
-### 4. Analysis Dashboard (`/dashboard`) - Relationship Manager View
+### 4. Analysis Dashboard (`/dashboard`) - Client-Specific View
+
+**Key Changes for Client-Specific Implementation:**
+
+- All analytics tied to specific client selected by Relationship Manager
+- Treasury agent provides enhanced insights and pattern recognition
+- Client comparison and portfolio overview for RMs
 
 #### Components:
 
-- `src/components/dashboard/MetricsCards.tsx` - Key financial metrics cards for RM clients
-- `src/components/dashboard/CashFlowChart.tsx` - Inflow/outflow visualization
-- `src/components/dashboard/LiquidityHeatmap.tsx` - Liquidity analysis chart
-- `src/components/dashboard/TransactionTable.tsx` - Transaction data table
+- `src/components/dashboard/MetricsCards.tsx` - Key financial metrics cards for specific client
+- `src/components/dashboard/CashFlowChart.tsx` - Client-specific inflow/outflow visualization
+- `src/components/dashboard/LiquidityHeatmap.tsx` - Client liquidity analysis chart
+- `src/components/dashboard/TransactionTable.tsx` - Client transaction data table
 - `src/components/dashboard/CategoryFilters.tsx` - Date and category filters
-- `src/components/dashboard/IdleBalanceAlert.tsx` - Idle balance notifications
+- `src/components/dashboard/IdleBalanceAlert.tsx` - Client-specific idle balance notifications
 - `src/components/dashboard/ClientSelector.tsx` - Client selection dropdown for RMs
+- `src/components/dashboard/ClientSummary.tsx` - Selected client overview
 
 #### Utils:
 
@@ -122,21 +141,34 @@ A React 19 + Vite + ShadCN + Tailwind v4 application that analyzes business bank
 
 #### API Endpoints:
 
-- `GET /analytics/overview/:clientId` - Dashboard metrics
-- `GET /analytics/cashflow/:clientId` - Cash flow data
-- `GET /transactions/:clientId` - Transaction details
+- `GET /analytics/overview/:clientId` - Client-specific dashboard metrics
+- `GET /analytics/cashflow/:clientId` - Client-specific cash flow data
+- `GET /transactions/:clientId` - Client-specific transaction details
+
+#### Agent Integration:
+
+- Treasury Solution Advisor provides real-time insights based on client data
+- Pattern recognition and anomaly detection for client spending
+- Automated alerts for treasury opportunities
 
 ---
 
-### 5. Recommendations Page (`/recommendations`)
+### 5. Recommendations Page (`/recommendations`) - Client-Specific
+
+**Key Changes for Client-Specific Implementation:**
+
+- All recommendations generated for specific client context
+- Treasury agent provides AI-powered product matching
+- Relationship Manager approval workflow before client presentation
 
 #### Components:
 
-- `src/components/recommendations/ProductCard.tsx` - Treasury product recommendation cards
-- `src/components/recommendations/BenefitTag.tsx` - Financial benefit indicators
-- `src/components/recommendations/RationaleModal.tsx` - Detailed recommendation rationale
-- `src/components/recommendations/ComparisonTable.tsx` - Side-by-side product comparison
-- `src/components/recommendations/TransactionDrillDown.tsx` - Supporting transaction details
+- `src/components/recommendations/ProductCard.tsx` - Client-specific treasury product recommendation cards
+- `src/components/recommendations/BenefitTag.tsx` - Client-specific financial benefit indicators
+- `src/components/recommendations/RationaleModal.tsx` - Detailed AI-powered recommendation rationale
+- `src/components/recommendations/ComparisonTable.tsx` - Side-by-side product comparison for client
+- `src/components/recommendations/TransactionDrillDown.tsx` - Supporting client transaction details
+- `src/components/recommendations/ClientContext.tsx` - Client information and statement summary
 
 #### Utils:
 
@@ -150,9 +182,15 @@ A React 19 + Vite + ShadCN + Tailwind v4 application that analyzes business bank
 
 #### API Endpoints:
 
-- `GET /recommendations/:clientId` - Get recommendations
+- `GET /recommendations/:clientId` - Get client-specific recommendations
 - `GET /products/catalog` - Treasury product catalog
-- `POST /recommendations/feedback` - User feedback on recommendations
+- `POST /recommendations/:clientId/feedback` - Client-specific feedback on recommendations
+
+#### Agent Integration:
+
+- Treasury Solution Advisor provides AI-powered recommendation generation
+- Real-time analysis of client's financial patterns
+- Confidence scoring and risk assessment for each recommendation
 
 ---
 

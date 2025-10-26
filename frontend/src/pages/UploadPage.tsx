@@ -1,22 +1,20 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Upload, Link as LinkIcon, ArrowRight, Clock, FileText } from 'lucide-react';
+import { Upload, ArrowRight, Clock, FileText } from 'lucide-react';
 import { useUpload } from '@/hooks/useUpload';
 import { FileUploadZone } from '@/components/upload/FileUploadZone';
 import { UploadProgress } from '@/components/upload/UploadProgress';
-import { BankConnectionModal } from '@/components/upload/BankConnectionModal';
+import { ClientSelector } from '@/components/upload/ClientSelector';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export const UploadPage = () => {
     const navigate = useNavigate();
-    const [showBankModal, setShowBankModal] = useState(false);
     const [clientInfo, setClientInfo] = useState({
-        clientId: 'd6e8f2b5-0865-485a-a63e-d083fad36462', // Valid GUID format
+        clientId: '', // Will be selected from dropdown
         startDate: '',
         endDate: ''
     });
@@ -62,64 +60,48 @@ export const UploadPage = () => {
         }
     };
 
-    const canProceed = validation?.isValid && files.length > 0;
+    const canProceed = validation?.isValid && files.length > 0 && clientInfo.clientId;
 
     return (
         <div className='container mx-auto px-4 py-8 max-w-4xl'>
             {/* Header */}
             <div className='mb-8'>
-                <h1 className='text-3xl font-bold text-gray-900 mb-2'>Upload Bank Statements</h1>
+                <h1 className='text-3xl font-bold text-gray-900 mb-2'>Upload Client Bank Statements</h1>
                 <p className='text-lg text-gray-600'>
-                    Upload your business bank statements to get personalized treasury recommendations
+                    Upload bank statements for your client to get AI-powered treasury recommendations
                 </p>
             </div>
 
             <div className='grid gap-6 lg:grid-cols-3'>
                 {/* Upload Section */}
                 <div className='lg:col-span-2 space-y-6'>
-                    {/* Upload Methods */}
+                    {/* Client Selection & Upload */}
                     <Card>
                         <CardHeader>
                             <CardTitle className='flex items-center gap-2'>
                                 <Upload className='h-5 w-5' />
-                                Choose Upload Method
+                                Upload Client Statements
                             </CardTitle>
-                            <CardDescription>Select how you'd like to provide your bank statement data</CardDescription>
+                            <CardDescription>
+                                Select a client and upload their bank statements for analysis
+                            </CardDescription>
                         </CardHeader>
                         <CardContent className='space-y-4'>
-                            {/* Connect Bank Option */}
-                            <div className='flex items-center justify-between p-4 border rounded-lg'>
-                                <div className='flex items-center gap-3'>
-                                    <LinkIcon className='h-8 w-8 text-blue-600' />
-                                    <div>
-                                        <h3 className='font-medium'>Connect Bank Account</h3>
-                                        <p className='text-sm text-gray-500'>
-                                            Securely connect for automatic data retrieval
-                                        </p>
-                                    </div>
-                                </div>
-                                <Button
-                                    variant='outline'
-                                    onClick={() => setShowBankModal(true)}
-                                >
-                                    Connect
-                                </Button>
-                            </div>
+                            {/* Client Selection */}
+                            <ClientSelector
+                                selectedClientId={clientInfo.clientId}
+                                onClientSelect={clientId => setClientInfo(prev => ({ ...prev, clientId }))}
+                                disabled={isUploading}
+                            />
 
-                            <div className='flex items-center gap-4'>
-                                <Separator className='flex-1' />
-                                <span className='text-sm text-gray-500'>or</span>
-                                <Separator className='flex-1' />
-                            </div>
-
-                            {/* Manual Upload Option */}
+                            {/* Upload Section */}
                             <div className='space-y-4'>
                                 <div className='flex items-center gap-3'>
                                     <FileText className='h-8 w-8 text-green-600' />
                                     <div>
-                                        <h3 className='font-medium'>Upload Files</h3>
+                                        <h3 className='font-medium'>Upload Bank Statements</h3>
                                         <p className='text-sm text-gray-500'>
-                                            Upload PDF or CSV bank statements manually
+                                            Upload PDF or CSV bank statements for the selected client
                                         </p>
                                     </div>
                                 </div>
@@ -298,17 +280,6 @@ export const UploadPage = () => {
                     </Card>
                 </div>
             </div>
-
-            {/* Bank Connection Modal */}
-            <BankConnectionModal
-                isOpen={showBankModal}
-                onClose={() => setShowBankModal(false)}
-                clientId={clientInfo.clientId}
-                onSuccess={connection => {
-                    console.log('Bank connected:', connection);
-                    // Could navigate to a different flow for bank connections
-                }}
-            />
         </div>
     );
 };

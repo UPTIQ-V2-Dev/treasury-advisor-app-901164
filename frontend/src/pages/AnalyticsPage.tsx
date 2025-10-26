@@ -12,6 +12,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { analyticsService } from '@/services/analytics';
 import { CashFlowChart } from '@/components/dashboard/CashFlowChart';
 import { MetricsCards } from '@/components/dashboard/MetricsCards';
+import { ClientSelector } from '@/components/upload/ClientSelector';
 import type { AnalyticsFilters, VendorConcentration } from '@/types/analytics';
 import {
     BarChart3,
@@ -25,8 +26,6 @@ import {
     AlertTriangle
 } from 'lucide-react';
 import { format, subMonths, startOfMonth, endOfMonth } from 'date-fns';
-
-const MOCK_CLIENT_ID = 'client-1';
 
 const TRANSACTION_CATEGORIES = [
     'Operating Expenses',
@@ -44,6 +43,7 @@ const TRANSACTION_CATEGORIES = [
 const TRANSACTION_TYPES = ['ach', 'wire', 'check', 'card', 'transfer'];
 
 export const AnalyticsPage = () => {
+    const [selectedClientId, setSelectedClientId] = useState<string>('');
     const [filters, setFilters] = useState<AnalyticsFilters>({
         dateRange: {
             startDate: format(startOfMonth(subMonths(new Date(), 11)), 'yyyy-MM-dd'),
@@ -64,23 +64,27 @@ export const AnalyticsPage = () => {
     const [amountMax, setAmountMax] = useState<string>('');
 
     const { data: summary, isLoading: summaryLoading } = useQuery({
-        queryKey: ['analytics-summary', MOCK_CLIENT_ID, filters],
-        queryFn: () => analyticsService.getAnalyticsSummary(MOCK_CLIENT_ID, filters)
+        queryKey: ['analytics-summary', selectedClientId, filters],
+        queryFn: () => analyticsService.getAnalyticsSummary(selectedClientId, filters),
+        enabled: !!selectedClientId
     });
 
     const { data: categories = [], isLoading: categoriesLoading } = useQuery({
-        queryKey: ['transaction-categories', MOCK_CLIENT_ID, filters],
-        queryFn: () => analyticsService.getTransactionCategories(MOCK_CLIENT_ID, filters)
+        queryKey: ['transaction-categories', selectedClientId, filters],
+        queryFn: () => analyticsService.getTransactionCategories(selectedClientId, filters),
+        enabled: !!selectedClientId
     });
 
     const { data: patterns = [], isLoading: patternsLoading } = useQuery({
-        queryKey: ['spending-patterns', MOCK_CLIENT_ID],
-        queryFn: () => analyticsService.getSpendingPatterns(MOCK_CLIENT_ID)
+        queryKey: ['spending-patterns', selectedClientId],
+        queryFn: () => analyticsService.getSpendingPatterns(selectedClientId),
+        enabled: !!selectedClientId
     });
 
     const { data: vendors = [], isLoading: vendorsLoading } = useQuery({
-        queryKey: ['vendor-analysis', MOCK_CLIENT_ID],
-        queryFn: () => analyticsService.getVendorAnalysis(MOCK_CLIENT_ID)
+        queryKey: ['vendor-analysis', selectedClientId],
+        queryFn: () => analyticsService.getVendorAnalysis(selectedClientId),
+        enabled: !!selectedClientId
     });
 
     const applyFilters = () => {
@@ -123,8 +127,9 @@ export const AnalyticsPage = () => {
     };
 
     const handleExport = async (format: 'csv' | 'excel' | 'pdf') => {
+        if (!selectedClientId) return;
         try {
-            const blob = await analyticsService.exportAnalyticsData(MOCK_CLIENT_ID, format, filters);
+            const blob = await analyticsService.exportAnalyticsData(selectedClientId, format, filters);
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -184,14 +189,17 @@ export const AnalyticsPage = () => {
             {/* Header */}
             <div className='flex items-center justify-between'>
                 <div>
-                    <h1 className='text-3xl font-bold'>Financial Analytics</h1>
-                    <p className='text-muted-foreground'>Detailed analysis with advanced filtering and insights</p>
+                    <h1 className='text-3xl font-bold'>Client Financial Analytics</h1>
+                    <p className='text-muted-foreground'>
+                        Client-specific detailed analysis with advanced filtering and insights
+                    </p>
                 </div>
                 <div className='flex gap-2'>
                     <Button
                         variant='outline'
                         size='sm'
                         onClick={() => handleExport('csv')}
+                        disabled={!selectedClientId}
                     >
                         <Download className='h-4 w-4 mr-2' />
                         Export CSV
@@ -200,6 +208,7 @@ export const AnalyticsPage = () => {
                         variant='outline'
                         size='sm'
                         onClick={() => handleExport('excel')}
+                        disabled={!selectedClientId}
                     >
                         <Download className='h-4 w-4 mr-2' />
                         Export Excel
@@ -208,12 +217,27 @@ export const AnalyticsPage = () => {
                         variant='outline'
                         size='sm'
                         onClick={() => handleExport('pdf')}
+                        disabled={!selectedClientId}
                     >
                         <Download className='h-4 w-4 mr-2' />
                         Export PDF
                     </Button>
                 </div>
             </div>
+
+            {/* Client Selection */}
+            <Card>
+                <CardHeader>
+                    <CardTitle>Client Selection</CardTitle>
+                    <CardDescription>Select a client to view their financial analytics</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <ClientSelector
+                        selectedClientId={selectedClientId}
+                        onClientSelect={setSelectedClientId}
+                    />
+                </CardContent>
+            </Card>
 
             {/* Filters */}
             <Card>
@@ -432,7 +456,21 @@ export const AnalyticsPage = () => {
                 </CardContent>
             </Card>
 
-            {isLoading ? (
+            {!selectedClientId ? (
+                <Card>
+                    <CardContent className='flex items-center justify-center h-64'>
+                        <div className='text-center space-y-4'>
+                            <div className='text-6xl'>📊</div>
+                            <div>
+                                <h3 className='text-lg font-semibold'>Select a Client</h3>
+                                <p className='text-muted-foreground'>
+                                    Choose a client above to view their financial analytics
+                                </p>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+            ) : isLoading ? (
                 <div className='flex items-center justify-center h-64'>
                     <div className='text-center space-y-4'>
                         <div className='animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto'></div>
